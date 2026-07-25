@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es" data-i18n-title="events.page.title">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eventos | Enjoy Punta Cana</title>
+  <meta name="description" content="Eventos en Enjoy PC Restaurante: música en vivo, DJ sets y noches especiales en Los Corales, Bávaro, Punta Cana." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Eventos | Enjoy Punta Cana" />
+  <meta property="og:image" content="img/ambiente/musica-vivo.jpg" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+
+  <script src="js/tailwind-cdn.js"></script>
+  <link rel="stylesheet" href="css/fonts.css" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-surface text-on-surface">
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-secondary/10 transition-colors">
+    <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
+        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+        <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="eventos.html" data-i18n="nav.events">Eventos</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 md:hidden">
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+        <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
+    <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-secondary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-label-caps text-label-caps text-primary" href="eventos.html" data-i18n="nav.events">Eventos</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </div>
+
+  <main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+    <header class="text-center mb-16">
+      <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+      <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="events.page.title">Eventos</h1>
+      <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="events.page.subtitle">Música en vivo, DJ sets y noches especiales en nuestra terraza.</p>
+    </header>
+
+    <!-- Evento de hoy -->
+    <section id="today-event" class="mb-16"></section>
+
+    <!-- Próximos eventos -->
+    <section>
+      <h2 class="font-headline-md text-headline-md text-on-surface mb-8 text-center" data-i18n="events.upcoming.title">Próximos eventos</h2>
+      <div id="upcoming-events" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </section>
+
+    <p class="text-center font-body-md text-on-surface-variant mt-16 italic" data-i18n="events.note">Horario referencial y sujeto a cambios — confirma con el restaurante antes de tu visita.</p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
+    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
+    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+    <div class="flex flex-wrap justify-center gap-8 mb-10">
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="eventos.html" data-i18n="nav.events">Eventos</a>
+    </div>
+    <div class="w-full h-px bg-outline-variant mb-8"></div>
+    <p class="font-body-md text-on-surface-variant">
+      © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.
+    </p>
+  </footer>
+
+  <script src="js/events-data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      const todayEl = document.getElementById("today-event");
+      const upcomingEl = document.getElementById("upcoming-events");
+
+      function currentLang() {
+        return document.documentElement.lang || "es";
+      }
+
+      function formatHour(time, lang) {
+        const [h, m] = time.split(":").map(Number);
+        const period = h >= 12 ? "PM" : "AM";
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+        const mm = String(m).padStart(2, "0");
+        return `${h12}:${mm} ${period}`;
+      }
+
+      function dayLabel(offset, lang) {
+        if (offset === 0) return I18N.translate("events.today.badge", lang);
+        if (offset === 1) return I18N.translate("day.tomorrow", lang);
+        const dayIndex = (new Date().getDay() + offset) % 7;
+        return I18N.translate("day." + dayIndex, lang);
+      }
+
+      function eventForOffset(offset) {
+        const dayIndex = (new Date().getDay() + offset) % 7;
+        return EVENTS_WEEKLY.find((e) => e.day === dayIndex);
+      }
+
+      function renderToday() {
+        const lang = currentLang();
+        const event = eventForOffset(0);
+
+        if (!event) {
+          todayEl.innerHTML = `<div class="bg-surface-container p-10 text-center"><p class="font-body-lg text-on-surface-variant" data-i18n="events.today.empty">${I18N.translate("events.today.empty", lang)}</p></div>`;
+          return;
+        }
+
+        todayEl.innerHTML = `
+          <div class="relative overflow-hidden group h-[420px]">
+            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${event.img}')"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 p-10">
+              <div class="inline-block bg-primary text-white px-3 py-1 font-label-caps text-label-caps mb-4">${I18N.translate("events.today.badge", lang)}</div>
+              <h3 class="font-headline-md text-white text-3xl mb-2">${event.nombre[lang]}</h3>
+              <p class="text-white/80 font-body-md mb-4 max-w-md">${event.desc[lang]}</p>
+              <p class="text-white font-label-caps text-label-caps">${formatHour(event.horaInicio, lang)} – ${formatHour(event.horaFin, lang)}</p>
+            </div>
+          </div>`;
+      }
+
+      function renderUpcoming() {
+        const lang = currentLang();
+        const cards = [];
+
+        for (let offset = 1; offset <= 6; offset++) {
+          const event = eventForOffset(offset);
+          if (!event) continue;
+          cards.push(`
+            <article class="bg-surface-container-low shadow-sm overflow-hidden">
+              <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${event.img}')" role="img" aria-label="${event.nombre[lang]}"></div>
+              <div class="p-6">
+                <span class="font-label-caps text-label-caps text-primary uppercase">${dayLabel(offset, lang)}</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 mb-2">${event.nombre[lang]}</h3>
+                <p class="font-body-md text-on-surface-variant mb-3">${event.desc[lang]}</p>
+                <p class="font-label-caps text-label-caps text-secondary">${formatHour(event.horaInicio, lang)} – ${formatHour(event.horaFin, lang)}</p>
+              </div>
+            </article>`);
+        }
+
+        upcomingEl.innerHTML = cards.join("");
+      }
+
+      function renderAll() {
+        renderToday();
+        renderUpcoming();
+      }
+
+      renderAll();
+
+      document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
+        btn.addEventListener("click", renderAll);
+      });
+    })();
+  </script>
+</body>
+</html>

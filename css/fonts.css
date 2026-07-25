@@ -1,0 +1,27 @@
+/* Fuentes auto-alojadas (descargadas de Google Fonts) para que el sitio funcione
+   sin conexión a internet. Subset "latin" — cubre español e inglés (incluye ñ, á, é, í, ó, ú, ¿, ¡).
+   Son variable fonts: el mismo archivo cubre varios pesos vía font-weight en cada @font-face. */
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/hanken-grotesk.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/playfair-display.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+  src: url("../fonts/material-symbols-outlined.woff2") format("woff2");
+}
