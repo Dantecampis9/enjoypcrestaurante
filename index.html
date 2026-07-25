@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es" data-i18n-title="meta.title.home" data-i18n-description="meta.desc.home">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enjoy Punta Cana | Tropical Luxury Dining</title>
+  <meta name="description" content="Enjoy PC Restaurante en Los Corales, Bávaro: cocina italiana, caribeña e internacional frente al Caribe. Terraza, música en vivo y sabor tropical." />
+
+  <meta property="og:type" content="restaurant.restaurant" />
+  <meta property="og:title" content="Enjoy Punta Cana | Tropical Luxury Dining" />
+  <meta property="og:description" content="Cocina italiana, caribeña e internacional en Los Corales, Bávaro. Terraza, música en vivo y sabor tropical." />
+  <meta property="og:image" content="img/ambiente/hero-terraza-noche.jpg" />
+  <meta property="og:locale" content="es_DO" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+  <link rel="canonical" href="https://enjoypcrestaurante.com/" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Enjoy PC Restaurante",
+    "image": "img/ambiente/hero-terraza-noche.jpg",
+    "servesCuisine": ["Italian", "Caribbean", "International"],
+    "priceRange": "$$-$$$",
+    "telephone": "+1-809-898-6193",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C. Residencial Los Corales",
+      "addressLocality": "Bávaro, Punta Cana",
+      "postalCode": "23301",
+      "addressCountry": "DO"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "07:00",
+      "closes": "22:00"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.3",
+      "reviewCount": "46"
+    },
+    "sameAs": [
+      "https://www.instagram.com/enjoypcrestaurante/",
+      "https://www.facebook.com/profile.php?id=61561738400019"
+    ]
+  }
+  </script>
+</head>
+<body class="bg-surface text-on-surface">
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-secondary/10 transition-colors">
+    <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
+        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 md:hidden">
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+        <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
+    <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-primary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <div class="w-full h-full bg-cover bg-center transition-transform duration-[10000ms] hover:scale-110" style="background-image: url('img/ambiente/hero-terraza-noche.jpg')"></div>
+        <div class="absolute inset-0 bg-black/30"></div>
+      </div>
+      <div class="relative z-10 text-center px-gutter max-w-4xl">
+        <h1 class="font-display-lg text-white mb-6 text-display-lg-mobile md:text-display-lg drop-shadow-lg" data-i18n="hero.title">
+          Sabor que abraza el Caribe
+        </h1>
+        <p class="font-body-lg text-white/90 mb-10 max-w-2xl mx-auto drop-shadow-md" data-i18n="hero.subtitle">
+          Una experiencia gastronómica donde el lujo se encuentra con la arena blanca. Descubre ingredientes locales elevados a la alta cocina.
+        </p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+          <a class="bg-primary text-white px-10 py-4 font-label-caps text-label-caps hover:bg-primary-container transition-all duration-300 shadow-xl" href="menu.html" data-i18n="hero.cta.menu">
+            Ver Menú Digital
+          </a>
+          <a class="border border-white text-white px-10 py-4 font-label-caps text-label-caps hover:bg-white hover:text-primary transition-all duration-300" href="#experiencia" data-i18n="hero.cta.story">
+            Nuestra Historia
+          </a>
+        </div>
+      </div>
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-white flex flex-col items-center animate-bounce">
+        <span class="material-symbols-outlined">expand_more</span>
+      </div>
+    </section>
+
+    <!-- Welcome Message Section -->
+    <section id="experiencia" class="py-section-gap px-gutter max-w-container-max mx-auto bg-surface">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div class="space-y-6">
+          <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+          <h2 class="font-headline-md text-headline-md text-on-surface" data-i18n="welcome.title">La esencia de la cocina caribeña bajo una nueva luz.</h2>
+          <p class="font-body-md text-on-surface-variant leading-relaxed" data-i18n="welcome.body">
+            En Enjoy Punta Cana no solo servimos comida; creamos momentos que perduran. Nuestra cocina combina lo mejor de la tradición italiana con el alma tropical de República Dominicana, en un jardín de orquídeas a pasos de la playa de Los Corales.
+          </p>
+          <div class="pt-4">
+            <a href="menu.html" class="flex items-center gap-4 group cursor-pointer w-fit">
+              <span class="w-12 h-px bg-primary transition-all group-hover:w-20"></span>
+              <span class="font-label-caps text-label-caps text-primary" data-i18n="welcome.explore">Explora nuestra visión</span>
+            </a>
+          </div>
+        </div>
+        <div class="relative group overflow-hidden">
+          <div class="aspect-[4/5] bg-cover bg-center shadow-2xl transition-transform duration-700 group-hover:scale-105" style="background-image: url('img/platos/pasta-italiana.jpg')"></div>
+          <div class="absolute -bottom-6 -left-6 bg-tertiary-fixed p-8 hidden md:block">
+            <p class="font-headline-sm italic text-on-tertiary-fixed-variant" data-i18n="welcome.quote">"Fresco. Local. Inolvidable."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Grid Quick Links -->
+    <section class="py-section-gap px-gutter max-w-container-max mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+        <!-- Eventos de Hoy -->
+        <div class="md:col-span-8 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('img/ambiente/musica-vivo.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-10">
+            <div class="inline-block bg-primary text-white px-3 py-1 font-label-caps text-label-caps mb-4" data-i18n="bento.events.badge">HOY</div>
+            <h3 class="font-headline-md text-white text-3xl mb-2" data-i18n="bento.events.title">Música en Vivo</h3>
+            <p class="text-white/80 font-body-md mb-6 max-w-md" data-i18n="bento.events.body">Disfruta de música en vivo y coctelería de autor en nuestra terraza frente al jardín, todas las noches desde las 7:00 PM.</p>
+            <a href="contacto.html" class="inline-block bg-white text-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors" data-i18n="bento.events.cta">Ver Horarios</a>
+          </div>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="md:col-span-4 bg-secondary-container flex flex-col justify-center p-10 relative overflow-hidden">
+          <div class="relative z-10">
+            <span class="material-symbols-outlined text-4xl text-on-secondary-container mb-4">share</span>
+            <h3 class="font-headline-md text-on-secondary-container mb-4" data-i18n="bento.social.title">Nuestras Redes</h3>
+            <p class="font-body-md text-on-secondary-container/80 mb-8" data-i18n="bento.social.body">Síguenos para un vistazo diario a nuestra cocina y eventos exclusivos.</p>
+            <div class="flex gap-4">
+              <a class="w-12 h-12 rounded-full border border-on-secondary-container flex items-center justify-center hover:bg-on-secondary-container hover:text-white transition-all" href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram">
+                <span class="material-symbols-outlined">camera</span>
+              </a>
+              <a class="w-12 h-12 rounded-full border border-on-secondary-container flex items-center justify-center hover:bg-on-secondary-container hover:text-white transition-all" href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook">
+                <span class="material-symbols-outlined">public</span>
+              </a>
+            </div>
+          </div>
+          <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full"></div>
+        </div>
+
+        <!-- Reservations Small -->
+        <div class="md:col-span-4 bg-primary text-white p-10 flex flex-col justify-end">
+          <h4 class="font-headline-sm mb-2" data-i18n="bento.reserve.title">Llámanos</h4>
+          <p class="font-body-md text-white/80 mb-6" data-i18n="bento.reserve.body">Asegura tu lugar en la mejor terraza de Los Corales.</p>
+          <a class="font-label-caps text-label-caps border-b border-white self-start pb-1 hover:opacity-70" href="contacto.html" data-i18n="bento.reserve.cta">Ver Contacto</a>
+        </div>
+
+        <!-- Gallery Small -->
+        <a href="galeria.html" class="md:col-span-8 relative group overflow-hidden block">
+          <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('img/platos/coctel-verde.jpg')"></div>
+          <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Follow / Community Teaser -->
+    <section class="bg-surface-container py-section-gap">
+      <div class="px-gutter max-w-container-max mx-auto text-center">
+        <h2 class="font-headline-md text-on-surface mb-6" data-i18n="newsletter.title">Únete a la Comunidad Enjoy</h2>
+        <p class="font-body-md text-on-surface-variant max-w-xl mx-auto mb-10" data-i18n="newsletter.body">Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.</p>
+        <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-4 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined">camera</span>
+          <span data-i18n="newsletter.cta">Seguir en Instagram</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
+    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
+    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+    <div class="flex flex-wrap justify-center gap-8 mb-10">
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+    </div>
+    <div class="w-full h-px bg-outline-variant mb-8"></div>
+    <p class="font-body-md text-on-surface-variant">
+      © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.
+    </p>
+    <div class="mt-8 flex gap-6 text-secondary">
+      <span class="material-symbols-outlined">restaurant</span>
+      <span class="material-symbols-outlined">wine_bar</span>
+      <span class="material-symbols-outlined">pool</span>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

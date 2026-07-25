@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es" data-i18n-title="contact.page.title">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto | Enjoy Punta Cana</title>
+  <meta name="description" content="Contacta Enjoy PC Restaurante en Los Corales, Bávaro, Punta Cana. Teléfono, horarios, ubicación y servicios." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Contacto | Enjoy Punta Cana" />
+  <meta property="og:image" content="img/ambiente/hero-terraza-noche.jpg" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-surface text-on-surface">
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-secondary/10 transition-colors">
+    <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
+        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+        <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 md:hidden">
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+        <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
+    <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-secondary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+      <a class="font-label-caps text-label-caps text-primary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </div>
+
+  <main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+    <header class="text-center mb-16">
+      <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+      <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="contact.page.title">Contacto y Ubicación</h1>
+      <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="contact.page.subtitle">Te esperamos en Los Corales, a solo 5 minutos de la playa.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-section-gap">
+      <!-- Contact details -->
+      <div class="space-y-8">
+        <div class="flex items-start gap-4">
+          <span class="material-symbols-outlined text-primary text-3xl">call</span>
+          <div>
+            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.phone">Teléfono</h2>
+            <a href="tel:+18098986193" class="font-headline-sm text-headline-sm text-on-surface hover:text-primary transition-colors">+1 809-898-6193</a>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <span class="material-symbols-outlined text-primary text-3xl">mail</span>
+          <div>
+            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.email">Correo</h2>
+            <p class="font-headline-sm text-headline-sm text-on-surface-variant italic" data-i18n="contact.email.pending">Próximamente</p>
+          </div>
+        </div>
+
+        <div id="ubicacion" class="flex items-start gap-4">
+          <span class="material-symbols-outlined text-primary text-3xl">location_on</span>
+          <div>
+            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.address">Dirección</h2>
+            <p class="font-headline-sm text-headline-sm text-on-surface">C. Residencial Los Corales</p>
+            <p class="font-body-md text-on-surface-variant">Bávaro, Punta Cana 23301, República Dominicana</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Enjoy+PC+Restaurante+Los+Corales+Bavaro+Punta+Cana" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-3 font-label-caps text-label-caps text-primary border-b border-primary pb-0.5 w-fit">
+              <span data-i18n="contact.map.cta">Cómo llegar</span>
+              <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+        <div id="horarios" class="flex items-start gap-4">
+          <span class="material-symbols-outlined text-primary text-3xl">schedule</span>
+          <div>
+            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.hours">Horario</h2>
+            <p class="font-headline-sm text-headline-sm text-on-surface" data-i18n="contact.hours.value">Todos los días, 7:00 AM – 10:00 PM</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <span class="material-symbols-outlined text-primary text-3xl">share</span>
+          <div>
+            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2" data-i18n="contact.social">Síguenos</h2>
+            <div class="flex gap-3">
+              <a class="w-11 h-11 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram">
+                <span class="material-symbols-outlined">camera</span>
+              </a>
+              <a class="w-11 h-11 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all" href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook">
+                <span class="material-symbols-outlined">public</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="h-full min-h-[320px] overflow-hidden shadow-xl">
+        <iframe
+          title="Ubicación de Enjoy PC Restaurante"
+          src="https://www.google.com/maps?q=Enjoy+PC+Restaurante+Los+Corales+Bavaro+Punta+Cana&output=embed"
+          width="100%"
+          height="100%"
+          style="border:0; min-height: 320px;"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <section class="bg-surface-container p-10 md:p-16">
+      <h2 class="font-headline-md text-headline-md text-on-surface mb-8 text-center" data-i18n="contact.services.title">Servicios</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">deck</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.1">Terraza exterior</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">music_note</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.2">Música en vivo</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">event_available</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.3">Se aceptan reservas</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">wifi</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.4">WiFi gratis</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">local_parking</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.5">Parking gratuito</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">pets</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.6">Dog-friendly</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">accessible</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.7">Accesible</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">wine_bar</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.8">Bar completo</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">icecream</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.9">Gelatería y panadería</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-3xl">storefront</span>
+          <span class="font-body-md text-on-surface-variant" data-i18n="contact.services.10">Boutique</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
+    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
+    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+    <div class="flex flex-wrap justify-center gap-8 mb-10">
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+    </div>
+    <div class="w-full h-px bg-outline-variant mb-8"></div>
+    <p class="font-body-md text-on-surface-variant">
+      © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.
+    </p>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

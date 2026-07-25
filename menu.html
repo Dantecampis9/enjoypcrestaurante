@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es" data-i18n-title="menu.page.title">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menú Digital | Enjoy Punta Cana</title>
+  <meta name="description" content="Menú de Enjoy PC Restaurante: cocina italiana, caribeña e internacional en Los Corales, Bávaro, Punta Cana." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Menú Digital | Enjoy Punta Cana" />
+  <meta property="og:image" content="img/platos/steak.jpg" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-surface text-on-surface">
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-secondary/10 transition-colors">
+    <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
+        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 md:hidden">
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+        <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
+    <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-primary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </div>
+
+  <main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+    <header class="text-center mb-16">
+      <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+      <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="menu.page.title">Menú Digital</h1>
+      <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="menu.page.subtitle">Cocina italiana, caribeña e internacional en el corazón de Los Corales.</p>
+      <button onclick="window.print()" class="no-print mt-6 inline-flex items-center gap-2 border border-primary text-primary px-5 py-2 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-base">print</span>
+        <span data-i18n="menu.print">Imprimir menú</span>
+      </button>
+    </header>
+
+    <!-- Category tabs -->
+    <div id="menu-tabs" class="no-print flex flex-wrap justify-center gap-3 mb-12" role="tablist"></div>
+
+    <!-- Menu grid -->
+    <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
+    <p class="text-center font-body-md text-on-surface-variant mt-16 italic" data-i18n="menu.price.note">Precios en USD. Sujetos a cambio sin previo aviso.</p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
+    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
+    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+    <div class="flex flex-wrap justify-center gap-8 mb-10">
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+    </div>
+    <div class="w-full h-px bg-outline-variant mb-8"></div>
+    <p class="font-body-md text-on-surface-variant">
+      © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.
+    </p>
+  </footer>
+
+  <script src="js/menu-data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      const tabsEl = document.getElementById("menu-tabs");
+      const gridEl = document.getElementById("menu-grid");
+      let activeCategory = "all";
+
+      function currentLang() {
+        return document.documentElement.lang || "es";
+      }
+
+      function tagLabel(tag, lang) {
+        return I18N.translate("menu.tag." + tag, lang);
+      }
+
+      function renderTabs() {
+        const lang = currentLang();
+        const allBtn = `<button data-cat="all" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === "all"}">${I18N.translate("menu.filter.all", lang)}</button>`;
+        const catBtns = MENU_CATEGORIES.map(
+          (cat) =>
+            `<button data-cat="${cat.id}" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === cat.id}">${cat.label[lang]}</button>`
+        ).join("");
+        tabsEl.innerHTML = allBtn + catBtns;
+
+        tabsEl.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            activeCategory = btn.getAttribute("data-cat");
+            renderTabs();
+            renderGrid();
+          });
+        });
+      }
+
+      function renderGrid() {
+        const lang = currentLang();
+        const items = MENU_ITEMS.filter((item) => activeCategory === "all" || item.category === activeCategory);
+
+        gridEl.innerHTML = items
+          .map(
+            (item) => `
+          <article class="menu-card bg-surface-container-low shadow-sm overflow-hidden">
+            <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${item.img}')" role="img" aria-label="${item.nombre[lang]}"></div>
+            <div class="p-6">
+              <div class="flex justify-between items-start gap-3 mb-2">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">${item.nombre[lang]}</h3>
+                <span class="font-headline-sm text-headline-sm text-primary whitespace-nowrap">$${item.precio}</span>
+              </div>
+              <p class="font-body-md text-on-surface-variant mb-3">${item.desc[lang]}</p>
+              ${
+                item.tags.length
+                  ? `<div class="flex gap-2 flex-wrap">${item.tags
+                      .map(
+                        (tag) =>
+                          `<span class="text-xs font-label-caps px-2 py-1 bg-secondary-container text-on-secondary-container rounded-full">${tagLabel(tag, lang)}</span>`
+                      )
+                      .join("")}</div>`
+                  : ""
+              }
+            </div>
+          </article>`
+          )
+          .join("");
+      }
+
+      renderTabs();
+      renderGrid();
+
+      document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          renderTabs();
+          renderGrid();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

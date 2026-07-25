@@ -1,0 +1,96 @@
+body {
+  background-color: #fcf9f8;
+  font-family: "Hanken Grotesk", sans-serif;
+  color: #1c1b1b;
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.glass-nav {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.text-sunset {
+  color: #9f3d04;
+}
+
+.bg-sunset {
+  background-color: #9f3d04;
+}
+
+.border-ocean {
+  border-color: #436083;
+}
+
+.text-ocean {
+  color: #436083;
+}
+
+/* Menú móvil */
+#mobile-menu {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Lightbox de galería */
+.lightbox-backdrop {
+  background-color: rgba(28, 27, 27, 0.92);
+}
+
+.lightbox-img {
+  max-height: 85vh;
+  max-width: 90vw;
+}
+
+.gallery-item img {
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+/* Tarjetas de menú */
+.menu-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-4px);
+}
+
+.menu-tab[aria-selected="true"] {
+  background-color: #9f3d04;
+  color: #ffffff;
+}
+
+@media print {
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+  .menu-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #e5e2e1;
+  }
+}

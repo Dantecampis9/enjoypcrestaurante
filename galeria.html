@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es" data-i18n-title="gallery.page.title">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galería | Enjoy Punta Cana</title>
+  <meta name="description" content="Galería de fotos de Enjoy PC Restaurante: platos, cócteles, música en vivo y el ambiente de nuestra terraza en Los Corales." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Galería | Enjoy Punta Cana" />
+  <meta property="og:image" content="img/ambiente/hero-terraza-noche.jpg" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-surface text-on-surface">
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm shadow-secondary/10 transition-colors">
+    <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
+        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+        <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 md:hidden">
+        <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+        </div>
+        <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
+    <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-secondary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+      <a class="font-label-caps text-label-caps text-primary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+    </div>
+  </div>
+
+  <main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+    <header class="text-center mb-16">
+      <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+      <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="gallery.page.title">Galería</h1>
+      <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="gallery.page.subtitle">Momentos, sabores y noches en Enjoy Punta Cana.</p>
+    </header>
+
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 [&>*]:mb-6">
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/hero-terraza-noche.jpg" data-lightbox-alt="Terraza iluminada de noche en Enjoy Punta Cana">
+        <img src="img/ambiente/hero-terraza-noche.jpg" alt="Terraza iluminada de noche" class="w-full h-auto" loading="lazy" width="1200" height="800" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/steak.jpg" data-lightbox-alt="Plato de carne a la parrilla">
+        <img src="img/platos/steak.jpg" alt="Plato de carne a la parrilla" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/musica-vivo.jpg" data-lightbox-alt="Música en vivo por la noche">
+        <img src="img/ambiente/musica-vivo.jpg" alt="Música en vivo por la noche" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/cocteles.jpg" data-lightbox-alt="Cócteles de autor">
+        <img src="img/platos/cocteles.jpg" alt="Cócteles de autor" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/ambiente-social-1.jpg" data-lightbox-alt="Ambiente social en la terraza">
+        <img src="img/ambiente/ambiente-social-1.jpg" alt="Ambiente social en la terraza" class="w-full h-auto" loading="lazy" width="800" height="1000" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/pasta-italiana.jpg" data-lightbox-alt="Pasta italiana artesanal">
+        <img src="img/platos/pasta-italiana.jpg" alt="Pasta italiana artesanal" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/dj-noche.jpg" data-lightbox-alt="DJ en vivo por la noche">
+        <img src="img/ambiente/dj-noche.jpg" alt="DJ en vivo por la noche" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/coctel-camarones.jpg" data-lightbox-alt="Cóctel de camarones frescos">
+        <img src="img/platos/coctel-camarones.jpg" alt="Cóctel de camarones frescos" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/bar-noche.jpg" data-lightbox-alt="Bar iluminado de noche">
+        <img src="img/ambiente/bar-noche.jpg" alt="Bar iluminado de noche" class="w-full h-auto" loading="lazy" width="800" height="1000" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/cheesecake.jpg" data-lightbox-alt="Cheesecake de la casa">
+        <img src="img/platos/cheesecake.jpg" alt="Cheesecake de la casa" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/saxofonista.jpg" data-lightbox-alt="Saxofonista en vivo">
+        <img src="img/ambiente/saxofonista.jpg" alt="Saxofonista en vivo" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/sangria.jpg" data-lightbox-alt="Sangría de la casa">
+        <img src="img/platos/sangria.jpg" alt="Sangría de la casa" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/ambiente-social-2.jpg" data-lightbox-alt="Ambiente social de noche">
+        <img src="img/ambiente/ambiente-social-2.jpg" alt="Ambiente social de noche" class="w-full h-auto" loading="lazy" width="800" height="1000" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/mamajuana.jpg" data-lightbox-alt="Mamajuana, trago tradicional dominicano">
+        <img src="img/platos/mamajuana.jpg" alt="Mamajuana, trago tradicional dominicano" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/boutique.jpg" data-lightbox-alt="Boutique de souvenirs">
+        <img src="img/ambiente/boutique.jpg" alt="Boutique de souvenirs" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/frutas-frescas.jpg" data-lightbox-alt="Frutas frescas de temporada">
+        <img src="img/platos/frutas-frescas.jpg" alt="Frutas frescas de temporada" class="w-full h-auto" loading="lazy" width="800" height="1000" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/ambiente/ambiente-mesa.jpg" data-lightbox-alt="Momento compartido en la mesa">
+        <img src="img/ambiente/ambiente-mesa.jpg" alt="Momento compartido en la mesa" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+      <div class="gallery-item overflow-hidden break-inside-avoid cursor-pointer" data-lightbox-src="img/platos/coctel-verde.jpg" data-lightbox-alt="Cóctel tropical verde">
+        <img src="img/platos/coctel-verde.jpg" alt="Cóctel tropical verde" class="w-full h-auto" loading="lazy" width="800" height="600" />
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[100] lightbox-backdrop flex items-center justify-center px-4" role="dialog" aria-modal="true">
+    <button id="lightbox-close" class="absolute top-6 right-6 text-white hover:text-primary-fixed transition-colors" data-i18n-aria="gallery.lightbox.close">
+      <span class="material-symbols-outlined text-4xl">close</span>
+    </button>
+    <button id="lightbox-prev" class="absolute left-4 md:left-8 text-white hover:text-primary-fixed transition-colors" data-i18n-aria="gallery.lightbox.prev">
+      <span class="material-symbols-outlined text-4xl">chevron_left</span>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="lightbox-img object-contain" />
+    <button id="lightbox-next" class="absolute right-4 md:right-8 text-white hover:text-primary-fixed transition-colors" data-i18n-aria="gallery.lightbox.next">
+      <span class="material-symbols-outlined text-4xl">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
+    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
+    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+    <div class="flex flex-wrap justify-center gap-8 mb-10">
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
+    </div>
+    <div class="w-full h-px bg-outline-variant mb-8"></div>
+    <p class="font-body-md text-on-surface-variant">
+      © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.
+    </p>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
