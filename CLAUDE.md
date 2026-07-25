@@ -4,9 +4,19 @@ Sitio web para **Enjoy PC Restaurante**, restaurante en Los Corales, Bávaro, Pu
 
 ## Restricciones duras
 
-- **Sin build, sin `npm`, sin frameworks.** HTML estático + Tailwind vía Play CDN (`cdn.tailwindcss.com`). No introducir bundlers, React, Astro, etc. sin preguntar antes.
+- **Sin build, sin `npm`, sin frameworks.** HTML estático + Tailwind (motor JIT del Play CDN). No introducir bundlers, React, Astro, etc. sin preguntar antes.
 - **No añadir dependencias nuevas** (librerías JS, servicios externos de formularios, analytics, etc.) sin confirmarlo con el usuario primero.
-- Cualquier página nueva debe seguir la misma estructura de `<head>` y nav que `index.html`, `menu.html`, `galeria.html` y `contacto.html`.
+- Cualquier página nueva debe seguir la misma estructura de `<head>` y nav que `index.html`, `menu.html`, `eventos.html`, `galeria.html` y `contacto.html`.
+
+## Assets auto-alojados (sin CDN)
+
+El sitio **no depende de internet** para verse bien — Tailwind y las fuentes se descargaron una vez y se sirven como archivos locales:
+
+- `js/tailwind-cdn.js` — copia local del motor JIT de Tailwind Play CDN (`cdn.tailwindcss.com`). Genera las clases de utilidad en el navegador igual que el CDN, pero sin llamar a ningún servidor externo.
+- `fonts/*.woff2` + `css/fonts.css` — Playfair Display, Hanken Grotesk y Material Symbols Outlined, descargadas de Google Fonts (subset `latin`, cubre español e inglés). Son variable fonts: un solo archivo cubre varios pesos vía `font-weight: 400 700` en el `@font-face`.
+- El único recurso que sigue necesitando red es el `<iframe>` de Google Maps en `contacto.html` (es un mapa en vivo, no un asset estático).
+- Si se actualiza `js/tailwind-config.js` con nuevas clases, `js/tailwind-cdn.js` no necesita volver a descargarse — sigue siendo el motor genérico, solo lee la config.
+- No reemplazar estos archivos locales por los `<script>`/`<link>` originales de CDN sin que el usuario lo pida explícitamente — el motivo de este cambio fue que el sitio se veía completamente sin estilos cuando no había conexión a internet.
 
 ## Design system
 
@@ -34,7 +44,7 @@ Viven **solo** en `js/business.js` (objeto `BUSINESS`). Si necesitas el teléfon
 ## Qué está verificado y qué no
 
 | Dato | Estado |
-|---|---|
+| --- | --- |
 | Nombre, dirección, horario, teléfono `+1 809-898-6193` | Verificado cruzando Tripadvisor + Now In Punta Cana |
 | Valoración 4.3/5 (46 reseñas), servicios (terraza, música en vivo, WiFi, parking, etc.) | Verificado (Tripadvisor) |
 | Nombres de platos en `js/menu-data.js` | Verificados — extraídos de reseñas reales |
@@ -43,6 +53,14 @@ Viven **solo** en `js/business.js` (objeto `BUSINESS`). Si necesitas el teléfon
 | Fotos en `img/platos/` y `img/ambiente/` | Reales del local, pero **descargadas de nowinpuntacana.com** (directorio de terceros), no de Instagram directamente — Instagram está tras login y no fue accesible. Confirmar derechos de uso antes de publicar. |
 | Logo (`img/logo/enjoy-logo.png`) | Mismo origen que las fotos; es el logo real del negocio. |
 | Teléfono alternativo `809-763-5088` visto en una sola fuente | Descartado a favor de `898-6193`, confirmado por 2 fuentes. |
+| Existencia de música en vivo por las noches | Verificado (mencionado en reseñas de Tripadvisor). |
+| **Días y horas de cada evento en `js/events-data.js`** | **Inventados.** No existe un calendario público de eventos. Es un horario plantilla semanal razonable (música en vivo / jazz / DJ rotando por día), marcado con comentario de advertencia en el propio archivo. Revisar y ajustar con el dueño antes de publicar. |
+
+## Página de Eventos (`eventos.html`)
+
+- Los datos viven en `js/events-data.js`, un array `EVENTS_WEEKLY` con **un evento por día de la semana** (`day: 0-6`, mismo índice que `Date.getDay()`), no un calendario con fechas específicas — es un horario recurrente semanal, no eventos puntuales.
+- La página calcula "Hoy" con `new Date().getDay()` y "Próximos eventos" recorriendo los siguientes 6 días desde mañana. Si se necesita en el futuro soportar eventos puntuales (ej. "Noche de Año Nuevo" en una fecha específica que rompa el patrón semanal), habrá que extender el esquema de datos (añadir un campo `fecha` opcional) — no forzarlo dentro de `day`.
+- Los horarios se formatean en 12h con AM/PM vía la función `formatHour` inline en `eventos.html`, igual que el horario del restaurante en `contacto.html`.
 
 ## Convenciones de imágenes
 
@@ -52,7 +70,7 @@ Viven **solo** en `js/business.js` (objeto `BUSINESS`). Si necesitas el teléfon
 
 ## Cómo servir en local
 
-```
+```bash
 python -m http.server 8000
 ```
 
@@ -64,3 +82,4 @@ y abrir `http://localhost:8000`. No requiere instalación de dependencias.
 2. Revisar y corregir todos los precios del menú.
 3. Confirmar derechos de uso de las fotos, o sustituirlas por originales en alta resolución.
 4. Confirmar el teléfono correcto.
+5. Confirmar los días y horarios reales de música en vivo / DJ / eventos especiales (`js/events-data.js` es un horario plantilla, no confirmado).
