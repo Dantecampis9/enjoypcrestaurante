@@ -18,7 +18,12 @@ El sitio **no depende de internet** para verse bien — Tailwind y las fuentes s
 - Si se actualiza `js/tailwind-config.js` con nuevas clases, `js/tailwind-cdn.js` no necesita volver a descargarse — sigue siendo el motor genérico, solo lee la config.
 - No reemplazar estos archivos locales por los `<script>`/`<link>` originales de CDN sin que el usuario lo pida explícitamente — el motivo de este cambio fue que el sitio se veía completamente sin estilos cuando no había conexión a internet.
 
-## Design system
+## Modal de bienvenida (`js/lead-modal.js`)
+
+- Aparece una sola vez por navegador (se guarda `enjoy-lead-seen` en `localStorage` al Aceptar **o** Cancelar) en las 5 páginas, ya que el script se carga en todas.
+- **No hay backend ni servicio externo conectado todavía.** Si el visitante acepta, nombre/correo se guardan solo en `localStorage` bajo `enjoy-lead` (clave `{name, email, date}`) — no llegan a ningún lado. Es una decisión explícita del usuario para arrancar simple; si más adelante se quiere captura real (email al dueño, hoja de cálculo, etc.), habrá que conectar un servicio externo y **preguntar primero** antes de añadirlo, igual que con cualquier otra dependencia nueva.
+- Para probarlo de nuevo en desarrollo: `localStorage.removeItem('enjoy-lead-seen')` en la consola del navegador y recargar.
+- Se carga después de `js/i18n.js` (necesita `I18N.translate` ya disponible) y antes de `js/main.js` en las 5 páginas.
 
 Los tokens de color, tipografía y espaciado viven en **`js/tailwind-config.js`** — es la única paleta autorizada. No inventar colores hexadecimales sueltos ni fuentes nuevas.
 

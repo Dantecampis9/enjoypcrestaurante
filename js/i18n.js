@@ -8,6 +8,16 @@ const I18N_DICT = {
     "meta.title.home": "Enjoy Punta Cana | Tropical Luxury Dining",
     "meta.desc.home": "Enjoy PC Restaurante en Los Corales, Bávaro: cocina italiana, caribeña e internacional frente al Caribe. Terraza, música en vivo y sabor tropical.",
 
+    "modal.title": "¡Bienvenido a Enjoy Punta Cana!",
+    "modal.subtitle": "Déjanos tu nombre y correo para enterarte de eventos especiales y promociones.",
+    "modal.name.label": "Nombre",
+    "modal.name.placeholder": "Tu nombre",
+    "modal.email.label": "Correo",
+    "modal.email.placeholder": "tucorreo@ejemplo.com",
+    "modal.accept": "Aceptar",
+    "modal.cancel": "Cancelar",
+    "modal.error": "Ingresa tu nombre y un correo válido.",
+
     "hero.title": "Sabor que abraza el Caribe",
     "hero.subtitle": "Una experiencia gastronómica donde el lujo se encuentra con la arena blanca. Descubre ingredientes locales elevados a la alta cocina.",
     "hero.cta.menu": "Ver Menú Digital",
@@ -98,6 +108,16 @@ const I18N_DICT = {
     "nav.call": "Call Us",
     "meta.title.home": "Enjoy Punta Cana | Tropical Luxury Dining",
     "meta.desc.home": "Enjoy PC Restaurante in Los Corales, Bávaro: Italian, Caribbean and international cuisine by the Caribbean Sea. Terrace, live music and tropical flavor.",
+
+    "modal.title": "Welcome to Enjoy Punta Cana!",
+    "modal.subtitle": "Leave us your name and email to hear about special events and promotions.",
+    "modal.name.label": "Name",
+    "modal.name.placeholder": "Your name",
+    "modal.email.label": "Email",
+    "modal.email.placeholder": "youremail@example.com",
+    "modal.accept": "Accept",
+    "modal.cancel": "Cancel",
+    "modal.error": "Please enter your name and a valid email.",
 
     "hero.title": "A Flavor That Embraces the Caribbean",
     "hero.subtitle": "A dining experience where luxury meets white sand. Discover local ingredients elevated to fine cuisine.",
