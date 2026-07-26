@@ -27,6 +27,7 @@
       </a>
 
       <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="index.html" data-i18n="nav.home">Inicio</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
         <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="eventos.html" data-i18n="nav.events">Eventos</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
@@ -53,6 +54,7 @@
 
   <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
     <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-secondary" href="index.html" data-i18n="nav.home">Inicio</a>
       <a class="font-label-caps text-label-caps text-secondary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
       <a class="font-label-caps text-label-caps text-primary" href="eventos.html" data-i18n="nav.events">Eventos</a>
       <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
@@ -99,6 +101,8 @@
   </footer>
 
   <script src="js/events-data.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/data-source.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/lead-modal.js"></script>
   <script src="js/main.js"></script>
@@ -107,12 +111,15 @@
       const todayEl = document.getElementById("today-event");
       const upcomingEl = document.getElementById("upcoming-events");
 
+      // Copia mutable de los datos locales; se reemplaza si Supabase responde.
+      let events = EVENTS_WEEKLY;
+
       function currentLang() {
         return document.documentElement.lang || "es";
       }
 
       function formatHour(time, lang) {
-        const [h, m] = time.split(":").map(Number);
+        const [h, m] = String(time).split(":").map(Number);
         const period = h >= 12 ? "PM" : "AM";
         const h12 = h % 12 === 0 ? 12 : h % 12;
         const mm = String(m).padStart(2, "0");
@@ -126,53 +133,79 @@
         return I18N.translate("day." + dayIndex, lang);
       }
 
-      function eventForOffset(offset) {
+      // Devuelve TODOS los eventos de ese día (puede ser 0, 1 o varios).
+      function eventsForOffset(offset) {
         const dayIndex = (new Date().getDay() + offset) % 7;
-        return EVENTS_WEEKLY.find((e) => e.day === dayIndex);
+        return events.filter((e) => e.day === dayIndex);
+      }
+
+      function heroCard(event, lang) {
+        return `
+          <div class="relative overflow-hidden group h-[420px]">
+            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${encodeURI(event.img)}')"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 p-10">
+              <div class="inline-block bg-primary text-white px-3 py-1 font-label-caps text-label-caps mb-4">${escapeHtml(I18N.translate("events.today.badge", lang))}</div>
+              <h3 class="font-headline-md text-white text-3xl mb-2">${escapeHtml(event.nombre[lang])}</h3>
+              <p class="text-white/80 font-body-md mb-4 max-w-md">${escapeHtml(event.desc[lang])}</p>
+              <p class="text-white font-label-caps text-label-caps">${escapeHtml(formatHour(event.horaInicio, lang))} – ${escapeHtml(formatHour(event.horaFin, lang))}</p>
+            </div>
+          </div>`;
       }
 
       function renderToday() {
         const lang = currentLang();
-        const event = eventForOffset(0);
+        const hoy = eventsForOffset(0);
 
-        if (!event) {
-          todayEl.innerHTML = `<div class="bg-surface-container p-10 text-center"><p class="font-body-lg text-on-surface-variant" data-i18n="events.today.empty">${I18N.translate("events.today.empty", lang)}</p></div>`;
+        // Un día sin eventos es un estado legítimo, no un error.
+        if (!hoy.length) {
+          todayEl.innerHTML = `<div class="bg-surface-container p-10 text-center"><p class="font-body-lg text-on-surface-variant">${escapeHtml(I18N.translate("events.today.empty", lang))}</p></div>`;
           return;
         }
 
-        todayEl.innerHTML = `
-          <div class="relative overflow-hidden group h-[420px]">
-            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${event.img}')"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 p-10">
-              <div class="inline-block bg-primary text-white px-3 py-1 font-label-caps text-label-caps mb-4">${I18N.translate("events.today.badge", lang)}</div>
-              <h3 class="font-headline-md text-white text-3xl mb-2">${event.nombre[lang]}</h3>
-              <p class="text-white/80 font-body-md mb-4 max-w-md">${event.desc[lang]}</p>
-              <p class="text-white font-label-caps text-label-caps">${formatHour(event.horaInicio, lang)} – ${formatHour(event.horaFin, lang)}</p>
-            </div>
-          </div>`;
+        // Varios eventos hoy: el primero como destacado, el resto debajo.
+        const [principal, ...resto] = hoy;
+        let html = heroCard(principal, lang);
+
+        if (resto.length) {
+          html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">${resto.map((e) => `
+            <article class="bg-surface-container-low shadow-sm overflow-hidden flex gap-4">
+              <div class="w-28 shrink-0 bg-cover bg-center" style="background-image: url('${encodeURI(e.img)}')" role="img" aria-label="${escapeHtml(e.nombre[lang])}"></div>
+              <div class="py-4 pr-4 min-w-0">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">${escapeHtml(e.nombre[lang])}</h3>
+                <p class="font-body-md text-on-surface-variant text-sm mb-2">${escapeHtml(e.desc[lang])}</p>
+                <p class="font-label-caps text-label-caps text-secondary">${escapeHtml(formatHour(e.horaInicio, lang))} – ${escapeHtml(formatHour(e.horaFin, lang))}</p>
+              </div>
+            </article>`).join("")}</div>`;
+        }
+
+        todayEl.innerHTML = html;
       }
 
       function renderUpcoming() {
         const lang = currentLang();
         const cards = [];
 
+        // Recorre los próximos 6 días; los días sin eventos se omiten y
+        // los que tienen varios aportan una tarjeta por evento.
         for (let offset = 1; offset <= 6; offset++) {
-          const event = eventForOffset(offset);
-          if (!event) continue;
-          cards.push(`
+          eventsForOffset(offset).forEach((event) => {
+            cards.push(`
             <article class="bg-surface-container-low shadow-sm overflow-hidden">
-              <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${event.img}')" role="img" aria-label="${event.nombre[lang]}"></div>
+              <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${encodeURI(event.img)}')" role="img" aria-label="${escapeHtml(event.nombre[lang])}"></div>
               <div class="p-6">
-                <span class="font-label-caps text-label-caps text-primary uppercase">${dayLabel(offset, lang)}</span>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 mb-2">${event.nombre[lang]}</h3>
-                <p class="font-body-md text-on-surface-variant mb-3">${event.desc[lang]}</p>
-                <p class="font-label-caps text-label-caps text-secondary">${formatHour(event.horaInicio, lang)} – ${formatHour(event.horaFin, lang)}</p>
+                <span class="font-label-caps text-label-caps text-primary uppercase">${escapeHtml(dayLabel(offset, lang))}</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface mt-1 mb-2">${escapeHtml(event.nombre[lang])}</h3>
+                <p class="font-body-md text-on-surface-variant mb-3">${escapeHtml(event.desc[lang])}</p>
+                <p class="font-label-caps text-label-caps text-secondary">${escapeHtml(formatHour(event.horaInicio, lang))} – ${escapeHtml(formatHour(event.horaFin, lang))}</p>
               </div>
             </article>`);
+          });
         }
 
-        upcomingEl.innerHTML = cards.join("");
+        upcomingEl.innerHTML = cards.length
+          ? cards.join("")
+          : `<p class="font-body-md text-on-surface-variant col-span-full text-center">${escapeHtml(I18N.translate("events.today.empty", lang))}</p>`;
       }
 
       function renderAll() {
@@ -180,10 +213,19 @@
         renderUpcoming();
       }
 
+      // 1. Pintar ya con los datos locales
       renderAll();
 
       document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
         btn.addEventListener("click", renderAll);
+      });
+
+      // 2. Revalidar contra Supabase. Aquí sí se acepta un array vacío:
+      //    que no haya ningún evento programado es un estado válido.
+      DataSource.loadEvents().then((remoto) => {
+        if (!remoto) return;
+        events = remoto;
+        renderAll();
       });
     })();
   </script>

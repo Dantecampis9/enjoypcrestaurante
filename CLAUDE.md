@@ -18,12 +18,52 @@ El sitio **no depende de internet** para verse bien — Tailwind y las fuentes s
 - Si se actualiza `js/tailwind-config.js` con nuevas clases, `js/tailwind-cdn.js` no necesita volver a descargarse — sigue siendo el motor genérico, solo lee la config.
 - No reemplazar estos archivos locales por los `<script>`/`<link>` originales de CDN sin que el usuario lo pida explícitamente — el motivo de este cambio fue que el sitio se veía completamente sin estilos cuando no había conexión a internet.
 
+## Backend: Supabase (panel de administración)
+
+El sitio tiene un panel privado en `admin.html` para gestionar menú, eventos y suscriptores. La instalación paso a paso está en **`sql/README.md`**.
+
+### La regla que ordena todo lo demás
+
+> **Las páginas públicas NO cargan el SDK de Supabase.** Hablan con la API REST (PostgREST) con `fetch()` nativo desde `js/data-source.js`. El SDK (~120 KB de terceros) solo se carga en `admin.html`.
+
+Esto existe para no romper la restricción offline de arriba. El patrón es **render optimista con revalidación**:
+
+1. `menu.html` y `eventos.html` pintan de inmediato con `js/menu-data.js` / `js/events-data.js` (comportamiento de siempre, sin esperas).
+2. En segundo plano consultan Supabase.
+3. Si responde, re-renderizan; si falla, se queda lo local.
+
+Por eso **`js/menu-data.js` y `js/events-data.js` no se borran**: son el respaldo offline. El panel tiene un botón "Exportar respaldo JS" que los regenera; hay que subirlos al repo tras hacer cambios o el respaldo se queda anticuado.
+
+`admin.html` **sí requiere internet** y **sí carga un script externo**: es una excepción consciente y necesaria (un panel sobre una base remota no puede funcionar sin red). Es la única página con esa excepción.
+
+### Seguridad — leer antes de tocar nada de esto
+
+- La `anonKey` en `js/supabase-config.js` **va expuesta en el frontend por diseño**. No es un secreto: identifica el proyecto. Lo único que protege los datos son los GRANT y las políticas RLS de `sql/02-rls.sql`.
+- **La `service_role` key NUNCA debe entrar al repositorio.** Ignora RLS por completo: quien la tenga lee todos los correos, borra el menú y crea administradores.
+- `leads` es asimétrica a propósito: **INSERT público** (el modal debe guardar sin sesión) pero **SELECT solo para admins** (un visitante jamás debe leer los correos de otros). Ni GRANT ni política de SELECT para `anon`.
+- **Detalle no obvio:** PostgREST ejecuta `INSERT ... RETURNING *` por defecto, y ese `RETURNING` activa las políticas de SELECT. Como `anon` no puede leer `leads`, el INSERT fallaría. Por eso `DataSource.saveLead()` envía `Prefer: return=minimal`. **No quitar esa cabecera.**
+- El ocultar/mostrar vistas de `js/admin.js` no es seguridad: es cosmética. Quien evada el JS con DevTools se encontrará con que Postgres rechaza cada operación.
+- Los textos ahora son editables desde el panel, así que ya no son constantes de confianza: usar `escapeHtml()` (en `js/data-source.js`) al interpolar en `innerHTML`.
+
+### Modelo de datos
+
+- Columnas planas `nombre_es` / `nombre_en`, no `jsonb`. `js/data-source.js` las normaliza a la forma anidada `{es, en}` que ya esperaban las plantillas, así el render y el i18n no cambiaron.
+- **Eventos: no hay `unique` sobre `dia`.** Se permiten varios eventos el mismo día y días sin ninguno. `eventos.html` maneja 0, 1 o N eventos por día.
+- **Las 6 categorías del menú son fijas** — el panel no permite crearlas ni borrarlas (decisión del usuario). Los platos sí son CRUD completo.
+- `activo = false` despublica sin borrar. El fetch público filtra `activo=eq.true`.
+- Fotos: las de `img/platos/` e `img/ambiente/` **siguen siendo archivos locales** (funcionan offline). Las nuevas que suba el dueño van al bucket `media` de Storage. El campo `img` acepta ambas formas.
+- `admin.html` está en **español únicamente**, sin `data-i18n`: es una herramienta interna, no contenido de cara al visitante. Excepción consciente a la regla de i18n.
+- `admin.html` lleva `noindex` y **no** está en `sitemap.xml`. **No añadir `Disallow: /admin.html` a `robots.txt`** — eso publicaría la ruta.
+
 ## Modal de bienvenida (`js/lead-modal.js`)
 
-- Aparece una sola vez por navegador (se guarda `enjoy-lead-seen` en `localStorage` al Aceptar **o** Cancelar) en las 5 páginas, ya que el script se carga en todas.
-- **No hay backend ni servicio externo conectado todavía.** Si el visitante acepta, nombre/correo se guardan solo en `localStorage` bajo `enjoy-lead` (clave `{name, email, date}`) — no llegan a ningún lado. Es una decisión explícita del usuario para arrancar simple; si más adelante se quiere captura real (email al dueño, hoja de cálculo, etc.), habrá que conectar un servicio externo y **preguntar primero** antes de añadirlo, igual que con cualquier otra dependencia nueva.
-- Para probarlo de nuevo en desarrollo: `localStorage.removeItem('enjoy-lead-seen')` en la consola del navegador y recargar.
-- Se carga después de `js/i18n.js` (necesita `I18N.translate` ya disponible) y antes de `js/main.js` en las 5 páginas.
+- Aparece una sola vez por navegador (se guarda `enjoy-lead-seen` en `localStorage` al Aceptar **o** Cancelar) en las 5 páginas públicas.
+- Al aceptar, envía nombre/correo a la tabla `leads` de Supabase vía `DataSource.saveLead()`.
+- **Nunca bloquea al visitante:** si el envío falla (sin red, proyecto pausado), el modal se cierra igual y el dato queda en `enjoy-lead-pending` para reintentarlo en la siguiente visita.
+- Para probarlo de nuevo en desarrollo: `localStorage.removeItem('enjoy-lead-seen')` en la consola y recargar.
+- Se carga después de `js/data-source.js` y `js/i18n.js` (necesita ambos disponibles) y antes de `js/main.js`.
+
+## Design system
 
 Los tokens de color, tipografía y espaciado viven en **`js/tailwind-config.js`** — es la única paleta autorizada. No inventar colores hexadecimales sueltos ni fuentes nuevas.
 
@@ -59,13 +99,17 @@ Viven **solo** en `js/business.js` (objeto `BUSINESS`). Si necesitas el teléfon
 | Logo (`img/logo/enjoy-logo.png`) | Mismo origen que las fotos; es el logo real del negocio. |
 | Teléfono alternativo `809-763-5088` visto en una sola fuente | Descartado a favor de `898-6193`, confirmado por 2 fuentes. |
 | Existencia de música en vivo por las noches | Verificado (mencionado en reseñas de Tripadvisor). |
-| **Días y horas de cada evento en `js/events-data.js`** | **Inventados.** No existe un calendario público de eventos. Es un horario plantilla semanal razonable (música en vivo / jazz / DJ rotando por día), marcado con comentario de advertencia en el propio archivo. Revisar y ajustar con el dueño antes de publicar. |
+| **Días y horas de cada evento** | **Inventados.** No existe un calendario público de eventos. Es un horario plantilla semanal razonable (música en vivo / jazz / DJ rotando por día), marcado con advertencia en `js/events-data.js` y `sql/04-seed.sql`. El dueño puede corregirlo desde `admin.html`. |
+| **Correos capturados antes del panel** | **Perdidos.** El modal los guardaba en el `localStorage` de cada visitante, no en un servidor: eran técnicamente inalcanzables. Desde la conexión con Supabase sí se guardan de verdad. |
 
 ## Página de Eventos (`eventos.html`)
 
-- Los datos viven en `js/events-data.js`, un array `EVENTS_WEEKLY` con **un evento por día de la semana** (`day: 0-6`, mismo índice que `Date.getDay()`), no un calendario con fechas específicas — es un horario recurrente semanal, no eventos puntuales.
-- La página calcula "Hoy" con `new Date().getDay()` y "Próximos eventos" recorriendo los siguientes 6 días desde mañana. Si se necesita en el futuro soportar eventos puntuales (ej. "Noche de Año Nuevo" en una fecha específica que rompa el patrón semanal), habrá que extender el esquema de datos (añadir un campo `fecha` opcional) — no forzarlo dentro de `day`.
-- Los horarios se formatean en 12h con AM/PM vía la función `formatHour` inline en `eventos.html`, igual que el horario del restaurante en `contacto.html`.
+- Fuente de datos: tabla `events_weekly` de Supabase, con `js/events-data.js` (`EVENTS_WEEKLY`) como respaldo offline.
+- Es un **horario recurrente semanal** (`day: 0-6`, mismo índice que `Date.getDay()`), no un calendario con fechas concretas. Pueden coexistir **varios eventos el mismo día** y **días sin ningún evento**.
+- "Hoy" se calcula con `new Date().getDay()`. Si hay varios eventos hoy, el primero va como tarjeta destacada y el resto debajo. Si no hay ninguno, se muestra `events.today.empty`.
+- "Próximos eventos" recorre los siguientes 6 días; los días vacíos se omiten y los que tienen varios aportan una tarjeta por evento.
+- Los horarios se formatean en 12h con AM/PM vía `formatHour` inline, igual que el horario del restaurante en `contacto.html`.
+- **Eventos puntuales con fecha concreta** (ej. "Fin de Año, 31 dic") siguen **fuera de alcance**. Requerirían una columna `fecha date` en `events_weekly` y lógica de prioridad en el render — no forzarlo dentro de `dia`.
 
 ## Convenciones de imágenes
 
@@ -83,8 +127,10 @@ y abrir `http://localhost:8000`. No requiere instalación de dependencias.
 
 ## Pendientes para el dueño del negocio
 
-1. Confirmar o dar un email de contacto real.
-2. Revisar y corregir todos los precios del menú.
-3. Confirmar derechos de uso de las fotos, o sustituirlas por originales en alta resolución.
-4. Confirmar el teléfono correcto.
-5. Confirmar los días y horarios reales de música en vivo / DJ / eventos especiales (`js/events-data.js` es un horario plantilla, no confirmado).
+1. **Montar Supabase** siguiendo `sql/README.md` — sin esto el panel no funciona y los correos no se guardan.
+2. Confirmar o dar un email de contacto real.
+3. Revisar y corregir todos los precios del menú (ya se puede desde `admin.html`).
+4. Confirmar derechos de uso de las fotos, o sustituirlas por originales en alta resolución.
+5. Confirmar el teléfono correcto.
+6. Confirmar los días y horarios reales de música en vivo / DJ / eventos especiales (ya se puede desde `admin.html`).
+7. Tras cada tanda de cambios en el panel: pulsar **"Exportar respaldo JS"** y subir los dos archivos a `js/`, para que el respaldo offline no se quede anticuado.

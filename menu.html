@@ -27,6 +27,7 @@
       </a>
 
       <div class="hidden md:flex items-center gap-8">
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="index.html" data-i18n="nav.home">Inicio</a>
         <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="eventos.html" data-i18n="nav.events">Eventos</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
@@ -53,6 +54,7 @@
 
   <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
     <div class="flex flex-col p-gutter gap-4">
+      <a class="font-label-caps text-label-caps text-secondary" href="index.html" data-i18n="nav.home">Inicio</a>
       <a class="font-label-caps text-label-caps text-primary" href="menu.html" data-i18n="nav.menu">Menú Digital</a>
       <a class="font-label-caps text-label-caps text-secondary" href="eventos.html" data-i18n="nav.events">Eventos</a>
       <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
@@ -100,6 +102,8 @@
   </footer>
 
   <script src="js/menu-data.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/data-source.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/lead-modal.js"></script>
   <script src="js/main.js"></script>
@@ -109,6 +113,11 @@
       const gridEl = document.getElementById("menu-grid");
       let activeCategory = "all";
 
+      // Copias mutables de los datos locales. Si Supabase responde, se
+      // reemplazan y se vuelve a renderizar. Si no, se quedan estas.
+      let categories = MENU_CATEGORIES;
+      let items = MENU_ITEMS;
+
       function currentLang() {
         return document.documentElement.lang || "es";
       }
@@ -117,12 +126,20 @@
         return I18N.translate("menu.tag." + tag, lang);
       }
 
+      // Los precios llegan de la base como number; mostrar 12 y no 12.00,
+      // pero respetar 12.50 si el dueño puso decimales.
+      function formatPrice(n) {
+        const num = Number(n);
+        if (!isFinite(num)) return "";
+        return Number.isInteger(num) ? String(num) : num.toFixed(2);
+      }
+
       function renderTabs() {
         const lang = currentLang();
-        const allBtn = `<button data-cat="all" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === "all"}">${I18N.translate("menu.filter.all", lang)}</button>`;
-        const catBtns = MENU_CATEGORIES.map(
+        const allBtn = `<button data-cat="all" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === "all"}">${escapeHtml(I18N.translate("menu.filter.all", lang))}</button>`;
+        const catBtns = categories.map(
           (cat) =>
-            `<button data-cat="${cat.id}" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === cat.id}">${cat.label[lang]}</button>`
+            `<button data-cat="${escapeHtml(cat.id)}" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === cat.id}">${escapeHtml(cat.label[lang])}</button>`
         ).join("");
         tabsEl.innerHTML = allBtn + catBtns;
 
@@ -137,25 +154,25 @@
 
       function renderGrid() {
         const lang = currentLang();
-        const items = MENU_ITEMS.filter((item) => activeCategory === "all" || item.category === activeCategory);
+        const visibles = items.filter((item) => activeCategory === "all" || item.category === activeCategory);
 
-        gridEl.innerHTML = items
+        gridEl.innerHTML = visibles
           .map(
             (item) => `
           <article class="menu-card bg-surface-container-low shadow-sm overflow-hidden">
-            <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${item.img}')" role="img" aria-label="${item.nombre[lang]}"></div>
+            <div class="aspect-[4/3] bg-cover bg-center" style="background-image: url('${encodeURI(item.img)}')" role="img" aria-label="${escapeHtml(item.nombre[lang])}"></div>
             <div class="p-6">
               <div class="flex justify-between items-start gap-3 mb-2">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">${item.nombre[lang]}</h3>
-                <span class="font-headline-sm text-headline-sm text-primary whitespace-nowrap">$${item.precio}</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">${escapeHtml(item.nombre[lang])}</h3>
+                <span class="font-headline-sm text-headline-sm text-primary whitespace-nowrap">$${escapeHtml(formatPrice(item.precio))}</span>
               </div>
-              <p class="font-body-md text-on-surface-variant mb-3">${item.desc[lang]}</p>
+              <p class="font-body-md text-on-surface-variant mb-3">${escapeHtml(item.desc[lang])}</p>
               ${
                 item.tags.length
                   ? `<div class="flex gap-2 flex-wrap">${item.tags
                       .map(
                         (tag) =>
-                          `<span class="text-xs font-label-caps px-2 py-1 bg-secondary-container text-on-secondary-container rounded-full">${tagLabel(tag, lang)}</span>`
+                          `<span class="text-xs font-label-caps px-2 py-1 bg-secondary-container text-on-secondary-container rounded-full">${escapeHtml(tagLabel(tag, lang))}</span>`
                       )
                       .join("")}</div>`
                   : ""
@@ -166,14 +183,29 @@
           .join("");
       }
 
-      renderTabs();
-      renderGrid();
+      function renderAll() {
+        renderTabs();
+        renderGrid();
+      }
+
+      // 1. Pintar ya con los datos locales (sin esperas)
+      renderAll();
 
       document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          renderTabs();
-          renderGrid();
-        });
+        btn.addEventListener("click", renderAll);
+      });
+
+      // 2. Revalidar contra Supabase en segundo plano. Si falla o no está
+      //    configurado, no pasa nada: se queda lo local.
+      DataSource.loadMenu().then((remoto) => {
+        if (!remoto) return;
+        categories = remoto.categories;
+        items = remoto.items;
+        // Si la categoría activa ya no existe, volver a "todos"
+        if (activeCategory !== "all" && !categories.some((c) => c.id === activeCategory)) {
+          activeCategory = "all";
+        }
+        renderAll();
       });
     })();
   </script>

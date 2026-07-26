@@ -1,5 +1,6 @@
 const I18N_DICT = {
   es: {
+    "nav.home": "Inicio",
     "nav.menu": "Menú Digital",
     "nav.events": "Eventos",
     "nav.gallery": "Galería",
@@ -101,6 +102,7 @@ const I18N_DICT = {
     "contact.services.10": "Boutique de souvenirs",
   },
   en: {
+    "nav.home": "Home",
     "nav.menu": "Digital Menu",
     "nav.events": "Events",
     "nav.gallery": "Gallery",

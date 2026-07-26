@@ -1,0 +1,12 @@
+# Nunca committear archivos con la clave service_role / sb_secret_ de Supabase,
+# contraseñas de base de datos, ni ningún .env — aunque este proyecto no usa
+# build tools y normalmente no genera ninguno de estos, es la red de seguridad
+# por si algún script local o herramienta llega a crear alguno.
+.env
+.env.*
+*.local.js
+*.secret.js
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<!--
+  Panel de administración — Enjoy PC Restaurante
+
+  NOTA: esta página, a diferencia del resto del sitio, SÍ requiere
+  conexión a internet y SÍ carga un script de terceros (el SDK de
+  Supabase). Es una excepción consciente y documentada en CLAUDE.md:
+  un panel que gestiona una base de datos remota no puede funcionar sin
+  red. Las páginas públicas siguen sin depender de nada externo.
+
+  Está en español únicamente (sin data-i18n): es una herramienta interna
+  para el dueño, no contenido de cara al visitante.
+-->
+<html class="scroll-smooth" lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de administración | Enjoy Punta Cana</title>
+
+  <!-- Fuera de buscadores. NO añadir Disallow en robots.txt: eso
+       publicaría la ruta a cualquiera que lea el archivo. -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="icon" href="img/logo/enjoy-logo.png" type="image/png" />
+
+  <script src="js/tailwind-cdn.js"></script>
+  <link rel="stylesheet" href="css/fonts.css" />
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-surface-container text-on-surface min-h-screen">
+
+  <!-- ================= Aviso de configuración pendiente ================= -->
+  <div id="setup-warning" class="hidden min-h-screen flex items-center justify-center px-4">
+    <div class="bg-surface max-w-lg w-full p-8 shadow-lg">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-error text-3xl">warning</span>
+        <h1 class="font-headline-md text-headline-md text-on-surface">Falta configurar Supabase</h1>
+      </div>
+      <p class="font-body-md text-on-surface-variant mb-4">
+        Antes de usar el panel hay que rellenar <code class="bg-surface-container px-1">js/supabase-config.js</code>
+        con la URL del proyecto y la clave <strong>anon / public</strong>.
+      </p>
+      <p class="font-body-md text-on-surface-variant mb-4">
+        Los pasos completos están en <code class="bg-surface-container px-1">sql/README.md</code>.
+      </p>
+      <p class="font-body-md text-error">
+        Nunca pegues ahí la clave <code>service_role</code>: ignora toda la seguridad de la base de datos.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ Login ============================ -->
+  <div id="login-view" class="hidden min-h-screen flex items-center justify-center px-4">
+    <div class="bg-surface max-w-sm w-full p-8 shadow-lg">
+      <div class="flex flex-col items-center mb-6">
+        <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-3" width="64" height="64" />
+        <h1 class="font-display-lg text-headline-sm text-primary">Panel de administración</h1>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="mb-4">
+          <label for="login-email" class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Correo</label>
+          <input id="login-email" type="email" required autocomplete="username"
+                 class="w-full border border-outline-variant px-4 py-3 font-body-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div class="mb-4">
+          <label for="login-password" class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Contraseña</label>
+          <input id="login-password" type="password" required autocomplete="current-password"
+                 class="w-full border border-outline-variant px-4 py-3 font-body-md bg-surface focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <p id="login-error" class="hidden font-body-md text-error mb-3"></p>
+        <button type="submit" id="login-submit"
+                class="w-full bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+          Entrar
+        </button>
+      </form>
+
+      <a href="index.html" class="block text-center mt-6 font-label-caps text-label-caps text-secondary hover:text-primary transition-colors">
+        Volver al sitio
+      </a>
+    </div>
+  </div>
+
+  <!-- ============================ Panel ============================ -->
+  <div id="panel-view" class="hidden">
+
+    <header class="bg-surface shadow-sm sticky top-0 z-40">
+      <div class="max-w-container-max mx-auto px-gutter py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <img src="img/logo/enjoy-logo.png" alt="" class="h-10 w-10 rounded-full shrink-0" width="40" height="40" />
+          <span class="font-display-lg text-headline-sm text-primary truncate">Administración</span>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <span id="admin-email" class="hidden sm:block font-body-md text-on-surface-variant text-sm truncate max-w-[200px]"></span>
+          <a href="index.html" class="hidden sm:block font-label-caps text-label-caps text-secondary hover:text-primary transition-colors">Ver sitio</a>
+          <button id="logout-btn" class="border border-outline-variant text-on-surface-variant px-4 py-2 font-label-caps text-label-caps hover:bg-surface-container transition-colors">
+            Salir
+          </button>
+        </div>
+      </div>
+
+      <nav class="max-w-container-max mx-auto px-gutter flex gap-1 border-t border-outline-variant overflow-x-auto" role="tablist">
+        <button data-tab="menu"    class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Menú</button>
+        <button data-tab="eventos" class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Eventos</button>
+        <button data-tab="leads"   class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Suscriptores</button>
+      </nav>
+    </header>
+
+    <!-- Barra de estado (guardado / errores) -->
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 font-body-md shadow-lg"></div>
+
+    <main class="max-w-container-max mx-auto px-gutter py-8">
+
+      <!-- ---------------------- Pestaña Menú ---------------------- -->
+      <section id="tab-menu" class="admin-panel hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Menú</h2>
+            <p class="font-body-md text-on-surface-variant">Las 6 categorías son fijas. Aquí gestionas los platos.</p>
+          </div>
+          <button id="new-dish-btn" class="bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+            + Nuevo plato
+          </button>
+        </div>
+        <div id="menu-list" class="space-y-8"></div>
+      </section>
+
+      <!-- --------------------- Pestaña Eventos --------------------- -->
+      <section id="tab-eventos" class="admin-panel hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Eventos</h2>
+            <p class="font-body-md text-on-surface-variant">Horario semanal. Puedes dejar días vacíos o poner varios el mismo día.</p>
+          </div>
+          <button id="new-event-btn" class="bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+            + Nuevo evento
+          </button>
+        </div>
+        <div id="events-list" class="space-y-6"></div>
+      </section>
+
+      <!-- ------------------- Pestaña Suscriptores ------------------- -->
+      <section id="tab-leads" class="admin-panel hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Suscriptores</h2>
+            <p id="leads-count" class="font-body-md text-on-surface-variant"></p>
+          </div>
+          <button id="export-csv-btn" class="bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+            Exportar CSV
+          </button>
+        </div>
+        <div id="leads-list" class="bg-surface shadow-sm overflow-x-auto"></div>
+      </section>
+
+      <!-- Respaldo offline -->
+      <div class="mt-12 pt-8 border-t border-outline-variant">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Respaldo para modo sin conexión</h3>
+        <p class="font-body-md text-on-surface-variant mb-1 max-w-2xl">
+          El sitio muestra los datos de <code class="bg-surface-container px-1">js/menu-data.js</code> y
+          <code class="bg-surface-container px-1">js/events-data.js</code> cuando el visitante no tiene internet.
+          Descarga estos archivos tras hacer cambios y súbelos al sitio para que el respaldo no se quede anticuado.
+        </p>
+        <p id="last-export" class="font-body-md text-on-surface-variant text-sm mb-4"></p>
+        <button id="export-backup-btn" class="border border-primary text-primary px-5 py-2 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors">
+          Exportar respaldo JS
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ======================= Modal de edición ======================= -->
+  <div id="editor-modal" class="hidden fixed inset-0 z-[200] lightbox-backdrop overflow-y-auto py-8 px-4">
+    <div class="bg-surface max-w-2xl w-full mx-auto p-6 md:p-8 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <h3 id="editor-title" class="font-headline-md text-headline-md text-primary"></h3>
+        <button type="button" id="editor-close" class="text-on-surface-variant hover:text-primary transition-colors" aria-label="Cerrar">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="editor-form" novalidate>
+        <div id="editor-fields" class="space-y-4"></div>
+        <p id="editor-error" class="hidden font-body-md text-error mt-4"></p>
+        <div class="flex flex-col sm:flex-row gap-3 mt-8">
+          <button type="submit" id="editor-save" class="flex-1 bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+            Guardar
+          </button>
+          <button type="button" id="editor-cancel" class="flex-1 border border-outline-variant text-on-surface-variant px-6 py-3 font-label-caps text-label-caps hover:bg-surface-container transition-colors">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SDK de Supabase: solo en esta página, nunca en las públicas -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
