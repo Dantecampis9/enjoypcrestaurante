@@ -40,8 +40,8 @@ Por eso **`js/menu-data.js` y `js/events-data.js` no se borran**: son el respald
 
 - La `anonKey` en `js/supabase-config.js` **va expuesta en el frontend por diseño**. No es un secreto: identifica el proyecto. Lo único que protege los datos son los GRANT y las políticas RLS de `sql/02-rls.sql`.
 - **La `service_role` key NUNCA debe entrar al repositorio.** Ignora RLS por completo: quien la tenga lee todos los correos, borra el menú y crea administradores.
-- `leads` es asimétrica a propósito: **INSERT público** (el modal debe guardar sin sesión) pero **SELECT solo para admins** (un visitante jamás debe leer los correos de otros). Ni GRANT ni política de SELECT para `anon`.
-- **Detalle no obvio:** PostgREST ejecuta `INSERT ... RETURNING *` por defecto, y ese `RETURNING` activa las políticas de SELECT. Como `anon` no puede leer `leads`, el INSERT fallaría. Por eso `DataSource.saveLead()` envía `Prefer: return=minimal`. **No quitar esa cabecera.**
+- `leads` sigue siendo asimétrica en la base de datos: **INSERT público** (pensado para que cualquier formulario futuro pueda guardar sin sesión) pero **SELECT solo para admins** (un visitante jamás debe leer los correos de otros). Ni GRANT ni política de SELECT para `anon`. Actualmente **no hay ningún formulario público que use este INSERT** (el modal de bienvenida que lo hacía fue retirado); la tabla y las políticas quedaron intactas para si se reintroduce una captura de correos más adelante.
+- **Detalle no obvio si se vuelve a usar ese INSERT público:** PostgREST ejecuta `INSERT ... RETURNING *` por defecto, y ese `RETURNING` activa las políticas de SELECT. Como `anon` no puede leer `leads`, el INSERT fallaría. Cualquier código que inserte ahí debe enviar la cabecera `Prefer: return=minimal`.
 - El ocultar/mostrar vistas de `js/admin.js` no es seguridad: es cosmética. Quien evada el JS con DevTools se encontrará con que Postgres rechaza cada operación.
 - Los textos ahora son editables desde el panel, así que ya no son constantes de confianza: usar `escapeHtml()` (en `js/data-source.js`) al interpolar en `innerHTML`.
 
@@ -54,14 +54,6 @@ Por eso **`js/menu-data.js` y `js/events-data.js` no se borran**: son el respald
 - Fotos: las de `img/platos/` e `img/ambiente/` **siguen siendo archivos locales** (funcionan offline). Las nuevas que suba el dueño van al bucket `media` de Storage. El campo `img` acepta ambas formas.
 - `admin.html` está en **español únicamente**, sin `data-i18n`: es una herramienta interna, no contenido de cara al visitante. Excepción consciente a la regla de i18n.
 - `admin.html` lleva `noindex` y **no** está en `sitemap.xml`. **No añadir `Disallow: /admin.html` a `robots.txt`** — eso publicaría la ruta.
-
-## Modal de bienvenida (`js/lead-modal.js`)
-
-- Aparece una sola vez por navegador (se guarda `enjoy-lead-seen` en `localStorage` al Aceptar **o** Cancelar) en las 5 páginas públicas.
-- Al aceptar, envía nombre/correo a la tabla `leads` de Supabase vía `DataSource.saveLead()`.
-- **Nunca bloquea al visitante:** si el envío falla (sin red, proyecto pausado), el modal se cierra igual y el dato queda en `enjoy-lead-pending` para reintentarlo en la siguiente visita.
-- Para probarlo de nuevo en desarrollo: `localStorage.removeItem('enjoy-lead-seen')` en la consola y recargar.
-- Se carga después de `js/data-source.js` y `js/i18n.js` (necesita ambos disponibles) y antes de `js/main.js`.
 
 ## Design system
 
@@ -100,7 +92,7 @@ Viven **solo** en `js/business.js` (objeto `BUSINESS`). Si necesitas el teléfon
 | Teléfono alternativo `809-763-5088` visto en una sola fuente | Descartado a favor de `898-6193`, confirmado por 2 fuentes. |
 | Existencia de música en vivo por las noches | Verificado (mencionado en reseñas de Tripadvisor). |
 | **Días y horas de cada evento** | **Inventados.** No existe un calendario público de eventos. Es un horario plantilla semanal razonable (música en vivo / jazz / DJ rotando por día), marcado con advertencia en `js/events-data.js` y `sql/04-seed.sql`. El dueño puede corregirlo desde `admin.html`. |
-| **Correos capturados antes del panel** | **Perdidos.** El modal los guardaba en el `localStorage` de cada visitante, no en un servidor: eran técnicamente inalcanzables. Desde la conexión con Supabase sí se guardan de verdad. |
+| **Correos capturados antes del panel** | **Perdidos.** El antiguo modal de bienvenida (ya retirado) los guardaba en el `localStorage` de cada visitante, no en un servidor: eran técnicamente inalcanzables. |
 
 ## Página de Eventos (`eventos.html`)
 

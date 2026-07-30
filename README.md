@@ -35,7 +35,6 @@ js/
   data-source.js      Lee de Supabase con fallback a los archivos locales
   supabase-config.js  URL y clave pública del proyecto Supabase
   i18n.js             Diccionarios ES/EN y selector de idioma
-  lead-modal.js       Modal de bienvenida (captura nombre/correo)
   admin.js            Lógica del panel de administración
   main.js             Nav, menú móvil, lightbox, año del footer
 sql/                  Scripts de instalación de Supabase (ver sql/README.md)
@@ -49,7 +48,7 @@ img/
 
 `admin.html` permite gestionar el menú, los eventos y ver los suscriptores, sin tocar código. No aparece en el menú de navegación y requiere iniciar sesión.
 
-**Necesita configurarse una vez**: sigue los pasos de [`sql/README.md`](sql/README.md). Hasta entonces el sitio funciona con normalidad usando los datos locales, pero el panel avisará de que falta configurarlo y los correos del modal no se guardarán en ningún sitio.
+**Necesita configurarse una vez**: sigue los pasos de [`sql/README.md`](sql/README.md). Hasta entonces el sitio funciona con normalidad usando los datos locales, pero el panel avisará de que falta configurarlo.
 
 ### Cómo funciona
 

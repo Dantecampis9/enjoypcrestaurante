@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check js/i18n.js)",
+      "Bash(node --check js/data-source.js)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -o /dev/null -w \"login.html: %{http_code}\\\\n\" http://localhost:8010/)",
+      "Bash(curl -s -o /dev/null -w \"style.css: %{http_code}\\\\n\" http://localhost:8010/style.css)",
+      "Bash(curl -s -o /dev/null -w \"banner.jpg: %{http_code}\\\\n\" http://localhost:8010/banner.jpg)",
+      "Bash(curl -s -o /dev/null -w \"fonts/playfair: %{http_code}\\\\n\" http://localhost:8010/fonts/playfair-display.woff2)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --no-sandbox --hide-scrollbars --virtual-time-budget=3000 --window-size=800,900 --screenshot=/c/Users/Laptop/AppData/Local/Temp/claude/c--Users-Laptop-Downloads-Proyectos-enjoypcrestaurante/a1a430f4-4e95-4b86-8e74-3622451501e3/scratchpad/screenshots/mikrotik-login.png http://localhost:8010/)",
+      "Bash(node mikrotik/preview-server.js)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"normal: %{http_code}\\\\n\" http://localhost:8010/)",
+      "Bash(curl -s -o /dev/null -w \"con error: %{http_code}\\\\n\" \"http://localhost:8010/?error=Usuario+o+clave+incorrectos\")",
+      "Bash(curl -s http://localhost:8010/)",
+      "Bash(grep -o '\\\\$\\(if error\\)\\\\|\\\\$\\(error\\)\\\\|\\\\$\\(endif\\)\\\\|link-login-only\\\\|mac-esc')",
+      "Bash(curl -s -X POST http://localhost:8010/mock-login -d \"username=T-AA-BB-CC-DD-EE-FF&dst=https://enjoypcrestaurante.com/&popup=false\")",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(taskkill //F //IM chrome.exe)"
+    ]
+  }
+}

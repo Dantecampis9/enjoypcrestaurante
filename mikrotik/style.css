@@ -1,0 +1,179 @@
+/* Estilos del portal cautivo — Enjoy Punta Cana
+   Sin Tailwind, sin CDN: el dispositivo del visitante NO tiene internet
+   todavía en el momento en que esta página se muestra, así que no puede
+   cargar nada externo. Todo (fuentes, imagen, CSS) se sube junto al
+   login.html a la carpeta del Hotspot en el router. */
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/playfair-display.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/hanken-grotesk.woff2") format("woff2");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background-color: #fcf9f8;
+  color: #1c1b1b;
+  font-family: "Hanken Grotesk", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.card {
+  background: #fcf9f8;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.banner {
+  height: 180px;
+  width: 100%;
+  background-image: url("banner.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #fcf9f8, rgba(252, 249, 248, 0));
+}
+
+.body {
+  padding: 8px 32px 40px;
+  text-align: center;
+}
+
+.title {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #9f3d04;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 16px;
+  color: #57423a;
+  margin: 0 0 28px;
+}
+
+.field {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.field input {
+  width: 100%;
+  background-color: #f6f3f2;
+  border: 1px solid #dec0b5;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 16px;
+  color: #1c1b1b;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+  border-color: #9f3d04;
+  box-shadow: 0 0 0 2px rgba(159, 61, 4, 0.25);
+}
+
+.error-text {
+  display: none;
+  color: #ba1a1a;
+  font-size: 13px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+
+.error-text.visible {
+  display: block;
+}
+
+.server-error {
+  background: #ffdad6;
+  color: #93000a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 0 0 20px;
+  text-align: left;
+}
+
+.btn-accept {
+  width: 100%;
+  background-color: #9f3d04;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  margin-top: 4px;
+}
+
+.btn-accept:hover {
+  background-color: #c0541e;
+}
+
+.btn-accept:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.terms {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #dec0b5;
+}
+
+.terms a {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #436083;
+  text-decoration: none;
+}
+
+.terms a:hover {
+  color: #9f3d04;
+}

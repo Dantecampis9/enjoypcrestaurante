@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--
+  Portal cautivo — Hotspot MikroTik RouterOS — Enjoy Punta Cana
+
+  Este archivo NO es una página normal: RouterOS lo sirve directamente
+  desde su Hotspot (IP > Hotspot > Server Profiles > carpeta del skin,
+  normalmente /hotspot/) y sustituye las variables $(...) él mismo antes
+  de enviarlo al navegador del visitante. No funciona si lo abres
+  directo con doble clic — necesita ser servido por el router.
+
+  Requisitos en el router (ver mikrotik/README.md para el detalle):
+  1. El perfil de usuario del Hotspot debe tener "Trial" habilitado
+     (así "T-$(mac-esc)" concede acceso sin usuario/clave reales).
+  2. El dominio de Supabase debe estar en el Walled Garden, o el fetch()
+     de abajo nunca podrá completarse (el dispositivo no tiene internet
+     hasta que este formulario lo autentica).
+  3. Subir junto a este archivo: style.css, banner.jpg y la carpeta fonts/
+     (todo dentro de esta misma carpeta mikrotik/).
+
+  Nombre/correo son solo para captura de contactos (marketing) — la
+  variable que de verdad concede la red es el username "T-$(mac-esc)"
+  del formulario oculto de abajo, no estos campos visibles.
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enjoy Punta Cana | WiFi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="card">
+    <div class="banner"></div>
+
+    <div class="body">
+      <h1 class="title">Bienvenido a Enjoy Punta Cana</h1>
+      <p class="subtitle">Sumérgete en una experiencia donde el lujo se encuentra con la esencia del Caribe. Déjanos tus datos para conectarte al WiFi.</p>
+
+      $(if error)
+      <div class="server-error">$(error)</div>
+      $(endif)
+
+      <!-- Formulario oculto: es el que MikroTik reconoce para autenticar.
+           "T-$(mac-esc)" es la convención estándar de RouterOS para un
+           login de tipo "Trial" (acceso libre tras aceptar, sin
+           usuario/clave reales). Requiere Trial habilitado en el
+           perfil de usuario del servidor Hotspot. -->
+      <form name="sendin" action="$(link-login-only)" method="post" id="hotspot-form">
+        <input type="hidden" name="dst" value="https://enjoypcrestaurante.com/" />
+        <!-- ⬆️ Cambiar por el dominio real una vez publicado el sitio.
+             Alternativa: usar value="$(link-orig-esc)" para devolver al
+             visitante a la página que intentaba abrir originalmente. -->
+        <input type="hidden" name="popup" value="$(popup)" />
+        <input type="hidden" name="username" value="T-$(mac-esc)" />
+      </form>
+
+      <!-- Formulario visible: solo captura nombre/correo para la base de
+           contactos del restaurante. No autentica nada por sí mismo. -->
+      <form id="lead-form" novalidate>
+        <div class="field">
+          <input id="lead-name" name="name" type="text" placeholder="Nombre completo" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <input id="lead-email" name="email" type="email" placeholder="Correo electrónico" autocomplete="email" required />
+        </div>
+        <p id="lead-error" class="error-text">Ingresa tu nombre y un correo válido.</p>
+        <button type="submit" id="lead-submit" class="btn-accept">Aceptar y Continuar</button>
+      </form>
+
+      <div class="terms">
+        <a href="#">Términos y Condiciones</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // Mismo proyecto Supabase que usa el sitio web (tabla `leads`,
+      // protegida por RLS: INSERT público, SELECT solo administradores).
+      // La clave "publishable" es segura para exponer aquí — no es un
+      // secreto, ver sql/README.md del proyecto principal.
+      var SUPABASE_URL = "https://buxkahmxaubgygsbreze.supabase.co";
+      var SUPABASE_ANON_KEY = "sb_publishable_Ye6rfsrZxf9q7xLqwuP-CA_PQfBwSeS";
+      var SAVE_TIMEOUT_MS = 2500; // corto a propósito: nunca debe demorar el acceso a la red
+
+      function isValidEmail(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      }
+
+      function saveLead(nombre, email) {
+        if (!window.fetch || !window.AbortController) return Promise.resolve();
+
+        var controller = new AbortController();
+        var timer = setTimeout(function () { controller.abort(); }, SAVE_TIMEOUT_MS);
+
+        return fetch(SUPABASE_URL + "/rest/v1/leads", {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            // Sin esta cabecera, PostgREST hace INSERT ... RETURNING *,
+            // lo que activa las políticas de SELECT (que el visitante no
+            // tiene) y el guardado fallaría. Ver sql/02-rls.sql.
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ nombre: nombre, email: email, origen: "mikrotik-hotspot" }),
+          signal: controller.signal,
+        }).catch(function () {
+          // Si Supabase no es alcanzable (walled garden mal puesto, sin
+          // internet en el router, proyecto pausado), no pasa nada: el
+          // visitante igual debe poder conectarse al WiFi.
+        }).finally(function () {
+          clearTimeout(timer);
+        });
+      }
+
+      document.getElementById("lead-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        var nombre = document.getElementById("lead-name").value.trim();
+        var email = document.getElementById("lead-email").value.trim();
+        var errorEl = document.getElementById("lead-error");
+        var submitBtn = document.getElementById("lead-submit");
+
+        if (!nombre || !isValidEmail(email)) {
+          errorEl.classList.add("visible");
+          return;
+        }
+        errorEl.classList.remove("visible");
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Conectando…";
+
+        // Intenta guardar el contacto, pero SIEMPRE concede la red al
+        // terminar (éxito, fallo o timeout) — nunca deja al visitante
+        // atrapado en esta pantalla por un problema de red ajeno a él.
+        saveLead(nombre, email).then(function () {
+          document.sendin.submit();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -118,42 +118,7 @@ const DataSource = (() => {
     return rows.map(toEvent);
   }
 
-  // Inserta un suscriptor. Devuelve true si se guardó.
-  //
-  // La cabecera `Prefer: return=minimal` es OBLIGATORIA, no una
-  // optimización: sin ella PostgREST ejecuta INSERT ... RETURNING *, y ese
-  // RETURNING activa las políticas de SELECT. Como el rol anónimo no
-  // puede leer `leads` (justamente para que nadie vea los correos ajenos),
-  // el INSERT fallaría con "permission denied" pese a tener permiso de
-  // inserción. Ver sql/02-rls.sql.
-  async function saveLead({ nombre, email, idioma, origen }) {
-    if (!isConfigured()) return false;
-    if (navigator.onLine === false) return false;
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    try {
-      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads`, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_CONFIG.anonKey,
-          Authorization: "Bearer " + SUPABASE_CONFIG.anonKey,
-          "Content-Type": "application/json",
-          Prefer: "return=minimal",
-        },
-        body: JSON.stringify({ nombre, email, idioma, origen }),
-        signal: controller.signal,
-      });
-      return res.ok;
-    } catch (_) {
-      return false;
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
-  return { isConfigured, loadMenu, loadEvents, saveLead };
+  return { isConfigured, loadMenu, loadEvents };
 })();
 
 // Escapa texto antes de interpolarlo en innerHTML.
