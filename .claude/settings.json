@@ -22,7 +22,8 @@
       "Bash(cat > *)",
       "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --no-sandbox --hide-scrollbars --lang=en-US --accept-lang=en-US --virtual-time-budget=3000 --window-size=800,950 --user-data-dir=/tmp/chrome-en-profile --screenshot=/c/Users/Laptop/AppData/Local/Temp/claude/c--Users-Laptop-Downloads-Proyectos-enjoypcrestaurante/a1a430f4-4e95-4b86-8e74-3622451501e3/scratchpad/screenshots/lang-en-auto.png http://localhost:8010/)",
       "Bash(tasklist)",
-      "Bash(netstat -ano)"
+      "Bash(netstat -ano)",
+      "Bash(node --check js/admin.js)"
     ],
     "additionalDirectories": [
       "\\tmp"

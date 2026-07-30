@@ -109,6 +109,8 @@ create policy "leads_insert_publico"
     char_length(nombre) between 1 and 120
     and char_length(email) <= 255
     and email ~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
+    and char_length(telefono) between 7 and 20
+    and telefono ~ '^[0-9+()\s-]+$'
   );
 
 -- SELECT: SOLO administradores.

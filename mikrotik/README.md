@@ -1,8 +1,10 @@
 # Portal cautivo WiFi — Enjoy Punta Cana
 
-Página de login del Hotspot de MikroTik: pide nombre y correo antes de dar acceso a internet, y redirige a la web del restaurante.
+Página de login del Hotspot de MikroTik: pide nombre, correo y teléfono antes de dar acceso a internet, y redirige a la web del restaurante.
 
 **Esto NO es parte del sitio web.** Vive en el router, no en tu hosting. Nadie llega a este archivo por una URL normal — el MikroTik lo sirve automáticamente cuando un dispositivo se conecta al WiFi y todavía no está autenticado.
+
+> ⚠️ **Si ya habías montado Supabase antes** (siguiendo `sql/README.md` del proyecto principal), necesitas ejecutar **`sql/05-add-phone.sql`** una vez en el SQL Editor de Supabase — añade la columna `telefono` a la tabla `leads` que no existía cuando se creó el proyecto por primera vez. Si vas a montar Supabase desde cero, ignora esto: `01-schema.sql` y `02-rls.sql` ya incluyen el teléfono desde el principio.
 
 ---
 
@@ -11,9 +13,9 @@ Página de login del Hotspot de MikroTik: pide nombre y correo antes de dar acce
 Hay **dos formularios** en `login.html`, y es importante no confundirlos:
 
 1. **Formulario oculto** (`name="sendin"`) — es el que MikroTik reconoce. Envía `username = T-$(mac-esc)`, la convención estándar de RouterOS para un login de tipo **Trial**: acceso libre, sin usuario/contraseña reales. Este es el que de verdad abre la red.
-2. **Formulario visible** (Nombre / Correo) — solo captura contactos para tu base de datos. No tiene ningún poder de conceder red por sí mismo.
+2. **Formulario visible** (Nombre / Correo / Teléfono) — solo captura contactos para tu base de datos. No tiene ningún poder de conceder red por sí mismo.
 
-Al pulsar **"Aceptar y Continuar"**: se valida el nombre/correo → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://enjoypcrestaurante.com/`.
+Al pulsar **"Aceptar y Continuar"**: se valida nombre/correo/teléfono → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://enjoypcrestaurante.com/`.
 
 Este orden es deliberado: un problema con Supabase (proyecto pausado, sin walled garden, etc.) **nunca** debe dejar a un cliente real sin WiFi.
 
@@ -25,7 +27,7 @@ Este orden es deliberado: un problema con Supabase (proyecto pausado, sin walled
 
 En Winbox o terminal:
 
-```
+```text
 /system resource print
 ```
 
@@ -35,7 +37,7 @@ Las variables de plantilla usadas aquí (`$(link-login-only)`, `$(mac-esc)`, `$(
 
 **IP → Hotspot → User Profiles** → abre el perfil que usa tu servidor Hotspot → pestaña donde configuras el Trial:
 
-```
+```text
 /ip hotspot user profile set [find name="default"] shared-users=1
 /ip hotspot user profile set [find name="default"] trial-uptime-limit=1h
 ```
@@ -50,7 +52,7 @@ Sin esto, el `fetch()` del formulario nunca completa (el dispositivo no tiene in
 
 **IP → Hotspot → Walled Garden** → nueva entrada:
 
-```
+```text
 /ip hotspot walled-garden add dst-host=buxkahmxaubgygsbreze.supabase.co action=allow
 ```
 
@@ -58,7 +60,7 @@ Sin esto, el `fetch()` del formulario nunca completa (el dispositivo no tiene in
 
 Sube **toda la carpeta `mikrotik/`** (no solo `login.html`) a la carpeta del skin del Hotspot, normalmente vía **Files** en Winbox o FTP:
 
-```
+```text
 /hotspot/login.html
 /hotspot/style.css
 /hotspot/banner.jpg
@@ -85,7 +87,7 @@ En `login.html`, busca:
 1. Conecta un celular al WiFi del restaurante (o fuerza el estado "no autenticado" quitando el dispositivo de **IP → Hotspot → Active** si ya estaba conectado).
 2. Debe abrirse esta página automáticamente (o al intentar entrar a cualquier web).
 3. Sin llenar nada y sin poder cerrar la ventana → confirma que **no** hay forma de navegar sin pasar por el formulario.
-4. Llena nombre/correo inválido (ej. correo sin `@`) → debe mostrar el error y no avanzar.
+4. Llena datos inválidos (ej. correo sin `@`, teléfono con letras o muy corto) → debe mostrar el error y no avanzar.
 5. Llena datos válidos → pulsa **Aceptar y Continuar** → el botón cambia a "Conectando…" → en unos segundos debe redirigir a la web del restaurante y el dispositivo ya tener internet.
 6. Entra al panel de administración del sitio (`admin.html`) → pestaña **Suscriptores** → el contacto debe aparecer con `origen = mikrotik-hotspot`.
 7. **Idioma:** con el navegador/teléfono en inglés, la página debe abrir en inglés automáticamente. Pulsa **ES/EN** arriba del título → todo el texto (título, subtítulo, placeholders, botón, error, términos) debe cambiar de idioma al instante.
@@ -96,7 +98,7 @@ En `login.html`, busca:
 ## Si algo falla
 
 | Síntoma | Causa habitual |
-|---|---|
+| --- | --- |
 | La página no aparece al conectar al WiFi | El servidor Hotspot no está activo en esa interfaz, o el dispositivo ya estaba autenticado antes |
 | Se ve sin estilos (texto plano) | `style.css`, `banner.jpg` o la carpeta `fonts/` no se subieron junto a `login.html`, o quedaron en una ruta distinta |
 | Aparece `$(error)` en un recuadro rojo | Es un error real de RouterOS (ver el mensaje) — normalmente credenciales Trial mal configuradas o sesión ya activa |

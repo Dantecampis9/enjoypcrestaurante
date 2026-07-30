@@ -371,6 +371,7 @@
           <tr>
             <th class="font-label-caps text-label-caps text-on-surface-variant p-4">Nombre</th>
             <th class="font-label-caps text-label-caps text-on-surface-variant p-4">Correo</th>
+            <th class="font-label-caps text-label-caps text-on-surface-variant p-4 whitespace-nowrap">Teléfono</th>
             <th class="font-label-caps text-label-caps text-on-surface-variant p-4 whitespace-nowrap">Fecha</th>
           </tr>
         </thead>
@@ -379,6 +380,7 @@
             <tr>
               <td class="font-body-md p-4">${esc(l.nombre)}</td>
               <td class="font-body-md p-4"><a href="mailto:${esc(l.email)}" class="text-secondary hover:text-primary">${esc(l.email)}</a></td>
+              <td class="font-body-md p-4 whitespace-nowrap">${l.telefono ? `<a href="tel:${esc(l.telefono)}" class="text-secondary hover:text-primary">${esc(l.telefono)}</a>` : "<span class='text-on-surface-variant'>—</span>"}</td>
               <td class="font-body-md text-on-surface-variant p-4 whitespace-nowrap text-sm">${esc(formatFecha(l.created_at))}</td>
             </tr>`).join("")}
         </tbody>
@@ -655,8 +657,8 @@
     // Escapado CSV: duplicar comillas y envolver todo entre comillas.
     const q = (v) => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
     const filas = [
-      ["Nombre", "Correo", "Idioma", "Origen", "Fecha"].map(q).join(","),
-      ...leads.map((l) => [l.nombre, l.email, l.idioma || "", l.origen || "", l.created_at].map(q).join(",")),
+      ["Nombre", "Correo", "Teléfono", "Idioma", "Origen", "Fecha"].map(q).join(","),
+      ...leads.map((l) => [l.nombre, l.email, l.telefono || "", l.idioma || "", l.origen || "", l.created_at].map(q).join(",")),
     ];
     // BOM UTF-8 para que Excel respete las tildes
     descargar(`suscriptores-${new Date().toISOString().slice(0, 10)}.csv`,

@@ -157,8 +157,12 @@ create table public.leads (
                char_length(email) <= 255
                and email ~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
              ),
+  telefono   text not null check (
+               char_length(telefono) between 7 and 20
+               and telefono ~ '^[0-9+()\s-]+$'
+             ),
   idioma     text check (idioma in ('es','en')),
-  origen     text check (char_length(origen) <= 120),   -- p.ej. "menu.html"
+  origen     text check (char_length(origen) <= 120),   -- p.ej. "menu.html", "mikrotik-hotspot"
   created_at timestamptz not null default now()
 );
 

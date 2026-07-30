@@ -60,8 +60,8 @@
         <input type="hidden" name="username" value="T-$(mac-esc)" />
       </form>
 
-      <!-- Formulario visible: solo captura nombre/correo para la base de
-           contactos del restaurante. No autentica nada por sí mismo. -->
+      <!-- Formulario visible: solo captura nombre/correo/teléfono para la
+           base de contactos del restaurante. No autentica nada por sí mismo. -->
       <form id="lead-form" novalidate>
         <div class="field">
           <input id="lead-name" name="name" type="text" data-i18n-placeholder="namePlaceholder" placeholder="Nombre completo" autocomplete="name" required />
@@ -69,7 +69,10 @@
         <div class="field">
           <input id="lead-email" name="email" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="Correo electrónico" autocomplete="email" required />
         </div>
-        <p id="lead-error" class="error-text" data-i18n="formError">Ingresa tu nombre y un correo válido.</p>
+        <div class="field">
+          <input id="lead-phone" name="phone" type="tel" data-i18n-placeholder="phonePlaceholder" placeholder="Número de teléfono" autocomplete="tel" required />
+        </div>
+        <p id="lead-error" class="error-text" data-i18n="formError">Ingresa tu nombre, un correo y un teléfono válidos.</p>
         <button type="submit" id="lead-submit" class="btn-accept" data-i18n="accept">Aceptar y Continuar</button>
       </form>
 
@@ -94,7 +97,8 @@
           errorLabel: "Error",
           namePlaceholder: "Nombre completo",
           emailPlaceholder: "Correo electrónico",
-          formError: "Ingresa tu nombre y un correo válido.",
+          phonePlaceholder: "Número de teléfono",
+          formError: "Ingresa tu nombre, un correo y un teléfono válidos.",
           accept: "Aceptar y Continuar",
           connecting: "Conectando…",
           terms: "Términos y Condiciones",
@@ -105,7 +109,8 @@
           errorLabel: "Error",
           namePlaceholder: "Full name",
           emailPlaceholder: "Email address",
-          formError: "Please enter your name and a valid email.",
+          phonePlaceholder: "Phone number",
+          formError: "Please enter a valid name, email and phone number.",
           accept: "Accept and Continue",
           connecting: "Connecting…",
           terms: "Terms and Conditions",
@@ -169,7 +174,16 @@
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       }
 
-      function saveLead(nombre, email) {
+      function isValidPhone(v) {
+        // Acepta dígitos, espacios, +, -, ( ) — con o sin código de país.
+        // Valida solo por cantidad de dígitos (7 a 15, rango internacional
+        // razonable), no por un formato dominicano específico.
+        if (!/^[0-9+()\s-]+$/.test(v)) return false;
+        var digits = v.replace(/\D/g, "");
+        return digits.length >= 7 && digits.length <= 15;
+      }
+
+      function saveLead(nombre, email, telefono) {
         if (!window.fetch || !window.AbortController) return Promise.resolve();
 
         var controller = new AbortController();
@@ -186,7 +200,7 @@
             // tiene) y el guardado fallaría. Ver sql/02-rls.sql.
             Prefer: "return=minimal",
           },
-          body: JSON.stringify({ nombre: nombre, email: email, origen: "mikrotik-hotspot" }),
+          body: JSON.stringify({ nombre: nombre, email: email, telefono: telefono, origen: "mikrotik-hotspot" }),
           signal: controller.signal,
         }).catch(function () {
           // Si Supabase no es alcanzable (walled garden mal puesto, sin
@@ -202,10 +216,11 @@
 
         var nombre = document.getElementById("lead-name").value.trim();
         var email = document.getElementById("lead-email").value.trim();
+        var telefono = document.getElementById("lead-phone").value.trim();
         var errorEl = document.getElementById("lead-error");
         var submitBtn = document.getElementById("lead-submit");
 
-        if (!nombre || !isValidEmail(email)) {
+        if (!nombre || !isValidEmail(email) || !isValidPhone(telefono)) {
           errorEl.classList.add("visible");
           return;
         }
@@ -217,7 +232,7 @@
         // Intenta guardar el contacto, pero SIEMPRE concede la red al
         // terminar (éxito, fallo o timeout) — nunca deja al visitante
         // atrapado en esta pantalla por un problema de red ajeno a él.
-        saveLead(nombre, email).then(function () {
+        saveLead(nombre, email, telefono).then(function () {
           document.sendin.submit();
         });
       });
