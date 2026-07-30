@@ -88,7 +88,8 @@ En `login.html`, busca:
 4. Llena nombre/correo inválido (ej. correo sin `@`) → debe mostrar el error y no avanzar.
 5. Llena datos válidos → pulsa **Aceptar y Continuar** → el botón cambia a "Conectando…" → en unos segundos debe redirigir a la web del restaurante y el dispositivo ya tener internet.
 6. Entra al panel de administración del sitio (`admin.html`) → pestaña **Suscriptores** → el contacto debe aparecer con `origen = mikrotik-hotspot`.
-7. **Prueba de resiliencia:** quita temporalmente la regla del Walled Garden (paso 3) y repite el paso 5 — debe seguir concediendo WiFi igual (solo que sin guardar el contacto). Vuelve a añadir la regla al terminar la prueba.
+7. **Idioma:** con el navegador/teléfono en inglés, la página debe abrir en inglés automáticamente. Pulsa **ES/EN** arriba del título → todo el texto (título, subtítulo, placeholders, botón, error, términos) debe cambiar de idioma al instante.
+8. **Prueba de resiliencia:** quita temporalmente la regla del Walled Garden (paso 3) y repite el paso 5 — debe seguir concediendo WiFi igual (solo que sin guardar el contacto). Vuelve a añadir la regla al terminar la prueba.
 
 ---
 
