@@ -1,7 +1,7 @@
 const I18N_DICT = {
   es: {
     "nav.home": "Inicio",
-    "nav.menu": "Menú Digital",
+    "nav.menu": "Menú",
     "nav.events": "Eventos",
     "nav.gallery": "Galería",
     "nav.contact": "Contacto",
@@ -11,7 +11,7 @@ const I18N_DICT = {
 
     "hero.title": "Sabor que abraza el Caribe",
     "hero.subtitle": "Una experiencia gastronómica donde el lujo se encuentra con la arena blanca. Descubre ingredientes locales elevados a la alta cocina.",
-    "hero.cta.menu": "Ver Menú Digital",
+    "hero.cta.menu": "Ver Menú",
     "hero.cta.story": "Nuestra Historia",
 
     "welcome.eyebrow": "Bienvenido al Paraíso",
@@ -40,7 +40,7 @@ const I18N_DICT = {
     "footer.hours": "Horarios",
     "footer.rights": "Todos los derechos reservados.",
 
-    "menu.page.title": "Menú Digital",
+    "menu.page.title": "Menú",
     "menu.page.subtitle": "Cocina italiana, caribeña e internacional en el corazón de Los Corales.",
     "menu.price.note": "Precios en USD. Sujetos a cambio sin previo aviso.",
     "menu.print": "Imprimir menú",
@@ -93,7 +93,7 @@ const I18N_DICT = {
   },
   en: {
     "nav.home": "Home",
-    "nav.menu": "Digital Menu",
+    "nav.menu": "Menu",
     "nav.events": "Events",
     "nav.gallery": "Gallery",
     "nav.contact": "Contact",
@@ -103,7 +103,7 @@ const I18N_DICT = {
 
     "hero.title": "A Flavor That Embraces the Caribbean",
     "hero.subtitle": "A dining experience where luxury meets white sand. Discover local ingredients elevated to fine cuisine.",
-    "hero.cta.menu": "View Digital Menu",
+    "hero.cta.menu": "View Menu",
     "hero.cta.story": "Our Story",
 
     "welcome.eyebrow": "Welcome to Paradise",
@@ -132,7 +132,7 @@ const I18N_DICT = {
     "footer.hours": "Hours",
     "footer.rights": "All rights reserved.",
 
-    "menu.page.title": "Digital Menu",
+    "menu.page.title": "Menu",
     "menu.page.subtitle": "Italian, Caribbean and international cuisine in the heart of Los Corales.",
     "menu.price.note": "Prices in USD. Subject to change without notice.",
     "menu.print": "Print menu",

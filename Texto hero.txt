@@ -1,0 +1,14 @@
+Apartir de la linea - 112
+<h1 class="font-display-lg text-white mb-6 text-display-lg-mobile md:text-display-lg drop-shadow-lg" data-i18n="hero.title">
+          Sabor que abraza el Caribe
+        </h1>
+        <p class="font-body-lg text-white/90 mb-10 max-w-2xl mx-auto drop-shadow-md" data-i18n="hero.subtitle">
+          Una experiencia gastronómica donde el lujo se encuentra con la arena blanca. Descubre ingredientes locales elevados a la alta cocina.
+        </p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+          <a class="bg-primary text-white px-10 py-4 font-label-caps text-label-caps hover:bg-primary-container transition-all duration-300 shadow-xl" href="menu.html" data-i18n="hero.cta.menu">
+            Ver Menú Digital
+          </a>
+          <a class="border border-white text-white px-10 py-4 font-label-caps text-label-caps hover:bg-white hover:text-primary transition-all duration-300" href="#experiencia" data-i18n="hero.cta.story">
+            Nuestra Historia
+          </a>
