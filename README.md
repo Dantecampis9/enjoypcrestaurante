@@ -14,7 +14,7 @@ No requiere `npm install` ni build: es HTML/CSS/JS plano. Tailwind y las fuentes
 
 ## Estructura
 
-```
+```text
 index.html      Home
 menu.html       Menú digital
 eventos.html    Eventos de hoy y próximos
@@ -32,6 +32,7 @@ js/
   business.js         Datos de contacto — única fuente de verdad
   menu-data.js        Menú — respaldo offline (⚠️ precios estimados)
   events-data.js      Eventos — respaldo offline (⚠️ horarios estimados)
+  gallery-data.js     Galería — respaldo offline (fotos y video)
   data-source.js      Lee de Supabase con fallback a los archivos locales
   supabase-config.js  URL y clave pública del proyecto Supabase
   i18n.js             Diccionarios ES/EN y selector de idioma
@@ -46,15 +47,15 @@ img/
 
 ## Panel de administración
 
-`admin.html` permite gestionar el menú, los eventos y ver los suscriptores, sin tocar código. No aparece en el menú de navegación y requiere iniciar sesión.
+`admin.html` permite gestionar el menú, los eventos, la galería (fotos y video) y ver los suscriptores, sin tocar código. No aparece en el menú de navegación y requiere iniciar sesión.
 
 **Necesita configurarse una vez**: sigue los pasos de [`sql/README.md`](sql/README.md). Hasta entonces el sitio funciona con normalidad usando los datos locales, pero el panel avisará de que falta configurarlo.
 
 ### Cómo funciona
 
-El sitio público **no depende de Supabase para verse**: pinta primero con los datos locales de `js/menu-data.js` / `js/events-data.js` y luego los actualiza si la base de datos responde. Sin internet, sigue funcionando con los datos locales.
+El sitio público **no depende de Supabase para verse**: pinta primero con los datos locales de `js/menu-data.js` / `js/events-data.js` / `js/gallery-data.js` y luego los actualiza si la base de datos responde. Sin internet, sigue funcionando con los datos locales.
 
-Por eso, **tras hacer cambios en el panel** conviene pulsar *"Exportar respaldo JS"* y sustituir esos dos archivos en `js/`, para que quien visite el sitio sin conexión también vea el contenido actualizado.
+Por eso, **tras hacer cambios en el panel** conviene pulsar *"Exportar respaldo JS"* y sustituir esos tres archivos en `js/`, para que quien visite el sitio sin conexión también vea el contenido actualizado.
 
 ## Publicar
 

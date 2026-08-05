@@ -21,13 +21,14 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. Activar RLS en las 5 tablas
+-- 1. Activar RLS en las 6 tablas
 -- ---------------------------------------------------------------------
 alter table public.admins          enable row level security;
 alter table public.menu_categories enable row level security;
 alter table public.menu_items      enable row level security;
 alter table public.events_weekly   enable row level security;
 alter table public.leads           enable row level security;
+alter table public.gallery_items   enable row level security;
 
 -- `force` hace que RLS se aplique incluso al dueño de la tabla.
 -- Blindaje extra frente a conexiones con roles privilegiados.
@@ -36,22 +37,23 @@ alter table public.menu_categories force row level security;
 alter table public.menu_items      force row level security;
 alter table public.events_weekly   force row level security;
 alter table public.leads           force row level security;
+alter table public.gallery_items   force row level security;
 
 -- ---------------------------------------------------------------------
 -- 2. Reset de permisos: partir de cero
 -- ---------------------------------------------------------------------
 revoke all on public.admins, public.menu_categories, public.menu_items,
-              public.events_weekly, public.leads
+              public.events_weekly, public.leads, public.gallery_items
   from anon, authenticated;
 
 -- Contenido público: lectura para todos
-grant select on public.menu_categories, public.menu_items, public.events_weekly
+grant select on public.menu_categories, public.menu_items, public.events_weekly, public.gallery_items
   to anon, authenticated;
 
 -- Escritura del contenido: solo usuarios logueados.
 -- Las políticas de abajo afinan esto a "logueado Y en la tabla admins".
 grant insert, update, delete
-  on public.menu_categories, public.menu_items, public.events_weekly
+  on public.menu_categories, public.menu_items, public.events_weekly, public.gallery_items
   to authenticated;
 
 -- LEADS: `anon` SOLO puede insertar. Nunca SELECT, ni siquiera a nivel
@@ -93,6 +95,16 @@ create policy "eventos_lectura_publica"
 
 create policy "eventos_escritura_admin"
   on public.events_weekly for all to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- Galería
+create policy "galeria_lectura_publica"
+  on public.gallery_items for select to anon, authenticated
+  using (activo = true);
+
+create policy "galeria_escritura_admin"
+  on public.gallery_items for all to authenticated
   using (public.is_admin())
   with check (public.is_admin());
 
@@ -154,7 +166,7 @@ create policy "admins_ve_su_propia_fila"
 -- ---------------------------------------------------------------------
 -- 6. Comprobación rápida tras ejecutar este script
 -- ---------------------------------------------------------------------
--- Las 5 tablas deben aparecer con rowsecurity = true:
+-- Las 6 tablas deben aparecer con rowsecurity = true:
 --
 --   select tablename, rowsecurity
 --     from pg_tables

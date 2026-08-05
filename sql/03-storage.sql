@@ -1,14 +1,16 @@
 -- =====================================================================
--- Enjoy PC Restaurante — Supabase Storage (fotos de platos y eventos)
+-- Enjoy PC Restaurante — Supabase Storage (fotos de platos, eventos y
+-- galería — incluye video corto formato smartphone)
 --
 -- Ejecutar DESPUÉS de 02-rls.sql.
 --
 -- Nota sobre las fotos existentes: las de img/platos/ e img/ambiente/ se
 -- quedan como archivos locales del sitio. Siguen funcionando sin
 -- conexión, que es un requisito duro del proyecto. Este bucket es para
--- las fotos NUEVAS que suba el dueño desde el panel.
+-- las fotos y videos NUEVOS que suba el dueño desde el panel.
 --
--- El campo `img` de menu_items / events_weekly acepta ambas formas:
+-- El campo `img` de menu_items / events_weekly y `archivo` de
+-- gallery_items aceptan ambas formas:
 --   - ruta local:  "img/platos/steak.jpg"
 --   - URL Storage: "https://<proyecto>.supabase.co/storage/v1/object/public/media/platos/xxx.jpg"
 -- =====================================================================
@@ -17,15 +19,25 @@
 -- 1. Crear el bucket público
 -- ---------------------------------------------------------------------
 -- `public = true` significa que los archivos son legibles por URL directa
--- (necesario: las etiquetas <img> del sitio no envían cabeceras de auth).
--- La ESCRITURA sigue protegida por las políticas de abajo.
+-- (necesario: las etiquetas <img>/<video> del sitio no envían cabeceras
+-- de auth). La ESCRITURA sigue protegida por las políticas de abajo.
+--
+-- Límite de 50 MB: cubre fotos sin problema y videos cortos tipo
+-- smartphone (formato vertical o horizontal, ~30-60s a compresión de
+-- redes sociales). Es un límite POR ARCHIVO, no total — el plan gratuito
+-- de Supabase da 1 GB de almacenamiento en total, así que conviene no
+-- subir decenas de videos pesados. Ajustar `file_size_limit` aquí si
+-- hace falta más o menos margen.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'media',
   'media',
   true,
-  5242880,                                     -- 5 MB por archivo
-  array['image/jpeg','image/png','image/webp','image/avif']
+  52428800,                                    -- 50 MB por archivo
+  array[
+    'image/jpeg','image/png','image/webp','image/avif',
+    'video/mp4','video/quicktime','video/webm'  -- quicktime = .mov (iPhone)
+  ]
 )
 on conflict (id) do update
   set public             = excluded.public,

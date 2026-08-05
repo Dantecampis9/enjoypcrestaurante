@@ -103,6 +103,7 @@
       <nav class="max-w-container-max mx-auto px-gutter flex gap-1 border-t border-outline-variant overflow-x-auto" role="tablist">
         <button data-tab="menu"    class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Menú</button>
         <button data-tab="eventos" class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Eventos</button>
+        <button data-tab="galeria" class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Galería</button>
         <button data-tab="leads"   class="admin-tab px-5 py-3 font-label-caps text-label-caps whitespace-nowrap transition-colors" role="tab">Suscriptores</button>
       </nav>
     </header>
@@ -140,6 +141,20 @@
         <div id="events-list" class="space-y-6"></div>
       </section>
 
+      <!-- --------------------- Pestaña Galería --------------------- -->
+      <section id="tab-galeria" class="admin-panel hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Galería</h2>
+            <p class="font-body-md text-on-surface-variant">Fotos y videos cortos (formato smartphone, vertical u horizontal). Máx. 50 MB por archivo.</p>
+          </div>
+          <button id="new-gallery-btn" class="bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary-container transition-colors">
+            + Nueva foto/video
+          </button>
+        </div>
+        <div id="gallery-list" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      </section>
+
       <!-- ------------------- Pestaña Suscriptores ------------------- -->
       <section id="tab-leads" class="admin-panel hidden">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -158,8 +173,9 @@
       <div class="mt-12 pt-8 border-t border-outline-variant">
         <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Respaldo para modo sin conexión</h3>
         <p class="font-body-md text-on-surface-variant mb-1 max-w-2xl">
-          El sitio muestra los datos de <code class="bg-surface-container px-1">js/menu-data.js</code> y
-          <code class="bg-surface-container px-1">js/events-data.js</code> cuando el visitante no tiene internet.
+          El sitio muestra los datos de <code class="bg-surface-container px-1">js/menu-data.js</code>,
+          <code class="bg-surface-container px-1">js/events-data.js</code> y
+          <code class="bg-surface-container px-1">js/gallery-data.js</code> cuando el visitante no tiene internet.
           Descarga estos archivos tras hacer cambios y súbelos al sitio para que el respaldo no se quede anticuado.
         </p>
         <p id="last-export" class="font-body-md text-on-surface-variant text-sm mb-4"></p>

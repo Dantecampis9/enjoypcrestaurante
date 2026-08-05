@@ -26,22 +26,6 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.text-sunset {
-  color: #9f3d04;
-}
-
-.bg-sunset {
-  background-color: #9f3d04;
-}
-
-.border-ocean {
-  border-color: #436083;
-}
-
-.text-ocean {
-  color: #436083;
-}
-
 /* Menú móvil */
 #mobile-menu {
   transition: max-height 0.3s ease, opacity 0.3s ease;
@@ -52,17 +36,36 @@ body {
   background-color: rgba(28, 27, 27, 0.92);
 }
 
-.lightbox-img {
+.lightbox-img,
+.lightbox-video {
   max-height: 85vh;
   max-width: 90vw;
 }
 
-.gallery-item img {
+.gallery-item img,
+.gallery-item video {
   transition: transform 0.5s ease;
 }
 
-.gallery-item:hover img {
+.gallery-item:hover img,
+.gallery-item:hover video {
   transform: scale(1.06);
+}
+
+/* Insignia de "video" sobre la miniatura en la galería */
+.gallery-video-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(28, 27, 27, 0.6);
+  color: #fff;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 /* Tarjetas de menú */
@@ -75,8 +78,8 @@ body {
 }
 
 .menu-tab[aria-selected="true"] {
-  background-color: #9f3d04;
-  color: #ffffff;
+  background-color: #ea3e70;
+  color: #000000;
 }
 
 @media print {

@@ -191,10 +191,32 @@
   </main>
 
   <!-- Footer -->
-  <footer class="w-full py-section-gap px-gutter flex flex-col items-center gap-base max-w-container-max mx-auto bg-surface-container">
-    <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-16 w-16 rounded-full mb-4" width="64" height="64" loading="lazy" />
-    <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
-    <p class="text-on-surface-variant font-body-md mb-6" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+  <footer class="w-full max-w-container-max mx-auto px-gutter pt-section-gap pb-section-gap border-t border-outline-variant flex flex-col items-center">
+
+    <!-- Fila superior: logo/nombre a la izquierda, comunidad/redes a la derecha, separados por una línea central (concepto tomado de la Guía Michelin) -->
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-outline-variant gap-y-10 md:gap-x-16 mb-10">
+      <div class="flex flex-col items-center text-center">
+        <img src="img/logo/enjoy-logo-mesa.png" alt="Enjoy Punta Cana" class="h-64 w-64 rounded-full mb-4" width="256" height="256" loading="lazy" />
+        <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
+        <p class="text-on-surface-variant font-body-md" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+      </div>
+
+      <div class="flex flex-col items-center text-center justify-center pt-10 md:pt-0">
+        <h2 class="font-headline-md text-on-surface mb-4" data-i18n="newsletter.title">Únete a la Comunidad Enjoy</h2>
+        <p class="font-body-md text-on-surface-variant max-w-xs mb-6" data-i18n="newsletter.body">Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.</p>
+        <div class="flex items-center justify-center gap-4">
+          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+            <span class="material-symbols-outlined text-2xl">camera</span>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+            <span class="material-symbols-outlined text-2xl">public</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full h-px bg-outline-variant mb-10"></div>
+
     <div class="flex flex-wrap justify-center gap-8 mb-10">
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
@@ -203,6 +225,7 @@
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="https://enjoyrestaurante.qrfy.do/#/categorias/191" data-i18n="nav.menu">Menú</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="eventos.html" data-i18n="nav.events">Eventos</a>
     </div>
+
     <div class="w-full h-px bg-outline-variant mb-8"></div>
     <p class="font-body-md text-on-surface-variant">
       © <span data-current-year>2026</span> Enjoy Punta Cana. <span data-i18n="footer.tagline">Tropical Luxury Dining</span>.

@@ -17,12 +17,18 @@
     { id: "vegano", label: "Vegano" },
     { id: "estrella", label: "Recomendado" },
   ];
-  const MAX_IMG_BYTES = 5 * 1024 * 1024; // 5 MB, igual que el límite del bucket
+  // 5 MB para fotos de platos/eventos (sin cambios). El bucket en sí
+  // admite hasta 50 MB porque ahora también acepta video de galería
+  // (MAX_GALLERY_BYTES, más abajo) — se mantienen dos límites separados
+  // a propósito: una foto de un plato nunca debería pesar 50 MB.
+  const MAX_IMG_BYTES = 5 * 1024 * 1024;
+  const MAX_GALLERY_BYTES = 50 * 1024 * 1024;
 
   let sb = null;              // cliente de Supabase
   let categorias = [];
   let platos = [];
   let eventos = [];
+  let galeria = [];
   let leads = [];
 
   // ------------------------------------------------------------------
@@ -190,7 +196,7 @@
     show($("panel-view"));
     $("admin-email").textContent = session.user.email;
 
-    await Promise.all([cargarMenu(), cargarEventos(), cargarLeads()]);
+    await Promise.all([cargarMenu(), cargarEventos(), cargarGaleria(), cargarLeads()]);
     activarTab("menu");
     mostrarUltimaExportacion();
   }
@@ -235,6 +241,13 @@
     if (error) { toast("No se pudieron cargar los eventos", "error"); return; }
     eventos = data || [];
     renderEventos();
+  }
+
+  async function cargarGaleria() {
+    const { data, error } = await sb.from("gallery_items").select("*").order("orden");
+    if (error) { toast("No se pudo cargar la galería", "error"); return; }
+    galeria = data || [];
+    renderGaleria();
   }
 
   async function cargarLeads() {
@@ -354,6 +367,48 @@
   }
 
   // ------------------------------------------------------------------
+  // Render: galería (grid de miniaturas, foto o video)
+  // ------------------------------------------------------------------
+  function renderGaleria() {
+    const cont = $("gallery-list");
+    if (!galeria.length) {
+      cont.innerHTML = "<p class='font-body-md text-on-surface-variant col-span-full'>Todavía no hay fotos ni videos. Usa \"+ Nueva foto/video\".</p>";
+      return;
+    }
+    cont.innerHTML = galeria.map(tarjetaGaleria).join("");
+
+    cont.querySelectorAll("[data-edit-gallery]").forEach((b) =>
+      b.addEventListener("click", () => abrirEditorGaleria(b.dataset.editGallery)));
+    cont.querySelectorAll("[data-del-gallery]").forEach((b) =>
+      b.addEventListener("click", () => borrarGaleria(b.dataset.delGallery)));
+  }
+
+  function tarjetaGaleria(g) {
+    const esVideo = g.tipo === "video";
+    const miniatura = esVideo
+      ? `<video src="${esc(g.archivo)}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video>
+         <span class="gallery-video-badge"><span class="material-symbols-outlined text-base">play_arrow</span></span>`
+      : `<div class="w-full h-full bg-cover bg-center" style="background-image:url('${esc(g.archivo)}')"></div>`;
+
+    return `
+      <div class="bg-surface shadow-sm overflow-hidden ${g.activo ? "" : "opacity-50"}">
+        <div class="relative w-full aspect-square bg-surface-container">${miniatura}</div>
+        <div class="p-3">
+          <p class="font-body-md text-sm text-on-surface truncate">${g.alt_es ? esc(g.alt_es) : "<i class='text-on-surface-variant'>(sin descripción)</i>"}</p>
+          ${g.activo ? "" : "<span class='text-xs font-label-caps text-on-surface-variant'>(oculto)</span>"}
+          <div class="flex gap-2 mt-2">
+            <button data-edit-gallery="${esc(g.id)}" class="text-secondary hover:text-primary transition-colors" aria-label="Editar">
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </button>
+            <button data-del-gallery="${esc(g.id)}" class="text-secondary hover:text-error transition-colors" aria-label="Borrar">
+              <span class="material-symbols-outlined text-lg">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ------------------------------------------------------------------
   // Render: suscriptores
   // ------------------------------------------------------------------
   function renderLeads() {
@@ -415,6 +470,7 @@
     show($("editor-modal"));
     document.body.style.overflow = "hidden";
     wireImagenPreview();
+    wireMediaPreview();
   }
 
   function cerrarEditor() {
@@ -452,6 +508,63 @@
           Ruta local (img/platos/…) o URL. Al subir un archivo se rellena sola. Máx. 5 MB.
         </p>
       </div>`;
+  }
+
+  function campoMedia(tipoActual, archivoActual) {
+    const esVideo = tipoActual === "video";
+    return `
+      <div>
+        <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Foto o video</label>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-24 h-24 bg-surface-container shrink-0 overflow-hidden relative">
+            <div id="media-preview-img" class="w-full h-full bg-cover bg-center ${esVideo ? "hidden" : ""}" style="background-image:url('${esc(archivoActual)}')"></div>
+            <video id="media-preview-video" class="w-full h-full object-cover ${esVideo ? "" : "hidden"}" src="${esc(archivoActual)}" muted playsinline preload="metadata"></video>
+          </div>
+          <input id="f-media-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/quicktime,video/webm"
+                 class="font-body-md text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-4 file:border-0 file:font-label-caps file:text-label-caps file:bg-primary file:text-on-primary" />
+        </div>
+        <input id="f-media-tipo" type="hidden" value="${esc(tipoActual)}" />
+        <input id="f-media-archivo" type="text" value="${esc(archivoActual)}"
+               class="w-full border border-outline-variant px-3 py-2 font-body-md text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary" />
+        <p class="font-body-md text-on-surface-variant text-xs mt-1">
+          Ruta local (img/ambiente/…) o URL. Al subir un archivo se rellena sola y se detecta el tipo. Foto o video, máx. 50 MB.
+        </p>
+      </div>`;
+  }
+
+  function wireMediaPreview() {
+    const file = $("f-media-file");
+    if (!file) return;
+    file.addEventListener("change", async () => {
+      const f = file.files && file.files[0];
+      if (!f) return;
+      const esVideo = f.type.startsWith("video/");
+      const esImagen = f.type.startsWith("image/");
+      if (!esVideo && !esImagen) { errorEditor("El archivo debe ser una imagen o un video."); return; }
+      if (f.size > MAX_GALLERY_BYTES) { errorEditor("El archivo supera los 50 MB."); return; }
+
+      hide($("editor-error"));
+      const ext = (f.name.split(".").pop() || (esVideo ? "mp4" : "jpg")).toLowerCase();
+      const ruta = `galeria/${crypto.randomUUID()}.${ext}`;
+
+      const { error } = await sb.storage.from("media").upload(ruta, f, {
+        cacheControl: "31536000", upsert: false, contentType: f.type,
+      });
+      if (error) { errorEditor("No se pudo subir el archivo: " + error.message); return; }
+
+      const { data } = sb.storage.from("media").getPublicUrl(ruta);
+      $("f-media-archivo").value = data.publicUrl;
+      $("f-media-tipo").value = esVideo ? "video" : "imagen";
+
+      $("media-preview-img").classList.toggle("hidden", esVideo);
+      $("media-preview-video").classList.toggle("hidden", !esVideo);
+      if (esVideo) {
+        $("media-preview-video").src = data.publicUrl;
+      } else {
+        $("media-preview-img").style.backgroundImage = `url('${data.publicUrl}')`;
+      }
+      toast(esVideo ? "Video subido" : "Foto subida");
+    });
   }
 
   function wireImagenPreview() {
@@ -633,12 +746,62 @@
     await cargarEventos();
   }
 
+  // ---------------------------- Galería ----------------------------
+  function abrirEditorGaleria(id) {
+    const g = id ? galeria.find((x) => x.id === id) : null;
+    const nuevo = !g;
+
+    abrirEditor(nuevo ? "Nueva foto/video" : "Editar foto/video", `
+      ${campoMedia(g ? g.tipo : "imagen", g ? g.archivo : "")}
+      ${campoTexto("f-alt-es", "Descripción / alt (español)", g ? g.alt_es : "")}
+      ${campoTexto("f-alt-en", "Descripción / alt (inglés)", g ? g.alt_en : "")}
+      <div class="grid grid-cols-2 gap-4 items-end">
+        ${campoTexto("f-orden", "Orden", g ? g.orden : 0, { type: "number" })}
+        <label class="flex items-center gap-2 font-body-md pb-2">
+          <input type="checkbox" id="f-activo" ${!g || g.activo ? "checked" : ""} /> Visible en el sitio
+        </label>
+      </div>
+    `, async () => {
+      const archivo = $("f-media-archivo").value.trim();
+      if (!archivo) { errorEditor("Sube una foto/video o pega una ruta/URL."); return; }
+
+      const payload = {
+        tipo: $("f-media-tipo").value === "video" ? "video" : "imagen",
+        archivo,
+        alt_es: $("f-alt-es").value.trim(),
+        alt_en: $("f-alt-en").value.trim(),
+        orden: Number($("f-orden").value) || 0,
+        activo: $("f-activo").checked,
+      };
+
+      const q = nuevo
+        ? sb.from("gallery_items").insert(payload)
+        : sb.from("gallery_items").update(payload).eq("id", id);
+      const { error } = await q;
+      if (error) { errorEditor("No se pudo guardar: " + error.message); return; }
+
+      cerrarEditor();
+      toast(nuevo ? "Elemento creado" : "Elemento actualizado");
+      await cargarGaleria();
+    });
+  }
+
+  async function borrarGaleria(id) {
+    const g = galeria.find((x) => x.id === id);
+    if (!g || !confirm("¿Borrar este elemento de la galería? Esta acción no se puede deshacer.")) return;
+    const { error } = await sb.from("gallery_items").delete().eq("id", id);
+    if (error) { toast("No se pudo borrar", "error"); return; }
+    toast("Elemento borrado");
+    await cargarGaleria();
+  }
+
   // ------------------------------------------------------------------
   // Acciones: CSV, respaldo JS
   // ------------------------------------------------------------------
   function wireActions() {
     $("new-dish-btn").addEventListener("click", () => abrirEditorPlato(null));
     $("new-event-btn").addEventListener("click", () => abrirEditorEvento(null));
+    $("new-gallery-btn").addEventListener("click", () => abrirEditorGaleria(null));
     $("export-csv-btn").addEventListener("click", exportarCSV);
     $("export-backup-btn").addEventListener("click", exportarRespaldo);
   }
@@ -715,8 +878,25 @@ ${eventos.filter((e) => e.activo).map((e) => `  {
 ];
 `;
 
+    const galleryJs = `// Respaldo offline de la galería.
+// Generado desde el panel de administración el ${new Date().toLocaleString("es-DO")}.
+// Este archivo es el RESPALDO que ve el visitante cuando no tiene conexión.
+//
+// tipo: "imagen" | "video"
+
+const GALLERY_ITEMS = [
+${galeria.filter((g) => g.activo).map((g) => `  {
+    id: ${js(g.slug || g.id)},
+    tipo: ${js(g.tipo)},
+    archivo: ${js(g.archivo)},
+    alt: { es: ${js(g.alt_es)}, en: ${js(g.alt_en)} },
+  },`).join("\n")}
+];
+`;
+
     descargar("menu-data.js", menuJs, "text/javascript;charset=utf-8");
     setTimeout(() => descargar("events-data.js", eventsJs, "text/javascript;charset=utf-8"), 300);
+    setTimeout(() => descargar("gallery-data.js", galleryJs, "text/javascript;charset=utf-8"), 600);
 
     localStorage.setItem("enjoy-last-export", new Date().toISOString());
     mostrarUltimaExportacion();

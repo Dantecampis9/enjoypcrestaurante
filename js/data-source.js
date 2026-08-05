@@ -118,7 +118,25 @@ const DataSource = (() => {
     return rows.map(toEvent);
   }
 
-  return { isConfigured, loadMenu, loadEvents };
+  function toGalleryItem(row) {
+    return {
+      id: row.id,
+      tipo: row.tipo === "video" ? "video" : "imagen",
+      archivo: row.archivo,
+      alt: { es: row.alt_es, en: row.alt_en },
+    };
+  }
+
+  // Devuelve un array de items de galería o null.
+  // Igual que el menú: un array vacío se descarta, nunca dejamos la
+  // galería en blanco por una base recién creada o un RLS mal aplicado.
+  async function loadGallery() {
+    const rows = await fetchTable("gallery_items?activo=eq.true&order=orden.asc");
+    if (!rows || rows.length === 0) return null;
+    return rows.map(toGalleryItem);
+  }
+
+  return { isConfigured, loadMenu, loadEvents, loadGallery };
 })();
 
 // Escapa texto antes de interpolarlo en innerHTML.

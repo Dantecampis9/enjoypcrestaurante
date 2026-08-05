@@ -168,3 +168,31 @@ create table public.leads (
 
 create index leads_created_at_idx  on public.leads (created_at desc);
 create index leads_email_lower_idx on public.leads (lower(email));
+
+-- ---------------------------------------------------------------------
+-- Galería: fotos y videos cortos (formato smartphone, vertical u
+-- horizontal — no se fuerza aspect ratio, el masonry de galeria.html
+-- se adapta a cualquiera).
+--
+-- `archivo` acepta, igual que `img` en menu_items/events_weekly, tanto
+-- una ruta local ("img/ambiente/foo.jpg") como una URL de Storage.
+-- ---------------------------------------------------------------------
+create table public.gallery_items (
+  id         uuid primary key default gen_random_uuid(),
+  -- `slug` solo existe para que el seed sea re-ejecutable sin duplicar.
+  slug       text unique,
+  tipo       text not null default 'imagen' check (tipo in ('imagen','video')),
+  archivo    text not null check (char_length(archivo) between 1 and 600),
+  alt_es     text not null default '' check (char_length(alt_es) <= 200),
+  alt_en     text not null default '' check (char_length(alt_en) <= 200),
+  orden      smallint not null default 0,
+  activo     boolean  not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index gallery_items_orden_idx on public.gallery_items (orden, id);
+
+create trigger gallery_items_set_updated_at
+  before update on public.gallery_items
+  for each row execute function public.set_updated_at();

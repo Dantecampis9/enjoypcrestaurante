@@ -37,7 +37,25 @@
       "mcp__chrome-devtools__resize_page",
       "mcp__chrome-devtools__take_screenshot",
       "mcp__chrome-devtools__navigate_page",
-      "mcp__chrome-devtools__emulate"
+      "mcp__chrome-devtools__emulate",
+      "Bash(sed -i 's/1\\\\. Activar RLS en las 5 tablas/1. Activar RLS en las 6 tablas/' sql/02-rls.sql)",
+      "Bash(sed -i 's/Las 5 tablas deben aparecer con rowsecurity = true:/Las 6 tablas deben aparecer con rowsecurity = true:/' sql/02-rls.sql)",
+      "Bash(grep -n \"^##\\\\|gallery\\\\|Galería\\\\|leads\\\\`\" \"c:/Users/Laptop/Downloads/Proyectos/enjoypcrestaurante/CLAUDE.md\")",
+      "Bash(sed -i '29s/|---|---|/| --- | --- |/' sql/README.md)",
+      "Bash(sed -i '127s/|---|---|/| --- | --- |/' sql/README.md)",
+      "Bash(node --check js/gallery-data.js)",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__list_network_requests",
+      "Read(//c/Users/Laptop/AppData/Local/Temp/chrome-devtools-mcp-SxCV9O/**)",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__evaluate_script",
+      "Bash(npx skills *)",
+      "Bash(grep -n \"urllib\\\\|requests\\\\|socket\\\\|subprocess\\\\|os.system\\\\|eval\\(\\\\|exec\\(\\\\|__import__\\\\|base64\\\\|marshal\\\\|pickle\\\\|curl\\\\|wget\\\\|http://\\\\|https://\" *.py)",
+      "Bash(sort -u -t: -k2)",
+      "Bash(where python *)",
+      "Bash(py -3 --version)",
+      "Bash(curl -s -o /dev/null -w \"index.html: %{http_code}\\\\n\" http://localhost:8000/index.html)"
     ],
     "additionalDirectories": [
       "\\tmp"

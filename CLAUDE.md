@@ -20,7 +20,7 @@ El sitio **no depende de internet** para verse bien — Tailwind y las fuentes s
 
 ## Backend: Supabase (panel de administración)
 
-El sitio tiene un panel privado en `admin.html` para gestionar menú, eventos y suscriptores. La instalación paso a paso está en **`sql/README.md`**.
+El sitio tiene un panel privado en `admin.html` para gestionar menú, eventos, galería (fotos y video) y suscriptores. La instalación paso a paso está en **`sql/README.md`**.
 
 ### La regla que ordena todo lo demás
 
@@ -28,11 +28,11 @@ El sitio tiene un panel privado en `admin.html` para gestionar menú, eventos y 
 
 Esto existe para no romper la restricción offline de arriba. El patrón es **render optimista con revalidación**:
 
-1. `menu.html` y `eventos.html` pintan de inmediato con `js/menu-data.js` / `js/events-data.js` (comportamiento de siempre, sin esperas).
+1. `menu.html`, `eventos.html` y `galeria.html` pintan de inmediato con `js/menu-data.js` / `js/events-data.js` / `js/gallery-data.js` (comportamiento de siempre, sin esperas).
 2. En segundo plano consultan Supabase.
 3. Si responde, re-renderizan; si falla, se queda lo local.
 
-Por eso **`js/menu-data.js` y `js/events-data.js` no se borran**: son el respaldo offline. El panel tiene un botón "Exportar respaldo JS" que los regenera; hay que subirlos al repo tras hacer cambios o el respaldo se queda anticuado.
+Por eso **`js/menu-data.js`, `js/events-data.js` y `js/gallery-data.js` no se borran**: son el respaldo offline. El panel tiene un botón "Exportar respaldo JS" que los regenera (los 3 archivos); hay que subirlos al repo tras hacer cambios o el respaldo se queda anticuado.
 
 `admin.html` **sí requiere internet** y **sí carga un script externo**: es una excepción consciente y necesaria (un panel sobre una base remota no puede funcionar sin red). Es la única página con esa excepción.
 
@@ -52,6 +52,7 @@ Por eso **`js/menu-data.js` y `js/events-data.js` no se borran**: son el respald
 - **Las 6 categorías del menú son fijas** — el panel no permite crearlas ni borrarlas (decisión del usuario). Los platos sí son CRUD completo.
 - `activo = false` despublica sin borrar. El fetch público filtra `activo=eq.true`.
 - Fotos: las de `img/platos/` e `img/ambiente/` **siguen siendo archivos locales** (funcionan offline). Las nuevas que suba el dueño van al bucket `media` de Storage. El campo `img` acepta ambas formas.
+- **Galería (`gallery_items`):** mismo patrón que menú/eventos (lectura pública de `activo=true`, escritura solo admin). Campo `tipo` en `'imagen'` o `'video'`; `archivo` acepta ruta local o URL de Storage, igual que `img`. El bucket `media` admite hasta **50 MB por archivo** y los MIME de video (`video/mp4`, `video/quicktime`, `video/webm`) desde `sql/03-storage.sql` — las subidas de fotos de platos/eventos siguen limitadas a 5 MB en el cliente (`MAX_IMG_BYTES` en `js/admin.js`), la de galería usa `MAX_GALLERY_BYTES` (50 MB) por separado. `galeria.html` no fuerza aspect ratio: un video vertical de smartphone (9:16) se acomoda solo en el masonry.
 - `admin.html` está en **español únicamente**, sin `data-i18n`: es una herramienta interna, no contenido de cara al visitante. Excepción consciente a la regla de i18n.
 - `admin.html` lleva `noindex` y **no** está en `sitemap.xml`. **No añadir `Disallow: /admin.html` a `robots.txt`** — eso publicaría la ruta.
 

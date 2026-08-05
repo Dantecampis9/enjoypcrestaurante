@@ -2,7 +2,9 @@
 
 Guía para conectar el sitio a Supabase. Se hace **una sola vez**, en orden.
 
-Al terminar tendrás: login real en `admin.html`, menú y eventos editables desde el navegador, y los correos de los suscriptores guardándose de verdad.
+Al terminar tendrás: login real en `admin.html`, menú, eventos y galería (fotos y video) editables desde el navegador, y los correos de los suscriptores guardándose de verdad.
+
+> **¿Ya tienes un proyecto Supabase montado con una versión anterior de este sitio?** Los pasos 1-6 de abajo son para una instalación **desde cero**. Si ya corriste `01-04` antes, en vez de repetirlos ejecuta solo las migraciones nuevas que falten, en orden: `sql/05-add-phone.sql` (teléfono en suscriptores) y `sql/06-add-gallery.sql` (galería con fotos y video). Cada una es idempotente — no duplica nada si ya la corriste.
 
 ---
 
@@ -24,7 +26,7 @@ Ten a mano el correo y la contraseña que quieres usar para entrar al panel.
 Ve a **Settings → API** y copia dos cosas:
 
 | Campo en Supabase | Dónde va |
-|---|---|
+| --- | --- |
 | **Project URL** | `js/supabase-config.js` → `url` |
 | Clave **`anon` / `public`** | `js/supabase-config.js` → `anonKey` |
 
@@ -42,12 +44,12 @@ Ve a **SQL Editor → New query**, pega el contenido de cada archivo y pulsa **R
 
 1. `sql/01-schema.sql` — crea las tablas
 2. `sql/02-rls.sql` — **activa la seguridad** (no te lo saltes)
-3. `sql/03-storage.sql` — prepara el almacén de fotos
-4. `sql/04-seed.sql` — carga los 21 platos y 7 eventos actuales
+3. `sql/03-storage.sql` — prepara el almacén de fotos y video (hasta 50 MB por archivo)
+4. `sql/04-seed.sql` — carga los 21 platos, 7 eventos y 18 fotos de galería actuales
 
 ### Comprobación obligatoria tras el paso 2
 
-Ve a **Database → Tables**. Las 5 tablas (`admins`, `menu_categories`, `menu_items`, `events_weekly`, `leads`) deben mostrar el candado **"RLS enabled"**.
+Ve a **Database → Tables**. Las 6 tablas (`admins`, `menu_categories`, `menu_items`, `events_weekly`, `leads`, `gallery_items`) deben mostrar el candado **"RLS enabled"**.
 
 Si alguna no lo tiene, **para aquí y arréglalo**. Sin RLS, cualquiera en internet podría leer los correos de tus suscriptores o borrarte el menú.
 
@@ -84,7 +86,7 @@ python -m http.server 8000
 ```
 
 - Sin sesión → debe salir la pantalla de login.
-- Con tu usuario → debe cargar el panel con los 21 platos y 7 eventos.
+- Con tu usuario → debe cargar el panel con los 21 platos, 7 eventos y 18 fotos de galería.
 
 ---
 
@@ -115,14 +117,14 @@ Debe devolver **401** o **403**. Si devuelve 200 con datos, las políticas RLS n
 
 ## Cómo funciona a partir de ahora
 
-- **El sitio público no depende de Supabase para verse.** Pinta primero con los datos locales de `js/menu-data.js` y `js/events-data.js`, y luego los actualiza si la base responde. Sin internet, sigue funcionando con los datos locales.
-- **Tras hacer cambios en el panel**, usa el botón **"Exportar respaldo JS"** y sustituye esos dos archivos en la carpeta `js/`. Así quien visite el sitio sin conexión también ve el menú actualizado.
+- **El sitio público no depende de Supabase para verse.** Pinta primero con los datos locales de `js/menu-data.js`, `js/events-data.js` y `js/gallery-data.js`, y luego los actualiza si la base responde. Sin internet, sigue funcionando con los datos locales.
+- **Tras hacer cambios en el panel**, usa el botón **"Exportar respaldo JS"** y sustituye esos tres archivos en la carpeta `js/`. Así quien visite el sitio sin conexión también ve el menú, eventos y galería actualizados.
 - **El plan gratuito pausa el proyecto** tras ~7 días sin ninguna actividad. El sitio seguiría funcionando con los datos locales, pero el panel no. Se reactiva desde el dashboard de Supabase.
 
 ## Si algo falla
 
 | Síntoma | Causa habitual |
-|---|---|
+| --- | --- |
 | "Falta configurar Supabase" al abrir el panel | `js/supabase-config.js` está vacío (paso 2) |
 | "Esta cuenta no tiene permisos de administrador" | Falta el `insert into public.admins` (paso 4.3) |
 | Los cambios no se ven en el sitio público | El plato/evento está marcado como no visible, o el navegador tiene caché: recarga con Ctrl+F5 |

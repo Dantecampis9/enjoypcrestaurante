@@ -38,6 +38,7 @@ const I18N_DICT = {
     "footer.contact": "Contacto",
     "footer.location": "Ubicación",
     "footer.hours": "Horarios",
+    "footer.follow": "Síguenos",
     "footer.rights": "Todos los derechos reservados.",
 
     "menu.page.title": "Menú",
@@ -130,6 +131,7 @@ const I18N_DICT = {
     "footer.contact": "Contact",
     "footer.location": "Location",
     "footer.hours": "Hours",
+    "footer.follow": "Follow us",
     "footer.rights": "All rights reserved.",
 
     "menu.page.title": "Menu",

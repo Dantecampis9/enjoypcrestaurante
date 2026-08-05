@@ -236,7 +236,58 @@ on conflict (slug) do update
       orden       = excluded.orden;
 
 -- ---------------------------------------------------------------------
+-- Galería (18 fotos — las mismas que ya estaban hardcodeadas en
+-- galeria.html). Todas quedan como `tipo = 'imagen'`; los videos se
+-- añaden después desde el panel, no hay ninguno de partida.
+-- ---------------------------------------------------------------------
+insert into public.gallery_items (slug, tipo, archivo, alt_es, alt_en, orden) values
+  ('g01-hero-terraza', 'imagen', 'img/ambiente/hero-terraza-noche.jpg',
+   'Terraza iluminada de noche en Enjoy Punta Cana', 'Terrace lit up at night at Enjoy Punta Cana', 10),
+  ('g02-steak', 'imagen', 'img/platos/steak.jpg',
+   'Plato de carne a la parrilla', 'Grilled steak', 20),
+  ('g03-musica-vivo', 'imagen', 'img/ambiente/musica-vivo.jpg',
+   'Música en vivo por la noche', 'Live music at night', 30),
+  ('g04-cocteles', 'imagen', 'img/platos/cocteles.jpg',
+   'Cócteles de autor', 'Signature cocktails', 40),
+  ('g05-ambiente-social-1', 'imagen', 'img/ambiente/ambiente-social-1.jpg',
+   'Ambiente social en la terraza', 'Social gathering on the terrace', 50),
+  ('g06-pasta-italiana', 'imagen', 'img/platos/pasta-italiana.jpg',
+   'Pasta italiana artesanal', 'House-made Italian pasta', 60),
+  ('g07-dj-noche', 'imagen', 'img/ambiente/dj-noche.jpg',
+   'DJ en vivo por la noche', 'Live DJ at night', 70),
+  ('g08-coctel-camarones', 'imagen', 'img/platos/coctel-camarones.jpg',
+   'Cóctel de camarones frescos', 'Fresh shrimp cocktail', 80),
+  ('g09-bar-noche', 'imagen', 'img/ambiente/bar-noche.jpg',
+   'Bar iluminado de noche', 'Bar lit up at night', 90),
+  ('g10-cheesecake', 'imagen', 'img/platos/cheesecake.jpg',
+   'Cheesecake de la casa', 'House cheesecake', 100),
+  ('g11-saxofonista', 'imagen', 'img/ambiente/saxofonista.jpg',
+   'Saxofonista en vivo', 'Live saxophonist', 110),
+  ('g12-sangria', 'imagen', 'img/platos/sangria.jpg',
+   'Sangría de la casa', 'House sangria', 120),
+  ('g13-ambiente-social-2', 'imagen', 'img/ambiente/ambiente-social-2.jpg',
+   'Ambiente social de noche', 'Evening social gathering', 130),
+  ('g14-mamajuana', 'imagen', 'img/platos/mamajuana.jpg',
+   'Mamajuana, trago tradicional dominicano', 'Mamajuana, traditional Dominican drink', 140),
+  ('g15-boutique', 'imagen', 'img/ambiente/boutique.jpg',
+   'Boutique de souvenirs', 'Souvenir boutique', 150),
+  ('g16-frutas-frescas', 'imagen', 'img/platos/frutas-frescas.jpg',
+   'Frutas frescas de temporada', 'Fresh seasonal fruit', 160),
+  ('g17-ambiente-mesa', 'imagen', 'img/ambiente/ambiente-mesa.jpg',
+   'Momento compartido en la mesa', 'A moment shared at the table', 170),
+  ('g18-coctel-verde', 'imagen', 'img/platos/coctel-verde.jpg',
+   'Cóctel tropical verde', 'Tropical green cocktail', 180)
+
+on conflict (slug) do update
+  set tipo    = excluded.tipo,
+      archivo = excluded.archivo,
+      alt_es  = excluded.alt_es,
+      alt_en  = excluded.alt_en,
+      orden   = excluded.orden;
+
+-- ---------------------------------------------------------------------
 -- Comprobación
 -- ---------------------------------------------------------------------
 -- select count(*) from public.menu_items;     -- debe dar 21
 -- select count(*) from public.events_weekly;  -- debe dar 7
+-- select count(*) from public.gallery_items;  -- debe dar 18
