@@ -66,10 +66,15 @@ tailwind.config = {
         "on-accent-plum": "#ffffff",
       },
       borderRadius: {
-        DEFAULT: "0.125rem",
-        lg: "0.25rem",
-        xl: "0.5rem",
-        full: "0.75rem",
+        // "full" estaba fijo en 0.75rem: los 56 usos de rounded-full del sitio
+        // (logo, íconos de redes, píldoras de idioma, avatares) salían como
+        // cuadrados con esquina apenas redondeada, no círculos/píldoras reales.
+        // 9999px es el valor estándar de Tailwind para "full" — corrige eso.
+        DEFAULT: "0.5rem",
+        lg: "0.75rem",
+        xl: "1rem",
+        "2xl": "1.5rem",
+        full: "9999px",
       },
       spacing: {
         "section-gap": "80px",

@@ -28,21 +28,20 @@
 
       <div class="hidden md:flex items-center gap-8">
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="index.html" data-i18n="nav.home">Inicio</a>
-        <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="https://enjoyrestaurante.qrfy.do/#/categorias/191" data-i18n="nav.menu">Menú</a>
+        <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="eventos.html" data-i18n="nav.events">Eventos</a>
         <a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1" href="galeria.html" data-i18n="nav.gallery">Galería</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
         <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
-          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
-          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="English">EN</button>
         </div>
       </div>
 
       <div class="flex items-center gap-3 md:hidden">
         <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
-          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
-          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="English">EN</button>
         </div>
         <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
           <span class="material-symbols-outlined">menu</span>
@@ -57,7 +56,7 @@
     <div class="flex flex-col p-gutter gap-4">
       <a class="font-label-caps text-label-caps text-secondary" href="index.html" data-i18n="nav.home">Inicio</a>
       <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-      <a class="font-label-caps text-label-caps text-secondary" href="https://enjoyrestaurante.qrfy.do/#/categorias/191" data-i18n="nav.menu">Menú</a>
+      <a class="font-label-caps text-label-caps text-secondary" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
       <a class="font-label-caps text-label-caps text-secondary" href="eventos.html" data-i18n="nav.events">Eventos</a>
       <a class="font-label-caps text-label-caps text-primary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
       <a class="font-label-caps text-label-caps text-secondary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
@@ -84,8 +83,8 @@
     <button id="lightbox-prev" class="absolute left-4 md:left-8 text-white hover:text-primary-fixed transition-colors" data-i18n-aria="gallery.lightbox.prev">
       <span class="material-symbols-outlined text-4xl">chevron_left</span>
     </button>
-    <img id="lightbox-img" src="" alt="" class="hidden lightbox-img object-contain" />
-    <video id="lightbox-video" class="hidden lightbox-video object-contain" controls playsinline></video>
+    <img id="lightbox-img" src="" alt="" class="hidden lightbox-img object-contain rounded-xl" />
+    <video id="lightbox-video" class="hidden lightbox-video object-contain rounded-xl" controls playsinline></video>
     <button id="lightbox-next" class="absolute right-4 md:right-8 text-white hover:text-primary-fixed transition-colors" data-i18n-aria="gallery.lightbox.next">
       <span class="material-symbols-outlined text-4xl">chevron_right</span>
     </button>
@@ -106,10 +105,10 @@
         <h2 class="font-headline-md text-on-surface mb-4" data-i18n="newsletter.title">Únete a la Comunidad Enjoy</h2>
         <p class="font-body-md text-on-surface-variant max-w-xs mb-6" data-i18n="newsletter.body">Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.</p>
         <div class="flex items-center justify-center gap-4">
-          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-black transition-all">
             <span class="material-symbols-outlined text-2xl">camera</span>
           </a>
-          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-black transition-all">
             <span class="material-symbols-outlined text-2xl">public</span>
           </a>
         </div>
@@ -123,7 +122,7 @@
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
       <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="https://enjoyrestaurante.qrfy.do/#/categorias/191" data-i18n="nav.menu">Menú</a>
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="eventos.html" data-i18n="nav.events">Eventos</a>
     </div>
 
@@ -168,7 +167,7 @@
                  <span class="gallery-video-badge"><span class="material-symbols-outlined text-lg">play_arrow</span></span>`
               : `<img src="${src}" alt="${alt}" class="w-full h-auto" loading="lazy" />`;
             return `
-              <div class="gallery-item relative overflow-hidden break-inside-avoid cursor-pointer" data-index="${index}" tabindex="0" role="button" aria-label="${alt}">
+              <div class="gallery-item relative overflow-hidden break-inside-avoid cursor-pointer rounded-xl" data-index="${index}" tabindex="0" role="button" aria-label="${alt}">
                 ${media}
               </div>`;
           })

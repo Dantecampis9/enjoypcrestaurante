@@ -55,7 +55,13 @@
       "Bash(sort -u -t: -k2)",
       "Bash(where python *)",
       "Bash(py -3 --version)",
-      "Bash(curl -s -o /dev/null -w \"index.html: %{http_code}\\\\n\" http://localhost:8000/index.html)"
+      "Bash(curl -s -o /dev/null -w \"index.html: %{http_code}\\\\n\" http://localhost:8000/index.html)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8000/index.html)",
+      "Bash(curl -s -o /dev/null -w \"index: %{http_code}\\\\n\" http://localhost:8000/index.html)",
+      "Bash(curl -s -o /dev/null -w \"mikrotik: %{http_code}\\\\n\" http://localhost:8000/mikrotik/login.html)",
+      "Bash(node \"C:\\\\Users\\\\Laptop\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Laptop-Downloads-Proyectos-enjoypcrestaurante\\\\a1a430f4-4e95-4b86-8e74-3622451501e3\\\\scratchpad\\\\static-server.js\")",
+      "Bash(echo \"resultado búsqueda exhaustiva: $?\")"
     ],
     "additionalDirectories": [
       "\\tmp"

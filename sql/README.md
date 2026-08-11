@@ -40,7 +40,9 @@ Ve a **Settings → API** y copia dos cosas:
 
 ## 3. Crear las tablas
 
-Ve a **SQL Editor → New query**, pega el contenido de cada archivo y pulsa **Run**, en este orden:
+**Opción rápida (recomendada para proyecto nuevo):** ve a **SQL Editor → New query**, pega el contenido completo de `sql/instalacion-completa.sql` y pulsa **Run** una sola vez. Crea las 6 tablas, activa RLS, prepara Storage y carga los datos iniciales — todo en un solo script.
+
+**Opción paso a paso (para entender o auditar cada parte):** ejecuta estos 4 archivos por separado, en orden — es exactamente el mismo contenido que `instalacion-completa.sql`, dividido:
 
 1. `sql/01-schema.sql` — crea las tablas
 2. `sql/02-rls.sql` — **activa la seguridad** (no te lo saltes)

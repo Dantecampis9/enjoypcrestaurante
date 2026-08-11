@@ -71,15 +71,15 @@
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
         <a class="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
         <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
-          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
-          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="English">EN</button>
         </div>
       </div>
 
       <div class="flex items-center gap-3 md:hidden">
         <div class="flex items-center gap-1 border border-outline-variant rounded-full px-1 py-1">
-          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="Español">ES</button>
-          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-white transition-colors" aria-label="English">EN</button>
+          <button data-lang-toggle="es" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="Español">ES</button>
+          <button data-lang-toggle="en" class="px-2 py-0.5 text-xs font-label-caps rounded-full aria-pressed:bg-primary aria-pressed:text-black transition-colors" aria-label="English">EN</button>
         </div>
         <button id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="text-primary">
           <span class="material-symbols-outlined">menu</span>
@@ -142,9 +142,9 @@
             </a>
           </div>
         </div>
-        <div class="relative group overflow-hidden">
+        <div class="relative group overflow-hidden rounded-2xl">
           <div class="aspect-[4/5] bg-cover bg-center shadow-2xl transition-transform duration-700 group-hover:scale-105" style="background-image: url('img/platos/pasta-italiana.jpg')"></div>
-          <div class="absolute -bottom-6 -left-6 bg-tertiary-fixed p-8 hidden md:block">
+          <div class="absolute -bottom-6 -left-6 bg-tertiary-fixed p-8 rounded-xl hidden md:block">
             <p class="font-headline-sm italic text-on-tertiary-fixed-variant" data-i18n="welcome.quote">"Fresco. Local. Inolvidable."</p>
           </div>
         </div>
@@ -155,26 +155,26 @@
     <section class="py-section-gap px-gutter max-w-container-max mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
         <!-- Eventos de Hoy -->
-        <div class="md:col-span-8 relative overflow-hidden group">
+        <div class="md:col-span-8 relative overflow-hidden group rounded-2xl">
           <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('img/ambiente/musica-vivo.jpg')"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
           <div class="absolute bottom-0 left-0 p-10">
-            <div class="inline-block bg-primary text-white px-3 py-1 font-label-caps text-label-caps mb-4" data-i18n="bento.events.badge">HOY</div>
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full font-label-caps text-label-caps mb-4" data-i18n="bento.events.badge">HOY</div>
             <h3 class="font-headline-md text-white text-3xl mb-2" data-i18n="bento.events.title">Música en Vivo</h3>
             <p class="text-white/80 font-body-md mb-6 max-w-md" data-i18n="bento.events.body">Disfruta de música en vivo y coctelería de autor en nuestra terraza frente al jardín, todas las noches desde las 7:00 PM.</p>
-            <a href="eventos.html" class="inline-block bg-white text-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-white transition-colors" data-i18n="bento.events.cta">Ver Horarios</a>
+            <a href="eventos.html" class="inline-block bg-white text-primary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-primary hover:text-black transition-colors" data-i18n="bento.events.cta">Ver Horarios</a>
           </div>
         </div>
 
         <!-- Reservations Small -->
-        <div class="md:col-span-4 bg-primary text-white p-10 flex flex-col justify-end">
+        <div class="md:col-span-4 bg-primary text-black p-10 flex flex-col justify-end rounded-2xl">
           <h4 class="font-headline-sm mb-2" data-i18n="bento.reserve.title">Llámanos</h4>
-          <p class="font-body-md text-white/80 mb-6" data-i18n="bento.reserve.body">Asegura tu lugar en la mejor terraza de Los Corales.</p>
-          <a class="font-label-caps text-label-caps border-b border-white self-start pb-1 hover:opacity-70" href="contacto.html" data-i18n="bento.reserve.cta">Ver Contacto</a>
+          <p class="font-body-md text-black/70 mb-6" data-i18n="bento.reserve.body">Asegura tu lugar en la mejor terraza de Los Corales.</p>
+          <a class="font-label-caps text-label-caps border-b border-black self-start pb-1 hover:opacity-70" href="contacto.html" data-i18n="bento.reserve.cta">Ver Contacto</a>
         </div>
 
         <!-- Gallery Small -->
-        <a href="galeria.html" class="md:col-span-8 relative group overflow-hidden block">
+        <a href="galeria.html" class="md:col-span-8 relative group overflow-hidden block rounded-2xl">
           <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('img/platos/coctel-verde.jpg')"></div>
           <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
         </a>
@@ -198,10 +198,10 @@
         <h2 class="font-headline-md text-on-surface mb-4" data-i18n="newsletter.title">Únete a la Comunidad Enjoy</h2>
         <p class="font-body-md text-on-surface-variant max-w-xs mb-6" data-i18n="newsletter.body">Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.</p>
         <div class="flex items-center justify-center gap-4">
-          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-black transition-all">
             <span class="material-symbols-outlined text-2xl">camera</span>
           </a>
-          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all">
+          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary hover:text-black transition-all">
             <span class="material-symbols-outlined text-2xl">public</span>
           </a>
         </div>

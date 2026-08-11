@@ -275,7 +275,7 @@
             ${esc(cat.label_es)}
             <span class="font-body-md text-on-surface-variant">(${items.length})</span>
           </h3>
-          <div class="bg-surface shadow-sm divide-y divide-outline-variant">${filas}</div>
+          <div class="bg-surface shadow-sm divide-y divide-outline-variant rounded-xl overflow-hidden">${filas}</div>
         </div>`;
     }).join("");
 
@@ -293,7 +293,7 @@
 
     return `
       <div class="p-4 flex items-center gap-4 ${p.activo ? "" : "opacity-50"}">
-        <div class="w-16 h-16 bg-cover bg-center bg-surface-container shrink-0" style="background-image:url('${esc(p.img)}')"></div>
+        <div class="w-16 h-16 bg-cover bg-center bg-surface-container shrink-0 rounded-lg" style="background-image:url('${esc(p.img)}')"></div>
         <div class="min-w-0 flex-1">
           <div class="flex items-baseline gap-2 flex-wrap">
             <span class="font-headline-sm text-on-surface">${esc(p.nombre_es)}</span>
@@ -322,8 +322,8 @@
     cont.innerHTML = DIAS.map((nombreDia, idx) => {
       const delDia = eventos.filter((e) => e.dia === idx);
       const cuerpo = delDia.length
-        ? `<div class="bg-surface shadow-sm divide-y divide-outline-variant">${delDia.map(filaEvento).join("")}</div>`
-        : `<div class="bg-surface shadow-sm p-4 flex items-center justify-between gap-4">
+        ? `<div class="bg-surface shadow-sm divide-y divide-outline-variant rounded-xl overflow-hidden">${delDia.map(filaEvento).join("")}</div>`
+        : `<div class="bg-surface shadow-sm p-4 flex items-center justify-between gap-4 rounded-xl">
              <span class="font-body-md text-on-surface-variant">Sin eventos este día</span>
              <button data-new-event-day="${idx}" class="font-label-caps text-label-caps text-primary hover:underline">+ Añadir</button>
            </div>`;
@@ -343,7 +343,7 @@
     const cruzaMedianoche = hhmm(e.hora_fin) <= hhmm(e.hora_inicio);
     return `
       <div class="p-4 flex items-center gap-4 ${e.activo ? "" : "opacity-50"}">
-        <div class="w-16 h-16 bg-cover bg-center bg-surface-container shrink-0" style="background-image:url('${esc(e.img)}')"></div>
+        <div class="w-16 h-16 bg-cover bg-center bg-surface-container shrink-0 rounded-lg" style="background-image:url('${esc(e.img)}')"></div>
         <div class="min-w-0 flex-1">
           <div class="flex items-baseline gap-2 flex-wrap">
             <span class="font-headline-sm text-on-surface">${esc(e.nombre_es)}</span>
@@ -391,7 +391,7 @@
       : `<div class="w-full h-full bg-cover bg-center" style="background-image:url('${esc(g.archivo)}')"></div>`;
 
     return `
-      <div class="bg-surface shadow-sm overflow-hidden ${g.activo ? "" : "opacity-50"}">
+      <div class="bg-surface shadow-sm overflow-hidden rounded-xl ${g.activo ? "" : "opacity-50"}">
         <div class="relative w-full aspect-square bg-surface-container">${miniatura}</div>
         <div class="p-3">
           <p class="font-body-md text-sm text-on-surface truncate">${g.alt_es ? esc(g.alt_es) : "<i class='text-on-surface-variant'>(sin descripción)</i>"}</p>
@@ -498,7 +498,7 @@
       <div>
         <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Imagen</label>
         <div class="flex items-center gap-3 mb-2">
-          <div id="img-preview" class="w-20 h-20 bg-cover bg-center bg-surface-container shrink-0" style="background-image:url('${esc(valorActual)}')"></div>
+          <div id="img-preview" class="w-20 h-20 bg-cover bg-center bg-surface-container shrink-0 rounded-lg" style="background-image:url('${esc(valorActual)}')"></div>
           <input id="f-img-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif"
                  class="font-body-md text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-4 file:border-0 file:font-label-caps file:text-label-caps file:bg-primary file:text-on-primary" />
         </div>
@@ -516,7 +516,7 @@
       <div>
         <label class="font-label-caps text-label-caps text-on-surface-variant block mb-1">Foto o video</label>
         <div class="flex items-center gap-3 mb-2">
-          <div class="w-24 h-24 bg-surface-container shrink-0 overflow-hidden relative">
+          <div class="w-24 h-24 bg-surface-container shrink-0 overflow-hidden relative rounded-lg">
             <div id="media-preview-img" class="w-full h-full bg-cover bg-center ${esVideo ? "hidden" : ""}" style="background-image:url('${esc(archivoActual)}')"></div>
             <video id="media-preview-video" class="w-full h-full object-cover ${esVideo ? "" : "hidden"}" src="${esc(archivoActual)}" muted playsinline preload="metadata"></video>
           </div>

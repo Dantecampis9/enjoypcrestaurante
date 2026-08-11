@@ -94,9 +94,9 @@ body {
 }
 
 .lang-btn.active {
-  background-color: #9f3d04;
-  border-color: #9f3d04;
-  color: #ffffff;
+  background-color: #ea3e70;
+  border-color: #ea3e70;
+  color: #000000;
 }
 
 .title {
@@ -104,7 +104,7 @@ body {
   font-size: 28px;
   line-height: 1.25;
   font-weight: 700;
-  color: #9f3d04;
+  color: #ea3e70;
   margin: 0 0 12px;
 }
 
@@ -134,8 +134,8 @@ body {
 }
 
 .field input:focus {
-  border-color: #9f3d04;
-  box-shadow: 0 0 0 2px rgba(159, 61, 4, 0.25);
+  border-color: #ea3e70;
+  box-shadow: 0 0 0 2px rgba(234, 62, 112, 0.25);
 }
 
 .error-text {
@@ -162,8 +162,8 @@ body {
 
 .btn-accept {
   width: 100%;
-  background-color: #9f3d04;
-  color: #ffffff;
+  background-color: #ea3e70;
+  color: #000000;
   border: none;
   border-radius: 8px;
   padding: 16px;
@@ -178,7 +178,7 @@ body {
 }
 
 .btn-accept:hover {
-  background-color: #c0541e;
+  background-color: #af2f54;
 }
 
 .btn-accept:disabled {
@@ -197,10 +197,10 @@ body {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #436083;
+  color: #5f8755;
   text-decoration: none;
 }
 
 .terms a:hover {
-  color: #9f3d04;
+  color: #ea3e70;
 }
