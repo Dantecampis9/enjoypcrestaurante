@@ -103,28 +103,16 @@
   </div>
 
   <main>
-    <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 z-0">
-        <!-- El video es panoramico (1920x1010, ~1.9:1). El cambio se decide por PROPORCION de
-             pantalla, no por ancho: asi el iPad en vertical (768px de ancho pero formato alto)
-             se comporta como un movil y no como escritorio.
-             - Pantalla apaisada (>=16/10): el video cubre todo el hero.
-             - Pantalla vertical: el video se muestra entero y estas bandas oscuras rellenan. -->
-        <div class="absolute inset-0 bg-gradient-to-b from-on-background via-inverse-surface to-on-background [@media(min-aspect-ratio:16/10)]:hidden"></div>
-        <video class="relative w-full h-full object-contain [@media(min-aspect-ratio:16/10)]:object-cover md:transition-transform md:duration-[10000ms] md:hover:scale-110" autoplay muted loop playsinline preload="auto" poster="img/ambiente/hero-promo-poster.jpg">
-          <source src="img/ambiente/hero-promo-web.mp4" type="video/mp4" />
-        </video>
-        <div class="absolute inset-0 bg-black/30"></div>
-      </div>
-      <div class="relative z-10 text-center px-gutter max-w-4xl">
-        
-        </div>
-      </div>
-      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-white flex flex-col items-center animate-bounce">
-        <!--<span class="material-symbols-outlined">expand_more</span>-->
-      </div>
-    </section>
+    <!-- El video es panorámico (1920x1010, ~1.9:1). Se muestra a su proporción
+         natural (sin forzar h-screen ni fondo de relleno detrás) para que se
+         vea siempre completo y nunca tape el contenido de la sección siguiente.
+         pt-16 empuja el video debajo del nav fijo (64px de alto) en vez de
+         dejar que lo tape por arriba. -->
+    <div class="relative w-full overflow-hidden pt-16">
+      <video class="w-full h-auto block md:transition-transform md:duration-[10000ms] md:hover:scale-110" autoplay muted loop playsinline preload="auto" poster="img/ambiente/hero-promo-poster.jpg">
+        <source src="img/ambiente/hero-promo-web.mp4" type="video/mp4" />
+      </video>
+    </div>
 
     <!-- Welcome Message Section -->
     <section id="experiencia" class="py-section-gap px-gutter max-w-container-max mx-auto bg-surface">
