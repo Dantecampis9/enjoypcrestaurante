@@ -18,8 +18,8 @@ const BUSINESS = {
     mapsQuery: "Enjoy+PC+Restaurante+Los+Corales+Bavaro+Punta+Cana",
   },
   hours: {
-    es: "Todos los días, 7:00 AM – 10:00 PM",
-    en: "Daily, 7:00 AM – 10:00 PM",
+    es: "Todos los días, 7:00 AM – 11:00 PM",
+    en: "Daily, 7:00 AM – 11:00 PM",
   },
   priceRange: "$$-$$$",
   rating: {
