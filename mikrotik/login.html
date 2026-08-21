@@ -14,8 +14,11 @@
   2. El dominio de Supabase debe estar en el Walled Garden, o el fetch()
      de abajo nunca podrá completarse (el dispositivo no tiene internet
      hasta que este formulario lo autentica).
-  3. Subir junto a este archivo: style.css, banner.jpg y la carpeta fonts/
-     (todo dentro de esta misma carpeta mikrotik/).
+  3. Subir junto a este archivo: md5.js, style.css, banner.jpg y la
+     carpeta fonts/ (todo dentro de esta misma carpeta mikrotik/).
+     md5.js NO es opcional si el servidor Hotspot usa CHAP (el modo
+     por defecto de RouterOS) — sin él, el router rechaza el login con
+     "web browser did not send challenge response".
 
   Nombre/correo son solo para captura de contactos (marketing) — la
   variable que de verdad concede la red es el username "T-$(mac-esc)"
@@ -27,6 +30,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enjoy Punta Cana | WiFi</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="md5.js"></script>
 </head>
 <body>
 
@@ -58,6 +62,15 @@
              visitante a la página que intentaba abrir originalmente. -->
         <input type="hidden" name="popup" value="$(popup)" />
         <input type="hidden" name="username" value="T-$(mac-esc)" />
+        $(if chap-id)
+        <!-- Solo existe si el servidor Hotspot usa autenticación CHAP
+             (el modo por defecto de RouterOS). El script de abajo calcula
+             su valor: MD5(chap-id + password + chap-challenge), con
+             password vacío porque este es un login Trial. Sin este campo,
+             MikroTik responde "web browser did not send challenge
+             response" y nunca concede la red. -->
+        <input type="hidden" name="password" value="" id="chap-password" />
+        $(endif)
       </form>
 
       <!-- Formulario visible: solo captura nombre/correo/teléfono para la
@@ -84,6 +97,20 @@
 
   <script>
     (function () {
+      // ---------------------------------------------------------------
+      // Respuesta CHAP para MikroTik RouterOS. $(chap-id) y
+      // $(chap-challenge) los sustituye el propio router al servir esta
+      // página (quedan vacíos si el servidor usa PAP en vez de CHAP, que
+      // es el otro modo posible — entonces no hace falta nada de esto).
+      // Debe ejecutarse ANTES de que se envíe #hotspot-form.
+      // ---------------------------------------------------------------
+      var chapId = "$(chap-id)";
+      var chapChallenge = "$(chap-challenge)";
+      var chapPasswordField = document.getElementById("chap-password");
+      if (chapChallenge && chapPasswordField && typeof hexMD5 === "function") {
+        chapPasswordField.value = hexMD5(chapId + chapChallenge); // password vacío: login Trial
+      }
+
       // ---------------------------------------------------------------
       // Idioma ES/EN — independiente del sitio principal a propósito:
       // esta página la sirve el router desde su propia carpeta, sin
@@ -168,7 +195,7 @@
       // secreto, ver sql/README.md del proyecto principal.
       var SUPABASE_URL = "https://buxkahmxaubgygsbreze.supabase.co";
       var SUPABASE_ANON_KEY = "sb_publishable_Ye6rfsrZxf9q7xLqwuP-CA_PQfBwSeS";
-      var SAVE_TIMEOUT_MS = 2500; // corto a propósito: nunca debe demorar el acceso a la red
+      var SAVE_TIMEOUT_MS = 3000; // corto a propósito: nunca debe demorar el acceso a la red
 
       function isValidEmail(v) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -200,12 +227,20 @@
             // tiene) y el guardado fallaría. Ver sql/02-rls.sql.
             Prefer: "return=minimal",
           },
-          body: JSON.stringify({ nombre: nombre, email: email, telefono: telefono, origen: "mikrotik-hotspot" }),
+          body: JSON.stringify({
+            nombre: nombre,
+            email: email,
+            telefono: telefono,
+            origen: "mikrotik-hotspot",
+            mac: "$(mac-esc)",
+            timestamp: new Date().toISOString(),
+          }),
           signal: controller.signal,
-        }).catch(function () {
+        }).catch(function (err) {
           // Si Supabase no es alcanzable (walled garden mal puesto, sin
           // internet en el router, proyecto pausado), no pasa nada: el
           // visitante igual debe poder conectarse al WiFi.
+          console.warn("No se pudo guardar el contacto en Supabase (no afecta el acceso al WiFi):", err);
         }).finally(function () {
           clearTimeout(timer);
         });

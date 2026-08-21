@@ -163,6 +163,8 @@ create table public.leads (
              ),
   idioma     text check (idioma in ('es','en')),
   origen     text check (char_length(origen) <= 120),   -- p.ej. "menu.html", "mikrotik-hotspot"
+  mac        text,                                      -- MAC del dispositivo (solo origen mikrotik-hotspot)
+  "timestamp" timestamptz,                               -- hora del navegador al enviar (distinta de created_at, que es la del servidor)
   created_at timestamptz not null default now()
 );
 

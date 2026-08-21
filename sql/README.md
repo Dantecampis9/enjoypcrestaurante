@@ -4,7 +4,7 @@ Guía para conectar el sitio a Supabase. Se hace **una sola vez**, en orden.
 
 Al terminar tendrás: login real en `admin.html`, menú, eventos y galería (fotos y video) editables desde el navegador, y los correos de los suscriptores guardándose de verdad.
 
-> **¿Ya tienes un proyecto Supabase montado con una versión anterior de este sitio?** Los pasos 1-6 de abajo son para una instalación **desde cero**. Si ya corriste `01-04` antes, en vez de repetirlos ejecuta solo las migraciones nuevas que falten, en orden: `sql/05-add-phone.sql` (teléfono en suscriptores) y `sql/06-add-gallery.sql` (galería con fotos y video). Cada una es idempotente — no duplica nada si ya la corriste.
+> **¿Ya tienes un proyecto Supabase montado con una versión anterior de este sitio?** Los pasos 1-6 de abajo son para una instalación **desde cero**. Si ya corriste `01-04` antes, en vez de repetirlos ejecuta solo las migraciones nuevas que falten, en orden: `sql/05-add-phone.sql` (teléfono en suscriptores), `sql/06-add-gallery.sql` (galería con fotos y video) y `sql/07-add-mikrotik-metadata.sql` (MAC y hora del navegador en los contactos del portal WiFi). Cada una es idempotente — no duplica nada si ya la corriste.
 
 ---
 

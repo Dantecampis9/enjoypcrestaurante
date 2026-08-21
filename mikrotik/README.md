@@ -4,7 +4,7 @@ Página de login del Hotspot de MikroTik: pide nombre, correo y teléfono antes 
 
 **Esto NO es parte del sitio web.** Vive en el router, no en tu hosting. Nadie llega a este archivo por una URL normal — el MikroTik lo sirve automáticamente cuando un dispositivo se conecta al WiFi y todavía no está autenticado.
 
-> ⚠️ **Si ya habías montado Supabase antes** (siguiendo `sql/README.md` del proyecto principal), necesitas ejecutar **`sql/05-add-phone.sql`** una vez en el SQL Editor de Supabase — añade la columna `telefono` a la tabla `leads` que no existía cuando se creó el proyecto por primera vez. Si vas a montar Supabase desde cero, ignora esto: `01-schema.sql` y `02-rls.sql` ya incluyen el teléfono desde el principio.
+> ⚠️ **Si ya habías montado Supabase antes** (siguiendo `sql/README.md` del proyecto principal), necesitas ejecutar **`sql/05-add-phone.sql`** y **`sql/07-add-mikrotik-metadata.sql`** una vez en el SQL Editor de Supabase — añaden, respectivamente, la columna `telefono` y las columnas `mac`/`timestamp` a la tabla `leads`, que no existían cuando se creó el proyecto por primera vez. Si vas a montar Supabase desde cero, ignora esto: `01-schema.sql` y `02-rls.sql` ya incluyen las tres desde el principio.
 
 ---
 
@@ -13,6 +13,7 @@ Página de login del Hotspot de MikroTik: pide nombre, correo y teléfono antes 
 Hay **dos formularios** en `login.html`, y es importante no confundirlos:
 
 1. **Formulario oculto** (`name="sendin"`) — es el que MikroTik reconoce. Envía `username = T-$(mac-esc)`, la convención estándar de RouterOS para un login de tipo **Trial**: acceso libre, sin usuario/contraseña reales. Este es el que de verdad abre la red.
+   - Si el servidor Hotspot usa **CHAP** (el modo por defecto de RouterOS), el formulario también necesita un campo `password` con la respuesta CHAP: `MD5(chap-id + password + chap-challenge)`, con `password` vacío por ser un login Trial. `login.html` lo calcula solo con `md5.js` — por eso ese archivo tiene que subirse junto a los demás (ver más abajo). `$(chap-id)` y `$(chap-challenge)` los rellena el propio router al servir la página; si el servidor usa PAP en vez de CHAP, quedan vacíos y el campo `password` ni se genera (`$(if chap-id)…$(endif)`).
 2. **Formulario visible** (Nombre / Correo / Teléfono) — solo captura contactos para tu base de datos. No tiene ningún poder de conceder red por sí mismo.
 
 Al pulsar **"Aceptar y Continuar"**: se valida nombre/correo/teléfono → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://enjoypcrestaurante.com/`.
@@ -62,11 +63,14 @@ Sube **toda la carpeta `mikrotik/`** (no solo `login.html`) a la carpeta del ski
 
 ```text
 /hotspot/login.html
+/hotspot/md5.js
 /hotspot/style.css
 /hotspot/banner.jpg
 /hotspot/fonts/playfair-display.woff2
 /hotspot/fonts/hanken-grotesk.woff2
 ```
+
+> ⚠️ **`md5.js` no es opcional.** Si el servidor Hotspot usa autenticación CHAP (el modo por defecto de RouterOS), `login.html` necesita ese archivo para calcular la respuesta que el router exige. Si falta, o quedó en otra ruta, el router rechaza el login con `web browser did not send challenge response` — aunque el resto de la página se vea perfecta.
 
 Si tu servidor Hotspot usa un skin con otro nombre de carpeta (no `hotspot` a secas), copia estos archivos dentro de esa carpeta en vez de crear una nueva.
 
@@ -92,6 +96,7 @@ En `login.html`, busca:
 6. Entra al panel de administración del sitio (`admin.html`) → pestaña **Suscriptores** → el contacto debe aparecer con `origen = mikrotik-hotspot`.
 7. **Idioma:** con el navegador/teléfono en inglés, la página debe abrir en inglés automáticamente. Pulsa **ES/EN** arriba del título → todo el texto (título, subtítulo, placeholders, botón, error, términos) debe cambiar de idioma al instante.
 8. **Prueba de resiliencia:** quita temporalmente la regla del Walled Garden (paso 3) y repite el paso 5 — debe seguir concediendo WiFi igual (solo que sin guardar el contacto). Vuelve a añadir la regla al terminar la prueba.
+9. **CHAP (si tu servidor Hotspot lo usa, el modo por defecto):** abre las DevTools del navegador (F12) → pestaña **Network** antes de pulsar "Aceptar y Continuar" → confirma que `md5.js` cargó con estado `200`. Si no aparece o da `404`, revisa que se subió junto a `login.html` (ver "Subir los archivos" arriba).
 
 ---
 
@@ -102,6 +107,7 @@ En `login.html`, busca:
 | La página no aparece al conectar al WiFi | El servidor Hotspot no está activo en esa interfaz, o el dispositivo ya estaba autenticado antes |
 | Se ve sin estilos (texto plano) | `style.css`, `banner.jpg` o la carpeta `fonts/` no se subieron junto a `login.html`, o quedaron en una ruta distinta |
 | Aparece `$(error)` en un recuadro rojo | Es un error real de RouterOS (ver el mensaje) — normalmente credenciales Trial mal configuradas o sesión ya activa |
+| `web browser did not send challenge response (try again, enable JavaScript)` | Falta `md5.js` en el router (no se subió, o quedó en otra ruta), o el visitante tiene JavaScript deshabilitado — sin eso no se puede calcular la respuesta CHAP que el servidor Hotspot exige |
 | Nunca concede la red tras pulsar el botón | El perfil de usuario del Hotspot no tiene Trial habilitado (paso 2) |
-| El botón se queda 2.5s en "Conectando…" siempre | Normal si Supabase no está en el Walled Garden (paso 3): agota el tiempo de espera y continúa igual |
+| El botón se queda 3s en "Conectando…" siempre | Normal si Supabase no está en el Walled Garden (paso 3): agota el tiempo de espera y continúa igual |
 | No llegan contactos a la pestaña Suscriptores | Revisa el Walled Garden (paso 3); confirma con la prueba del navegador: `fetch("https://buxkahmxaubgygsbreze.supabase.co/rest/v1/leads", {headers:{apikey:"..."}})` desde un dispositivo ya conectado |
