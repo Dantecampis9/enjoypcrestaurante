@@ -14,10 +14,13 @@
   2. El dominio de Supabase debe estar en el Walled Garden, o el fetch()
      de abajo nunca podrá completarse (el dispositivo no tiene internet
      hasta que este formulario lo autentica).
-  3. Subir junto a este archivo: md5.js, style.css, banner.jpg y la
-     carpeta fonts/ (todo dentro de esta misma carpeta mikrotik/).
-     md5.js NO es opcional si el servidor Hotspot usa CHAP (el modo
-     por defecto de RouterOS) — sin él, el router rechaza el login con
+  3. Subir junto a este archivo: style.css, banner.jpg y la carpeta
+     fonts/ (todo dentro de esta misma carpeta mikrotik/).
+  4. Este archivo asume que el servidor Hotspot NO usa CHAP como método
+     de login (confirmado: "HTTP CHAP" desmarcado en Server Profiles,
+     solo Cookie + Trial activos) — por eso no incluye md5.js ni el
+     campo $(chap-id). Si algún día se activa CHAP en el router, hay
+     que volver a añadir ese soporte o el login fallará con
      "web browser did not send challenge response".
 
   Nombre/correo son solo para captura de contactos (marketing) — la
@@ -30,7 +33,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enjoy Punta Cana | WiFi</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="md5.js"></script>
 </head>
 <body>
 
@@ -43,7 +45,7 @@
         <button type="button" data-lang="en" class="lang-btn">EN</button>
       </div>
 
-      <h1 class="title" data-i18n="title">Bienvenido a Enjoy Punta Cana</h1>
+      <h1 class="title" data-i18n="title">Enjoy PC / Corales Pizzeria Cigar, Sushi y Lounge</h1>
       <p class="subtitle" data-i18n="subtitle">Sumérgete en una experiencia donde el lujo se encuentra con la esencia del Caribe. Déjanos tus datos para conectarte al WiFi.</p>
 
       $(if error)
@@ -63,28 +65,19 @@
              visitante a la página que intentaba abrir originalmente. -->
         <input type="hidden" name="popup" value="$(popup)" />
         <input type="hidden" name="username" value="T-$(mac-esc)" />
-        $(if chap-id)
-        <!-- Solo existe si el servidor Hotspot usa autenticación CHAP
-             (el modo por defecto de RouterOS). El script de abajo calcula
-             su valor: MD5(chap-id + password + chap-challenge), con
-             password vacío porque este es un login Trial. Sin este campo,
-             MikroTik responde "web browser did not send challenge
-             response" y nunca concede la red. -->
-        <input type="hidden" name="password" value="" id="chap-password" />
-        $(endif)
       </form>
 
       <!-- Formulario visible: solo captura nombre/correo/teléfono para la
            base de contactos del restaurante. No autentica nada por sí mismo. -->
       <form id="lead-form" novalidate>
         <div class="field">
-          <input id="lead-name" name="name" type="text" data-i18n-placeholder="namePlaceholder" placeholder="Nombre completo" autocomplete="name" required />
+          <input id="lead-name" name="name" type="text" data-i18n-placeholder="namePlaceholder" placeholder="Nombre completo" autocomplete="name" maxlength="120" required />
         </div>
         <div class="field">
-          <input id="lead-email" name="email" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="Correo electrónico" autocomplete="email" required />
+          <input id="lead-email" name="email" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="Correo electrónico" autocomplete="email" maxlength="255" required />
         </div>
         <div class="field">
-          <input id="lead-phone" name="phone" type="tel" data-i18n-placeholder="phonePlaceholder" placeholder="Número de teléfono" autocomplete="tel" required />
+          <input id="lead-phone" name="phone" type="tel" inputmode="tel" data-i18n-placeholder="phonePlaceholder" placeholder="Número de teléfono" autocomplete="tel" maxlength="20" required />
         </div>
         <p id="lead-error" class="error-text" data-i18n="formError">Ingresa tu nombre, un correo y un teléfono válidos.</p>
         <button type="submit" id="lead-submit" class="btn-accept" data-i18n="accept">Aceptar y Continuar</button>
@@ -99,20 +92,6 @@
   <script>
     (function () {
       // ---------------------------------------------------------------
-      // Respuesta CHAP para MikroTik RouterOS. $(chap-id) y
-      // $(chap-challenge) los sustituye el propio router al servir esta
-      // página (quedan vacíos si el servidor usa PAP en vez de CHAP, que
-      // es el otro modo posible — entonces no hace falta nada de esto).
-      // Debe ejecutarse ANTES de que se envíe #hotspot-form.
-      // ---------------------------------------------------------------
-      var chapId = "$(chap-id)";
-      var chapChallenge = "$(chap-challenge)";
-      var chapPasswordField = document.getElementById("chap-password");
-      if (chapChallenge && chapPasswordField && typeof hexMD5 === "function") {
-        chapPasswordField.value = hexMD5(chapId + chapChallenge); // password vacío: login Trial
-      }
-
-      // ---------------------------------------------------------------
       // Idioma ES/EN — independiente del sitio principal a propósito:
       // esta página la sirve el router desde su propia carpeta, sin
       // acceso a js/i18n.js del sitio (el visitante ni siquiera tiene
@@ -120,7 +99,7 @@
       // ---------------------------------------------------------------
       var DICT = {
         es: {
-          title: "Bienvenido a Enjoy Punta Cana",
+          title: "Enjoy PC / Corales Pizzeria Cigar, Sushi y Lounge",
           subtitle: "Sumérgete en una experiencia donde el lujo se encuentra con la esencia del Caribe. Déjanos tus datos para conectarte al WiFi.",
           errorLabel: "Error",
           namePlaceholder: "Nombre completo",
@@ -132,7 +111,7 @@
           terms: "Términos y Condiciones",
         },
         en: {
-          title: "Welcome to Enjoy Punta Cana",
+          title: "Enjoy PC / Corales Pizzeria Cigar, Sushi & Lounge",
           subtitle: "Immerse yourself in an experience where luxury meets the essence of the Caribbean. Leave us your details to connect to WiFi.",
           errorLabel: "Error",
           namePlaceholder: "Full name",
@@ -198,17 +177,58 @@
       var SUPABASE_ANON_KEY = "sb_publishable_Ye6rfsrZxf9q7xLqwuP-CA_PQfBwSeS";
       var SAVE_TIMEOUT_MS = 3000; // corto a propósito: nunca debe demorar el acceso a la red
 
-      function isValidEmail(v) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      // Letras (incluye acentos/ñ), espacios, apóstrofe y guion — mismo
+      // conjunto que se filtra en vivo en #lead-name más abajo.
+      // OJO: "À-ÖØ-öø-ÿ" (no "À-ÿ" de un tirón) porque el rango Latin-1
+      // completo cuela de colado los símbolos × (U+00D7) y ÷ (U+00F7),
+      // que caen justo entre letras acentuadas y no son letras.
+      var NAME_LETTERS = "A-Za-zÀ-ÖØ-öø-ÿĀ-ſ";
+      var NAME_CHARS = NAME_LETTERS + "\\s'-";
+      var NAME_DISALLOWED_RE = new RegExp("[^" + NAME_CHARS + "]", "g");
+
+      function isValidName(v) {
+        var trimmed = v.trim();
+        if (trimmed.length < 2 || trimmed.length > 120) return false;
+        if (!new RegExp("^[" + NAME_CHARS + "]+$").test(trimmed)) return false;
+        // Al menos una letra real: rechaza "- -" o "'''" como nombre.
+        return new RegExp("[" + NAME_LETTERS + "]").test(trimmed);
       }
 
+      function isValidEmail(v) {
+        var trimmed = v.trim();
+        if (trimmed.length > 255) return false;
+        if (trimmed.indexOf("..") !== -1) return false;
+        // local@dominio.tld — sin espacios, TLD de al menos 2 letras.
+        return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,24}$/.test(trimmed);
+      }
+
+      // Dígitos, espacios, +, -, ( ) — con o sin código de país. Mismo
+      // conjunto que se filtra en vivo en #lead-phone más abajo.
+      var PHONE_DISALLOWED_RE = /[^0-9+()\s-]/g;
+
       function isValidPhone(v) {
-        // Acepta dígitos, espacios, +, -, ( ) — con o sin código de país.
+        var trimmed = v.trim();
         // Valida solo por cantidad de dígitos (7 a 15, rango internacional
         // razonable), no por un formato dominicano específico.
-        if (!/^[0-9+()\s-]+$/.test(v)) return false;
-        var digits = v.replace(/\D/g, "");
+        if (!/^[0-9+()\s-]+$/.test(trimmed)) return false;
+        var digits = trimmed.replace(/\D/g, "");
         return digits.length >= 7 && digits.length <= 15;
+      }
+
+      // Elimina en tiempo real cualquier carácter fuera del conjunto
+      // permitido, sin dejar que el cursor salte al final del campo.
+      function restrictInput(el, disallowedRe) {
+        el.addEventListener("input", function () {
+          var start = el.selectionStart;
+          var before = el.value;
+          var after = before.replace(disallowedRe, "");
+          if (before !== after) {
+            var diff = before.length - after.length;
+            el.value = after;
+            var pos = Math.max(0, (start || 0) - diff);
+            el.setSelectionRange(pos, pos);
+          }
+        });
       }
 
       function saveLead(nombre, email, telefono) {

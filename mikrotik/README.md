@@ -13,7 +13,7 @@ Página de login del Hotspot de MikroTik: pide nombre, correo y teléfono antes 
 Hay **dos formularios** en `login.html`, y es importante no confundirlos:
 
 1. **Formulario oculto** (`name="sendin"`) — es el que MikroTik reconoce. Envía `username = T-$(mac-esc)`, la convención estándar de RouterOS para un login de tipo **Trial**: acceso libre, sin usuario/contraseña reales. Este es el que de verdad abre la red.
-   - Si el servidor Hotspot usa **CHAP** (el modo por defecto de RouterOS), el formulario también necesita un campo `password` con la respuesta CHAP: `MD5(chap-id + password + chap-challenge)`, con `password` vacío por ser un login Trial. `login.html` lo calcula solo con `md5.js` — por eso ese archivo tiene que subirse junto a los demás (ver más abajo). `$(chap-id)` y `$(chap-challenge)` los rellena el propio router al servir la página; si el servidor usa PAP en vez de CHAP, quedan vacíos y el campo `password` ni se genera (`$(if chap-id)…$(endif)`).
+   - Este archivo asume que el servidor Hotspot **no** usa CHAP (confirmado en Server Profiles: "HTTP CHAP" desmarcado, solo Cookie + Trial activos), así que no incluye `md5.js` ni el campo `$(chap-id)`. Si algún día se activa CHAP en el router, hay que volver a añadir ese soporte (un script que calcule `MD5(chap-id + password + chap-challenge)`) o el login fallará con `web browser did not send challenge response`.
 2. **Formulario visible** (Nombre / Correo / Teléfono) — solo captura contactos para tu base de datos. No tiene ningún poder de conceder red por sí mismo.
 
 Al pulsar **"Aceptar y Continuar"**: se valida nombre/correo/teléfono → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://dantecampis9.github.io/enjoypcrestaurante/`.
@@ -34,16 +34,36 @@ En Winbox o terminal:
 
 Las variables de plantilla usadas aquí (`$(link-login-only)`, `$(mac-esc)`, `$(popup)`, `$(error)`) son las clásicas del módulo Hotspot y funcionan igual en v6 y v7. Si tu router corre v7, no necesitas cambiar nada de este archivo.
 
-### 2. Habilitar el login "Trial" en el perfil de usuario del Hotspot
+### 2. Habilitar "Trial" en el Server Profile del Hotspot (no en el User Profile)
 
-**IP → Hotspot → User Profiles** → abre el perfil que usa tu servidor Hotspot → pestaña donde configuras el Trial:
+⚠️ **Corrección importante:** una versión anterior de este README decía que `trial-uptime-limit` se configura en **IP → Hotspot → User Profiles**. Es un error — esa propiedad vive en el **Server Profile** (`/ip hotspot profile`), no en el User Profile. `shared-users` sí es del User Profile; son menús distintos.
+
+Primero confirma **cuál Server Profile usa tu servidor Hotspot real** (si tienes varios, como `hsprof1` y `default`, solo uno está activo):
+
+```text
+/ip hotspot print
+```
+
+Esto muestra la columna `profile=...` del hotspot activo. Edita **ese** perfil, no el que no se usa:
+
+**IP → Hotspot → Server Profiles → (tu perfil) → pestaña "Login"**:
+
+- **Login By**: marca **Trial** (y deja **Cookie** si ya lo tenías — sirve para que un visitante que vuelve no tenga que rellenar el formulario otra vez). **No marques HTTP CHAP** a menos que subas de nuevo `md5.js` y el soporte para CHAP que se quitó de `login.html` (ver nota en "Cómo funciona" arriba).
+- **Trial Uptime Limit**: cuánto dura el acceso gratis antes de tener que aceptar de nuevo (ej. `30m` o `1h`).
+- **Trial Uptime Reset**: cada cuánto se reinicia el contador por MAC (ej. `1d`).
+- **Trial User Profile**: qué User Profile (límites de velocidad, sesión, etc.) aplica a los usuarios Trial — normalmente `default`.
+
+Por terminal, sobre el perfil correcto (reemplaza `"default"` por el nombre real que confirmaste con `/ip hotspot print`):
+
+```text
+/ip hotspot profile set [find name="default"] login-by=trial,cookie trial-uptime-limit=30m trial-uptime-reset=1d trial-user-profile=default
+```
+
+Aparte, en **IP → Hotspot → User Profiles** (menú distinto) puedes ajustar cuántas sesiones simultáneas permite una misma cuenta:
 
 ```text
 /ip hotspot user profile set [find name="default"] shared-users=1
-/ip hotspot user profile set [find name="default"] trial-uptime-limit=1h
 ```
-
-(Ajusta `trial-uptime-limit` a lo que decidas — es cuánto dura la sesión antes de tener que aceptar de nuevo.)
 
 > Si prefieres **no** usar Trial y ya tienes tu propio usuario/clave genérico de invitado, cambia en `login.html` el valor de `username` (y añade un `password`) por tus credenciales fijas, en vez de `T-$(mac-esc)`.
 
@@ -57,24 +77,31 @@ Sin esto, el `fetch()` del formulario nunca completa (el dispositivo no tiene in
 /ip hotspot walled-garden add dst-host=buxkahmxaubgygsbreze.supabase.co action=allow
 ```
 
-### 4. Subir los archivos
+### 4. Confirmar la carpeta del skin (`html-directory`)
 
-Sube **toda la carpeta `mikrotik/`** (no solo `login.html`) a la carpeta del skin del Hotspot, normalmente vía **Files** en Winbox o FTP:
+Antes de subir nada, confirma en qué carpeta busca los archivos tu Server Profile (documentación oficial de MikroTik: esta propiedad vive en el **Server Profile**, con `hotspot` como valor por defecto):
+
+```text
+/ip hotspot profile print detail
+```
+
+Busca `html-directory=...` en el perfil que confirmaste en el paso 2 (normalmente `hotspot`).
+
+### 5. Subir los archivos
+
+RouterOS ya crea automáticamente, al configurar el Hotspot, un juego de archivos por defecto en esa carpeta (`alogin.html`, `error.html`, `logout.html`, `radvert.html`, `redirect.html`, `rlogin.html`, `status.html`, `errors.txt`, `logo.png`, `login.css`, etc.). **No los borres** — solo sube/reemplaza los nuestros encima, vía **Files** en Winbox o FTP:
 
 ```text
 /hotspot/login.html
-/hotspot/md5.js
 /hotspot/style.css
 /hotspot/banner.jpg
 /hotspot/fonts/playfair-display.woff2
 /hotspot/fonts/hanken-grotesk.woff2
 ```
 
-> ⚠️ **`md5.js` no es opcional.** Si el servidor Hotspot usa autenticación CHAP (el modo por defecto de RouterOS), `login.html` necesita ese archivo para calcular la respuesta que el router exige. Si falta, o quedó en otra ruta, el router rechaza el login con `web browser did not send challenge response` — aunque el resto de la página se vea perfecta.
+Como `login.html` referencia `style.css` (no `login.css`), el `login.css` por defecto del router queda simplemente sin usarse — no hace falta borrarlo. Si tu servidor Hotspot usa un skin con otro nombre de carpeta (no `hotspot` a secas, según lo que confirmaste arriba), copia estos archivos dentro de esa carpeta en vez de crear una nueva.
 
-Si tu servidor Hotspot usa un skin con otro nombre de carpeta (no `hotspot` a secas), copia estos archivos dentro de esa carpeta en vez de crear una nueva.
-
-### 5. Destino final tras conectar
+### 6. Destino final tras conectar
 
 `login.html` ya apunta a la web publicada:
 
@@ -96,7 +123,6 @@ Si más adelante el sitio se muda a un dominio propio (ej. `enjoypcrestaurante.c
 6. Entra al panel de administración del sitio (`admin.html`) → pestaña **Suscriptores** → el contacto debe aparecer con `origen = mikrotik-hotspot`.
 7. **Idioma:** con el navegador/teléfono en inglés, la página debe abrir en inglés automáticamente. Pulsa **ES/EN** arriba del título → todo el texto (título, subtítulo, placeholders, botón, error, términos) debe cambiar de idioma al instante.
 8. **Prueba de resiliencia:** quita temporalmente la regla del Walled Garden (paso 3) y repite el paso 5 — debe seguir concediendo WiFi igual (solo que sin guardar el contacto). Vuelve a añadir la regla al terminar la prueba.
-9. **CHAP (si tu servidor Hotspot lo usa, el modo por defecto):** abre las DevTools del navegador (F12) → pestaña **Network** antes de pulsar "Aceptar y Continuar" → confirma que `md5.js` cargó con estado `200`. Si no aparece o da `404`, revisa que se subió junto a `login.html` (ver "Subir los archivos" arriba).
 
 ---
 
@@ -107,7 +133,8 @@ Si más adelante el sitio se muda a un dominio propio (ej. `enjoypcrestaurante.c
 | La página no aparece al conectar al WiFi | El servidor Hotspot no está activo en esa interfaz, o el dispositivo ya estaba autenticado antes |
 | Se ve sin estilos (texto plano) | `style.css`, `banner.jpg` o la carpeta `fonts/` no se subieron junto a `login.html`, o quedaron en una ruta distinta |
 | Aparece `$(error)` en un recuadro rojo | Es un error real de RouterOS (ver el mensaje) — normalmente credenciales Trial mal configuradas o sesión ya activa |
-| `web browser did not send challenge response (try again, enable JavaScript)` | Falta `md5.js` en el router (no se subió, o quedó en otra ruta), o el visitante tiene JavaScript deshabilitado — sin eso no se puede calcular la respuesta CHAP que el servidor Hotspot exige |
-| Nunca concede la red tras pulsar el botón | El perfil de usuario del Hotspot no tiene Trial habilitado (paso 2) |
+| `invalid username or password` | El **Server Profile** (no el User Profile) no tiene "Trial" marcado en Login By (paso 2) — revisa que editaste el perfil correcto con `/ip hotspot print`, ya que puede haber varios Server Profiles y solo uno estar activo |
+| `web browser did not send challenge response (try again, enable JavaScript)` | El servidor Hotspot pasó a usar CHAP (revisa Server Profiles → Login) y `login.html` ya no trae el soporte para eso — ver la nota en "Cómo funciona" arriba |
+| Nunca concede la red tras pulsar el botón | El Server Profile no tiene Trial habilitado (paso 2), o el `html-directory` del perfil (paso 4) no coincide con la carpeta donde subiste los archivos |
 | El botón se queda 3s en "Conectando…" siempre | Normal si Supabase no está en el Walled Garden (paso 3): agota el tiempo de espera y continúa igual |
 | No llegan contactos a la pestaña Suscriptores | Revisa el Walled Garden (paso 3); confirma con la prueba del navegador: `fetch("https://buxkahmxaubgygsbreze.supabase.co/rest/v1/leads", {headers:{apikey:"..."}})` desde un dispositivo ya conectado |

@@ -138,6 +138,14 @@ body {
   box-shadow: 0 0 0 2px rgba(234, 62, 112, 0.25);
 }
 
+.field input.invalid {
+  border-color: #ba1a1a;
+}
+
+.field input.invalid:focus {
+  box-shadow: 0 0 0 2px rgba(186, 26, 26, 0.25);
+}
+
 .error-text {
   display: none;
   color: #ba1a1a;

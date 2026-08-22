@@ -163,9 +163,9 @@
             const alt = escapeHtml(item.alt[lang] || item.alt.es || "");
             const src = encodeURI(item.archivo);
             const media = item.tipo === "video"
-              ? `<video src="${src}" class="w-full h-auto" muted loop playsinline preload="metadata"></video>
+              ? `<video src="${src}" class="w-full h-auto rounded-xl" muted loop playsinline preload="metadata"></video>
                  <span class="gallery-video-badge"><span class="material-symbols-outlined text-lg">play_arrow</span></span>`
-              : `<img src="${src}" alt="${alt}" class="w-full h-auto" loading="lazy" />`;
+              : `<img src="${src}" alt="${alt}" class="w-full h-auto rounded-xl" loading="lazy" />`;
             return `
               <div class="gallery-item relative overflow-hidden break-inside-avoid cursor-pointer rounded-xl" data-index="${index}" tabindex="0" role="button" aria-label="${alt}">
                 ${media}

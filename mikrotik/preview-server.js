@@ -10,9 +10,10 @@
 //   node mikrotik/preview-server.js
 //   abrir http://localhost:8010/
 //   para ver el estado de error: http://localhost:8010/?error=Usuario+o+clave+incorrectos
-//   para simular un servidor Hotspot con CHAP (el modo por defecto de
-//   RouterOS): http://localhost:8010/?chap=1 — así se puede probar en
-//   local que el campo "password" (respuesta MD5) se calcula y se envía.
+//
+// NOTA: login.html ya no soporta CHAP (se quitó md5.js porque el Server
+// Profile del router usa Trial + Cookie, sin CHAP) — por eso este script
+// tampoco simula ese modo.
 //
 // Requiere solo Node — sin dependencias, sin npm install.
 
@@ -36,27 +37,18 @@ const MIME = {
 
 // Sustituye las variables de plantilla de MikroTik por valores de
 // ejemplo, igual que haría el router al servir la página.
-function mockMikrotikTemplate(html, errorMessage, simulateChap) {
+function mockMikrotikTemplate(html, errorMessage) {
   // Bloque condicional $(if error) ... $(endif)
   html = html.replace(/\$\(if error\)([\s\S]*?)\$\(endif\)/, (_, block) => {
     if (!errorMessage) return ""; // sin error: el router omitiría el bloque entero
     return block.replace(/\$\(error\)/g, errorMessage);
   });
 
-  // Bloque condicional $(if chap-id) ... $(endif): RouterOS solo lo
-  // incluye cuando el servidor Hotspot usa autenticación CHAP.
-  html = html.replace(/\$\(if chap-id\)([\s\S]*?)\$\(endif\)/, (_, block) => {
-    if (!simulateChap) return ""; // servidor "PAP": el router omitiría el bloque
-    return block;
-  });
-
   return html
     .replace(/\$\(link-login-only\)/g, "/mock-login")
     .replace(/\$\(link-orig-esc\)/g, "https://ejemplo.com/pagina-original")
     .replace(/\$\(mac-esc\)/g, "AA-BB-CC-DD-EE-FF")
-    .replace(/\$\(popup\)/g, "false")
-    .replace(/\$\(chap-id\)/g, simulateChap ? "1" : "")
-    .replace(/\$\(chap-challenge\)/g, simulateChap ? "vista-previa-challenge" : "");
+    .replace(/\$\(popup\)/g, "false");
 }
 
 function serveStatic(filePath, res) {
@@ -93,7 +85,6 @@ const server = http.createServer((req, res) => {
           <p>Esto es lo que el <b>formulario oculto</b> (el que de verdad concede la red) envió al router:</p>
           <table border="1" cellpadding="8" style="border-collapse:collapse">
             <tr><td><b>username</b></td><td>${params.get("username") || "(vacío)"}</td></tr>
-            <tr><td><b>password</b> (respuesta CHAP, solo si el servidor simula CHAP)</td><td>${params.get("password") || "(vacío)"}</td></tr>
             <tr><td><b>dst</b> (a dónde redirige)</td><td>${params.get("dst") || "(vacío)"}</td></tr>
             <tr><td><b>popup</b></td><td>${params.get("popup") || "(vacío)"}</td></tr>
           </table>
@@ -115,9 +106,8 @@ const server = http.createServer((req, res) => {
         return;
       }
       const errorMessage = url.searchParams.get("error");
-      const simulateChap = url.searchParams.get("chap") === "1";
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(mockMikrotikTemplate(html, errorMessage, simulateChap));
+      res.end(mockMikrotikTemplate(html, errorMessage));
     });
     return;
   }

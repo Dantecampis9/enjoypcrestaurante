@@ -61,7 +61,16 @@
       "Bash(curl -s -o /dev/null -w \"index: %{http_code}\\\\n\" http://localhost:8000/index.html)",
       "Bash(curl -s -o /dev/null -w \"mikrotik: %{http_code}\\\\n\" http://localhost:8000/mikrotik/login.html)",
       "Bash(node \"C:\\\\Users\\\\Laptop\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Laptop-Downloads-Proyectos-enjoypcrestaurante\\\\a1a430f4-4e95-4b86-8e74-3622451501e3\\\\scratchpad\\\\static-server.js\")",
-      "Bash(echo \"resultado búsqueda exhaustiva: $?\")"
+      "Bash(echo \"resultado búsqueda exhaustiva: $?\")",
+      "Bash(ls -la \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\" 2>&1 | head -50)",
+      "Read(//c/Users/Laptop/Downloads/hotspot/**)",
+      "Bash(node --check mikrotik/login.html)",
+      "Bash(node --check /tmp/check.js)",
+      "Bash(node --check __TRACKED_VAR__/check2.js)",
+      "WebFetch(domain:help.mikrotik.com)",
+      "WebFetch(domain:manual.mikrotik.com)",
+      "WebFetch(domain:docs.mikrotik.com)",
+      "WebSearch"
     ],
     "additionalDirectories": [
       "\\tmp"
