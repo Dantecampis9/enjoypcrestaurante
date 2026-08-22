@@ -16,7 +16,7 @@ Hay **dos formularios** en `login.html`, y es importante no confundirlos:
    - Si el servidor Hotspot usa **CHAP** (el modo por defecto de RouterOS), el formulario también necesita un campo `password` con la respuesta CHAP: `MD5(chap-id + password + chap-challenge)`, con `password` vacío por ser un login Trial. `login.html` lo calcula solo con `md5.js` — por eso ese archivo tiene que subirse junto a los demás (ver más abajo). `$(chap-id)` y `$(chap-challenge)` los rellena el propio router al servir la página; si el servidor usa PAP en vez de CHAP, quedan vacíos y el campo `password` ni se genera (`$(if chap-id)…$(endif)`).
 2. **Formulario visible** (Nombre / Correo / Teléfono) — solo captura contactos para tu base de datos. No tiene ningún poder de conceder red por sí mismo.
 
-Al pulsar **"Aceptar y Continuar"**: se valida nombre/correo/teléfono → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://enjoypcrestaurante.com/`.
+Al pulsar **"Aceptar y Continuar"**: se valida nombre/correo/teléfono → se intenta guardar en Supabase (máx. 2.5 segundos) → **pase lo que pase con ese guardado** (éxito, fallo, sin internet) se envía el formulario oculto → MikroTik concede la red → redirige a `https://dantecampis9.github.io/enjoypcrestaurante/`.
 
 Este orden es deliberado: un problema con Supabase (proyecto pausado, sin walled garden, etc.) **nunca** debe dejar a un cliente real sin WiFi.
 
@@ -74,15 +74,15 @@ Sube **toda la carpeta `mikrotik/`** (no solo `login.html`) a la carpeta del ski
 
 Si tu servidor Hotspot usa un skin con otro nombre de carpeta (no `hotspot` a secas), copia estos archivos dentro de esa carpeta en vez de crear una nueva.
 
-### 5. Actualizar el destino final
+### 5. Destino final tras conectar
 
-En `login.html`, busca:
+`login.html` ya apunta a la web publicada:
 
 ```html
-<input type="hidden" name="dst" value="https://enjoypcrestaurante.com/" />
+<input type="hidden" name="dst" value="https://dantecampis9.github.io/enjoypcrestaurante/" />
 ```
 
-`enjoypcrestaurante.com` es un dominio de ejemplo usado en todo el proyecto (sitemap, robots.txt, etc.) — **reemplázalo por la URL real** una vez que el sitio esté publicado.
+Si más adelante el sitio se muda a un dominio propio (ej. `enjoypcrestaurante.com`), actualiza ese valor con la URL nueva.
 
 ---
 
