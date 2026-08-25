@@ -70,10 +70,19 @@
       "WebFetch(domain:help.mikrotik.com)",
       "WebFetch(domain:manual.mikrotik.com)",
       "WebFetch(domain:docs.mikrotik.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(node --check 'C:\\\\Users\\\\Laptop\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Laptop-Downloads-Proyectos-enjoypcrestaurante\\\\a1a430f4-4e95-4b86-8e74-3622451501e3\\\\scratchpad/check3.js')",
+      "Bash(echo \"OK: sintaxis JS valida\")",
+      "Bash(cd \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\" && ls -la && echo \"---\" && grep -n \"chap\\\\|md5\\\\|hexMD5\" login.html || echo \"OK: sin referencias a md5/CHAP\")",
+      "Bash(ls -la \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\")",
+      "Bash(ls -la \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\\\\fonts\" && echo \"---project fonts---\" && ls -la \"c:\\\\Users\\\\Laptop\\\\Downloads\\\\Proyectos\\\\enjoypcrestaurante\\\\mikrotik\\\\fonts\")",
+      "Read(//c/Users/Laptop/Downloads/hotspot/fonts/**)",
+      "Bash(cp \"c:\\\\Users\\\\Laptop\\\\Downloads\\\\Proyectos\\\\enjoypcrestaurante\\\\mikrotik\\\\banner.jpg\" \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\\\\banner.jpg\")",
+      "Bash(echo \"=== mikrotik/ \\(proyecto\\) ===\" && ls -la \"c:\\\\Users\\\\Laptop\\\\Downloads\\\\Proyectos\\\\enjoypcrestaurante\\\\mikrotik\" && echo \"\" && echo \"=== Downloads\\\\hotspot ===\" && ls -la \"C:\\\\Users\\\\Laptop\\\\Downloads\\\\hotspot\")"
     ],
     "additionalDirectories": [
-      "\\tmp"
+      "\\tmp",
+      "C:\\Users\\Laptop\\Downloads\\hotspot"
     ]
   }
 }

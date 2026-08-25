@@ -5,7 +5,7 @@ const I18N_DICT = {
     "nav.events": "Eventos",
     "nav.gallery": "Galería",
     "nav.contact": "Contacto",
-    "nav.call": "Llámanos",
+    "nav.call": "Reservaciones",
     "meta.title.home": "Enjoy Punta Cana | Tropical Luxury Dining",
     "meta.desc.home": "Enjoy PC Restaurante en Los Corales, Bávaro: cocina italiana, caribeña e internacional frente al Caribe. Terraza, música en vivo y sabor tropical.",
 
@@ -15,9 +15,10 @@ const I18N_DICT = {
     "hero.cta.story": "Nuestra Historia",
 
     "welcome.eyebrow": "Bienvenido al Paraíso",
-    "welcome.title": "La esencia de la cocina caribeña bajo una nueva luz.",
-    "welcome.body": "En Enjoy Punta Cana no solo servimos comida; creamos momentos que perduran. Nuestra cocina combina lo mejor de la tradición italiana con el alma tropical de República Dominicana, en un jardín de orquídeas a pasos de la playa de Los Corales.",
-    "welcome.explore": "Explora nuestra visión",
+    "welcome.eyebrow2": "Descubre un mundo gastronómico en el Caribe",
+    "welcome.body2": "Ubicados en el corazón de Los Corales, Punta Cana. Enjoy Restaurant y Corales Pizzeria reúnen sabores internacionales, auténtica pizza al estilo italiano, cócteles refrescantes y ambientes vibrantes, a solo minutos de la playa.",
+    "welcome.body3": "Ya sea que busques una comida relajada, una noche divertida, entretenimiento en vivo o una experiencia memorable con familiares y amigos, aquí siempre hay una sorpresa para todos.",
+    "welcome.explore": "Descúbrenos",
     "welcome.quote": "\"Fresco. Local. Inolvidable.\"",
 
     "bento.events.badge": "HOY",
@@ -30,9 +31,9 @@ const I18N_DICT = {
     "bento.reserve.body": "Asegura tu lugar en la mejor terraza de Los Corales.",
     "bento.reserve.cta": "Ver Contacto",
 
-    "newsletter.title": "Únete a la Comunidad Enjoy",
-    "newsletter.body": "Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.",
-    "newsletter.cta": "Seguir en Instagram",
+    "footer.visitUs": "Visítanos en Punta Cana",
+    "footer.followUs": "Síguenos por las Redes",
+    "footer.shareExperience": "¡Síguenos y comparte tu experiencia con nosotros!",
 
     "footer.tagline": "Tropical Luxury Dining",
     "footer.contact": "Contacto",
@@ -73,8 +74,6 @@ const I18N_DICT = {
     "contact.page.title": "Contacto y Ubicación",
     "contact.page.subtitle": "Te esperamos en Los Corales, a solo 5 minutos de la playa.",
     "contact.phone": "Teléfono",
-    "contact.email": "Correo",
-    "contact.email.pending": "Próximamente",
     "contact.address": "Dirección",
     "contact.hours": "Horario",
     "contact.hours.value": "Todos los días, 7:00 AM – 11:00 PM",
@@ -98,7 +97,7 @@ const I18N_DICT = {
     "nav.events": "Events",
     "nav.gallery": "Gallery",
     "nav.contact": "Contact",
-    "nav.call": "Call Us",
+    "nav.call": "Reservations",
     "meta.title.home": "Enjoy Punta Cana | Tropical Luxury Dining",
     "meta.desc.home": "Enjoy PC Restaurante in Los Corales, Bávaro: Italian, Caribbean and international cuisine by the Caribbean Sea. Terrace, live music and tropical flavor.",
 
@@ -108,9 +107,10 @@ const I18N_DICT = {
     "hero.cta.story": "Our Story",
 
     "welcome.eyebrow": "Welcome to Paradise",
-    "welcome.title": "The essence of Caribbean cooking in a new light.",
-    "welcome.body": "At Enjoy Punta Cana we don't just serve food; we create moments that last. Our kitchen blends the best of Italian tradition with the tropical soul of the Dominican Republic, set in an orchid garden steps from Los Corales beach.",
-    "welcome.explore": "Explore our vision",
+    "welcome.eyebrow2": "Discover a Culinary World in the Caribbean",
+    "welcome.body2": "Located in the heart of Los Corales, Punta Cana. Enjoy Restaurant and Corales Pizzeria bring together international flavors, authentic Italian-style pizza, refreshing cocktails and vibrant atmospheres, just minutes from the beach.",
+    "welcome.body3": "Whether you're looking for a relaxed meal, a fun night out, live entertainment, or a memorable experience with family and friends, there's always a surprise here for everyone.",
+    "welcome.explore": "Discover Us",
     "welcome.quote": "\"Fresh. Local. Unforgettable.\"",
 
     "bento.events.badge": "TONIGHT",
@@ -123,9 +123,9 @@ const I18N_DICT = {
     "bento.reserve.body": "Secure your spot on the best terrace in Los Corales.",
     "bento.reserve.cta": "See Contact",
 
-    "newsletter.title": "Join the Enjoy Community",
-    "newsletter.body": "Follow us on Instagram for live music updates, seasonal dishes and exclusive promotions.",
-    "newsletter.cta": "Follow on Instagram",
+    "footer.visitUs": "Visit us in Punta Cana",
+    "footer.followUs": "Follow Us on Social Media",
+    "footer.shareExperience": "Follow us and share your experience with us!",
 
     "footer.tagline": "Tropical Luxury Dining",
     "footer.contact": "Contact",
@@ -166,8 +166,6 @@ const I18N_DICT = {
     "contact.page.title": "Contact & Location",
     "contact.page.subtitle": "We're waiting for you in Los Corales, just 5 minutes from the beach.",
     "contact.phone": "Phone",
-    "contact.email": "Email",
-    "contact.email.pending": "Coming soon",
     "contact.address": "Address",
     "contact.hours": "Hours",
     "contact.hours.value": "Daily, 7:00 AM – 11:00 PM",

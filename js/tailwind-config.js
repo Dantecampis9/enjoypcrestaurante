@@ -12,22 +12,28 @@ tailwind.config = {
         // llegue al contraste 4.5:1 exigido por WCAG AA con texto pequeño (botones
         // usan font-label-caps de 12px). Negro sí lo cumple en los cuatro. El malva
         // es la excepción: es oscuro, así que ahí el texto es blanco.
+        //
+        // Repaso de paleta (pedido explícito del dueño): botones a coral #E36A56
+        // (antes rosa #EA3E70), texto de cuerpo y texto secundario a negro puro,
+        // y un nuevo tono teal #2E6E78 exclusivo para títulos reales (headings),
+        // separado de "primary" para que cambiar el color de los botones no
+        // recoloree también los títulos. Ver `title` más abajo.
         "on-tertiary-fixed-variant": "#6f5022",
         error: "#ba1a1a",
         "on-secondary-fixed": "#395133",
         "on-error": "#ffffff",
         "on-primary-fixed-variant": "#751f38",
         "surface-dim": "#dcd9d9",
-        "primary-container": "#af2f54",
+        "primary-container": "#aa5041",
         "on-secondary": "#000000",
         "outline-variant": "#dec0b5",
         "primary-fixed-dim": "#f6a8be",
         "error-container": "#ffdad6",
         "secondary-fixed-dim": "#9fb799",
-        "on-surface-variant": "#57423a",
+        "on-surface-variant": "#000000",
         "surface-bright": "#fcf9f8",
         surface: "#fcf9f8",
-        "surface-tint": "#ea3e70",
+        "surface-tint": "#e36a56",
         "tertiary-fixed-dim": "#fad193",
         "tertiary-fixed": "#fef4e4",
         "surface-container-highest": "#e5e2e1",
@@ -40,7 +46,7 @@ tailwind.config = {
         "inverse-surface": "#313030",
         "surface-container-low": "#f6f3f2",
         "on-secondary-container": "#395133",
-        "primary-fixed": "#fce2ea",
+        "primary-fixed": "#fbe9e6",
         "secondary-fixed": "#dcebd4",
         "on-primary-fixed": "#3d0a1e",
         "on-tertiary-fixed": "#4a3517",
@@ -53,8 +59,8 @@ tailwind.config = {
         "inverse-on-surface": "#f3f0ef",
         "tertiary-container": "#b98638",
         tertiary: "#f7b24b",
-        "on-surface": "#1c1b1b",
-        primary: "#ea3e70",
+        "on-surface": "#000000",
+        primary: "#e36a56",
         "surface-container-high": "#eae7e7",
         "secondary-container": "#e7ede6",
         outline: "#8a7268",
@@ -64,6 +70,11 @@ tailwind.config = {
         "on-accent-gold": "#000000",
         "accent-plum": "#8f4c6f",
         "on-accent-plum": "#ffffff",
+        // Título: exclusivo para encabezados reales (h1-h4 / font-display-lg /
+        // font-headline-md / font-headline-sm). Separado de "primary" a propósito:
+        // "primary" ahora es el color de los botones/CTAs, y no debe cambiar el
+        // color de los títulos si el negocio vuelve a pedir otro color de botón.
+        title: "#2e6e78",
       },
       borderRadius: {
         // "full" estaba fijo en 0.75rem: los 56 usos de rounded-full del sitio

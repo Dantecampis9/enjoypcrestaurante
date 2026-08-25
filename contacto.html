@@ -23,7 +23,7 @@
     <div class="flex justify-between items-center px-gutter py-3 max-w-container-max mx-auto">
       <a href="index.html" class="flex items-center gap-3">
         <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-12 w-12 rounded-full" width="48" height="48" />
-        <span class="font-display-lg text-headline-sm text-primary hidden sm:block">Enjoy Punta Cana</span>
+        <img src="img/logo/corales-logo.png" alt="Corales Pizzeria Lounge &amp; Cigar Club" class="h-14 w-auto hidden sm:block" width="150" height="124" />
       </a>
 
       <div class="hidden md:flex items-center gap-8">
@@ -49,7 +49,7 @@
         </button>
       </div>
 
-      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Llámanos</a>
+      <a href="tel:+18098986193" class="hidden md:block bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:opacity-80 transition-all duration-200" data-i18n="nav.call">Reservaciones</a>
     </div>
   </nav>
 
@@ -60,13 +60,13 @@
       <a class="font-label-caps text-label-caps text-secondary" href="eventos.html" data-i18n="nav.events">Eventos</a>
       <a class="font-label-caps text-label-caps text-secondary" href="galeria.html" data-i18n="nav.gallery">Galería</a>
       <a class="font-label-caps text-label-caps text-primary" href="contacto.html" data-i18n="nav.contact">Contacto</a>
-      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Llámanos</a>
+      <a href="tel:+18098986193" class="bg-primary text-on-primary px-6 py-3 text-center font-label-caps text-label-caps" data-i18n="nav.call">Reservaciones</a>
     </div>
   </div>
 
   <main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
     <header class="text-center mb-16">
-      <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
+      <span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
       <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="contact.page.title">Contacto y Ubicación</h1>
       <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="contact.page.subtitle">Te esperamos en Los Corales, a solo 5 minutos de la playa.</p>
     </header>
@@ -79,14 +79,6 @@
           <div>
             <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.phone">Teléfono</h2>
             <a href="tel:+18098986193" class="font-headline-sm text-headline-sm text-on-surface hover:text-primary transition-colors">+1 809-898-6193</a>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-4">
-          <span class="material-symbols-outlined text-primary text-3xl">mail</span>
-          <div>
-            <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1" data-i18n="contact.email">Correo</h2>
-            <p class="font-headline-sm text-headline-sm text-on-surface-variant italic" data-i18n="contact.email.pending">Próximamente</p>
           </div>
         </div>
 
@@ -111,16 +103,18 @@
           </div>
         </div>
 
-        <div class="flex items-start gap-4">S
+        <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-primary text-3xl">share</span>
           <div>
             <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2" data-i18n="contact.social">Síguenos</h2>
-            <div class="flex gap-3">
-              <a class="w-11 h-11 rounded-full border border-primary flex items-center justify-center hover:bg-primary transition-all" href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram">
-                <img src="img/icons/instagram.png" alt="" class="w-6 h-6" width="24" height="24" loading="lazy" />
+            <div class="flex flex-col gap-2">
+              <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Síguenos por las redes de Enjoy" class="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary border-b border-primary pb-0.5 w-fit">
+                <span data-i18n="footer.followUs">Síguenos por las Redes</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
               </a>
-              <a class="w-11 h-11 rounded-full border border-primary flex items-center justify-center hover:bg-primary transition-all" href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook">
-                <img src="img/icons/facebook.png" alt="" class="w-6 h-6" width="24" height="24" loading="lazy" />
+              <a href="#" aria-label="Síguenos por las redes de Corales" class="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary border-b border-primary pb-0.5 w-fit">
+                <span data-i18n="footer.followUs">Síguenos por las Redes</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
               </a>
             </div>
           </div>
@@ -196,21 +190,16 @@
     <div class="w-full grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-outline-variant gap-y-10 md:gap-x-16 mb-10">
       <div class="flex flex-col items-center text-center">
         <img src="img/logo/enjoy-logo.png" alt="Enjoy Punta Cana" class="h-64 w-64 rounded-full mb-4" width="256" height="256" loading="lazy" />
-        <div class="font-display-lg text-headline-md text-primary mb-2">Enjoy Punta Cana</div>
-        <p class="text-on-surface-variant font-body-md" data-i18n="footer.tagline">Tropical Luxury Dining</p>
+        <div class="font-display-lg text-headline-md text-title mb-2" data-i18n="footer.visitUs">Visítanos en Punta Cana</div>
+        <a href="#" class="text-on-surface-variant font-body-md hover:text-primary hover:underline underline-offset-4 transition-colors" data-i18n="footer.followUs">Síguenos por las Redes</a>
+        <p class="text-on-surface-variant font-body-md text-sm mt-2" data-i18n="footer.shareExperience">¡Síguenos y comparte tu experiencia con nosotros!</p>
       </div>
 
       <div class="flex flex-col items-center text-center justify-center pt-10 md:pt-0">
-        <h2 class="font-headline-md text-on-surface mb-4" data-i18n="newsletter.title">Únete a la Comunidad Enjoy</h2>
-        <p class="font-body-md text-on-surface-variant max-w-xs mb-6" data-i18n="newsletter.body">Síguenos en Instagram para enterarte de música en vivo, platos de temporada y promociones exclusivas.</p>
-        <div class="flex items-center justify-center gap-4">
-          <a href="https://www.instagram.com/enjoypcrestaurante/" target="_blank" rel="noopener" aria-label="Instagram" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary transition-all">
-            <img src="img/icons/instagram.png" alt="" class="w-6 h-6" width="24" height="24" loading="lazy" />
-          </a>
-          <a href="https://www.facebook.com/profile.php?id=61561738400019" target="_blank" rel="noopener" aria-label="Facebook" class="w-14 h-14 rounded-full border border-outline-variant flex items-center justify-center hover:bg-primary hover:border-primary transition-all">
-            <img src="img/icons/facebook.png" alt="" class="w-6 h-6" width="24" height="24" loading="lazy" />
-          </a>
-        </div>
+        <img src="img/logo/corales-logo.png" alt="Corales Pizzeria Lounge &amp; Cigar Club" class="w-64 h-auto mb-4" width="256" height="211" loading="lazy" />
+        <div class="font-display-lg text-headline-md text-title mb-2" data-i18n="footer.visitUs">Visítanos en Punta Cana</div>
+        <a href="#" class="text-on-surface-variant font-body-md hover:text-primary hover:underline underline-offset-4 transition-colors" data-i18n="footer.followUs">Síguenos por las Redes</a>
+        <p class="text-on-surface-variant font-body-md text-sm mt-2" data-i18n="footer.shareExperience">¡Síguenos y comparte tu experiencia con nosotros!</p>
       </div>
     </div>
 
