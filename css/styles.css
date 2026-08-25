@@ -39,6 +39,7 @@ body {
 
 .gallery-item img,
 .gallery-item video {
+  display: block;
   transition: transform 0.5s ease;
 }
 
