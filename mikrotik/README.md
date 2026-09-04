@@ -67,15 +67,22 @@ Aparte, en **IP → Hotspot → User Profiles** (menú distinto) puedes ajustar 
 
 > Si prefieres **no** usar Trial y ya tienes tu propio usuario/clave genérico de invitado, cambia en `login.html` el valor de `username` (y añade un `password`) por tus credenciales fijas, en vez de `T-$(mac-esc)`.
 
-### 3. Añadir Supabase al Walled Garden
+### 3. Añadir Supabase al Walled Garden **IP**
 
-Sin esto, el `fetch()` del formulario nunca completa (el dispositivo no tiene internet todavía) y cada envío se resuelve como "fallo silencioso" — no rompe el acceso a la red, pero **tampoco vas a recibir ningún contacto**.
+> ⚠️ Versiones anteriores de este documento indicaban aquí el menú `/ip hotspot walled-garden` (el de HTTP). **Ese no sirve para Supabase.** Filtra por nombre de dominio leyendo la cabecera `Host` de la petición, y en HTTPS esa cabecera va cifrada dentro del TLS: el router no puede leerla, la regla nunca coincide y el guardado falla en silencio.
 
-**IP → Hotspot → Walled Garden** → nueva entrada:
+El menú correcto es **`/ip hotspot walled-garden ip`**, que trabaja a nivel de IP/firewall — no inspecciona nada, así que el cifrado le da igual:
 
 ```text
-/ip hotspot walled-garden add dst-host=buxkahmxaubgygsbreze.supabase.co action=allow
+/ip hotspot walled-garden ip
+add action=accept dst-host=buxkahmxaubgygsbreze.supabase.co comment="Supabase - guardar contactos"
 ```
+
+Al indicar `dst-host` con un nombre de dominio, RouterOS lo resuelve y **crea entradas dinámicas** con las IPs reales. Puedes verlas con `/ip hotspot walled-garden ip print`.
+
+**Para comprobarlo:** desde un celular conectado al WiFi pero **sin haber pulsado el botón todavía**, abre `https://buxkahmxaubgygsbreze.supabase.co/rest/v1/`. Si devuelve texto JSON (aunque sea un error de Supabase), está pasando. Si sale el portal o se queda cargando, no.
+
+**Este paso ya no es imprescindible**, pero sí recomendable. Supabase está detrás de Cloudflare y su API REST [no tiene IPs fijas](https://supabase.com/docs/guides/troubleshooting/why-supabase-edge-functions-cannot-provide-static-egress-ips-for-whitelisting-3d78b0), así que el día que roten la regla deja de coincidir. Por eso existe la vía de respaldo: cuando este guardado no se confirma, el contacto viaja en el fragmento (`#`) de la URL de destino y lo guarda el sitio web ya con internet (`js/lead-capture.js`). El detalle está en la cabecera de `login.html`.
 
 ### 4. Confirmar la carpeta del skin (`html-directory`)
 
