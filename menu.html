@@ -28,8 +28,8 @@
 
       <div class="hidden md:flex items-center gap-8">
         <a class="font-label-caps text-label-caps text-title hover:text-primary transition-colors" href="index.html" data-i18n="nav.home">Inicio</a>
-        <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-        <a class="font-label-caps text-label-caps text-title border-b-2 border-title pb-1" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
+        <!-- Enlace del navbar (Menú): apunta a menu.html, que ahora muestra el menú real desde Supabase. -->
+        <a class="font-label-caps text-label-caps text-title border-b-2 border-title pb-1" href="menu.html" data-i18n="nav.menu">Menú</a>
         <a class="font-label-caps text-label-caps text-title hover:text-primary transition-colors" href="eventos.html" data-i18n="nav.events">Eventos</a>
         <a class="font-label-caps text-label-caps text-title hover:text-primary transition-colors" href="galeria.html" data-i18n="nav.gallery">Galería</a>
         <a class="font-label-caps text-label-caps text-title hover:text-primary transition-colors" href="contacto.html" data-i18n="nav.contact">Contacto</a>
@@ -56,8 +56,8 @@
   <div id="mobile-menu" class="hidden fixed top-[64px] left-0 w-full z-40 bg-surface shadow-lg md:hidden">
     <div class="flex flex-col p-gutter gap-4">
       <a class="font-label-caps text-label-caps text-title" href="index.html" data-i18n="nav.home">Inicio</a>
-      <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-      <a class="font-label-caps text-label-caps text-title" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
+      <!-- Enlace del navbar (Menú): apunta a menu.html, que ahora muestra el menú real desde Supabase. -->
+      <a class="font-label-caps text-label-caps text-title" href="menu.html" data-i18n="nav.menu">Menú</a>
       <a class="font-label-caps text-label-caps text-title" href="eventos.html" data-i18n="nav.events">Eventos</a>
       <a class="font-label-caps text-label-caps text-title" href="galeria.html" data-i18n="nav.gallery">Galería</a>
       <a class="font-label-caps text-label-caps text-title" href="contacto.html" data-i18n="nav.contact">Contacto</a>
@@ -82,7 +82,7 @@
     <!-- Menu grid -->
     <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
-    <p class="text-center font-body-md text-on-surface-variant mt-16 italic" data-i18n="menu.price.note">Precios en USD. Sujetos a cambio sin previo aviso.</p>
+    <p class="text-center font-body-md text-on-surface-variant mt-16 italic" data-i18n="menu.price.note">Precios en pesos dominicanos (RD$). Sujetos a cambio sin previo aviso.</p>
   </main>
 
   <!-- Footer -->
@@ -133,8 +133,8 @@
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html" data-i18n="footer.contact">Contacto</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#ubicacion" data-i18n="footer.location">Ubicación</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="contacto.html#horarios" data-i18n="footer.hours">Horarios</a>
-      <!-- Enlace del navbar (Menú): antes iba a menu.html (página interna, SIN borrar, sigue existiendo). Ahora redirige al menú digital externo (QRfy) por pedido del usuario. -->
-      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="https://enjoyrestaurante.qrfy.do/#" data-i18n="nav.menu">Menú</a>
+      <!-- Enlace del navbar (Menú): apunta a menu.html, que ahora muestra el menú real desde Supabase. -->
+      <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="menu.html" data-i18n="nav.menu">Menú</a>
       <a class="font-body-md text-secondary hover:underline decoration-primary underline-offset-4 transition-all" href="eventos.html" data-i18n="nav.events">Eventos</a>
     </div>
 
@@ -155,10 +155,14 @@
       const gridEl = document.getElementById("menu-grid");
       let activeCategory = "all";
 
-      // Copias mutables de los datos locales. Si Supabase responde, se
-      // reemplazan y se vuelve a renderizar. Si no, se quedan estas.
-      let categories = MENU_CATEGORIES;
-      let items = MENU_ITEMS;
+      // El menú real vive SOLO en Supabase — a propósito, sin respaldo
+      // local: js/menu-data.js quedó con datos de muestra y mostrarlo
+      // como si fuera el menú real sería peor que no mostrar nada.
+      let categories = [];
+      let items = [];
+      // "loading" mientras se espera Supabase, "error" si no respondió
+      // (sin internet, proyecto pausado, etc.), "ready" con datos reales.
+      let loadState = "loading";
 
       function currentLang() {
         return document.documentElement.lang || "es";
@@ -196,6 +200,16 @@
 
       function renderGrid() {
         const lang = currentLang();
+
+        if (loadState === "loading") {
+          gridEl.innerHTML = `<p class="col-span-full text-center font-body-md text-on-surface-variant py-16">${escapeHtml(I18N.translate("menu.loading", lang))}</p>`;
+          return;
+        }
+        if (loadState === "error") {
+          gridEl.innerHTML = `<p class="col-span-full text-center font-body-md text-on-surface-variant py-16">${escapeHtml(I18N.translate("menu.loadError", lang))}</p>`;
+          return;
+        }
+
         const visibles = items.filter((item) => activeCategory === "all" || item.category === activeCategory);
 
         gridEl.innerHTML = visibles
@@ -206,7 +220,7 @@
             <div class="p-6">
               <div class="flex justify-between items-start gap-3 mb-2">
                 <h3 class="font-headline-sm text-headline-sm text-on-surface">${escapeHtml(item.nombre[lang])}</h3>
-                <span class="font-headline-sm text-headline-sm text-primary whitespace-nowrap">$${escapeHtml(formatPrice(item.precio))}</span>
+                <span class="font-headline-sm text-headline-sm text-primary whitespace-nowrap">RD$${escapeHtml(formatPrice(item.precio))}</span>
               </div>
               <p class="font-body-md text-on-surface-variant mb-3">${escapeHtml(item.desc[lang])}</p>
               ${
@@ -230,17 +244,24 @@
         renderGrid();
       }
 
-      // 1. Pintar ya con los datos locales (sin esperas)
+      // Mientras se espera la respuesta de Supabase, mostrar el estado de
+      // carga en vez de nada (o peor, datos de muestra).
       renderAll();
 
       document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
         btn.addEventListener("click", renderAll);
       });
 
-      // 2. Revalidar contra Supabase en segundo plano. Si falla o no está
-      //    configurado, no pasa nada: se queda lo local.
+      // Única fuente del menú real: Supabase. loadMenu() nunca lanza —
+      // resuelve null ante cualquier fallo (sin internet, proyecto
+      // pausado, RLS mal aplicado, tabla vacía).
       DataSource.loadMenu().then((remoto) => {
-        if (!remoto) return;
+        if (!remoto) {
+          loadState = "error";
+          renderAll();
+          return;
+        }
+        loadState = "ready";
         categories = remoto.categories;
         items = remoto.items;
         // Si la categoría activa ya no existe, volver a "todos"

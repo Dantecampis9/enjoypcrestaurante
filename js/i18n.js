@@ -44,8 +44,10 @@ const I18N_DICT = {
 
     "menu.page.title": "Menú",
     "menu.page.subtitle": "Cocina italiana, caribeña e internacional en el corazón de Los Corales.",
-    "menu.price.note": "Precios en USD. Sujetos a cambio sin previo aviso.",
+    "menu.price.note": "Precios en pesos dominicanos (RD$). Sujetos a cambio sin previo aviso.",
     "menu.print": "Imprimir menú",
+    "menu.loading": "Cargando el menú…",
+    "menu.loadError": "No se pudo cargar el menú en este momento. Intenta de nuevo más tarde.",
     "menu.filter.all": "Todos",
     "menu.tag.vegano": "Vegano",
     "menu.tag.estrella": "Recomendado",
@@ -136,8 +138,10 @@ const I18N_DICT = {
 
     "menu.page.title": "Menu",
     "menu.page.subtitle": "Italian, Caribbean and international cuisine in the heart of Los Corales.",
-    "menu.price.note": "Prices in USD. Subject to change without notice.",
+    "menu.price.note": "Prices in Dominican pesos (RD$). Subject to change without notice.",
     "menu.print": "Print menu",
+    "menu.loading": "Loading menu…",
+    "menu.loadError": "Could not load the menu right now. Please try again later.",
     "menu.filter.all": "All",
     "menu.tag.vegano": "Vegan",
     "menu.tag.estrella": "Recommended",
