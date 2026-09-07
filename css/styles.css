@@ -73,7 +73,9 @@ body {
   transform: translateY(-4px);
 }
 
-.menu-tab[aria-selected="true"] {
+/* Filtro activo del menú. Los botones usan aria-pressed (son filtros que se
+   alternan), no aria-selected (que pertenece al patrón de pestañas). */
+.menu-tab[aria-pressed="true"] {
   background-color: #e36a56;
   color: #000000;
 }

@@ -9,7 +9,8 @@
 // Uso:
 //   node mikrotik/preview-server.js
 //   abrir http://localhost:8010/
-//   para ver el estado de error: http://localhost:8010/?error=Usuario+o+clave+incorrectos
+//   estado de error:     http://localhost:8010/?error=Usuario+o+clave+incorrectos
+//   Trial ya consumido:  http://localhost:8010/?trial=no
 //
 // NOTA: login.html ya no soporta CHAP (se quitó md5.js porque el Server
 // Profile del router usa Trial + Cookie, sin CHAP) — por eso este script
@@ -37,7 +38,18 @@ const MIME = {
 
 // Sustituye las variables de plantilla de MikroTik por valores de
 // ejemplo, igual que haría el router al servir la página.
-function mockMikrotikTemplate(html, errorMessage) {
+//
+// `trialDisponible` imita lo que decide el router: solo vale "yes" cuando
+// ESE dispositivo todavía tiene tiempo de Trial. Con ?trial=no se ve el
+// aviso de "ya usaste tu acceso de hoy" sin tener que agotarlo de verdad.
+function mockMikrotikTemplate(html, errorMessage, trialDisponible) {
+  // Bloque condicional del acceso Trial:
+  //   (if trial == 'yes') formulario + botón (else) aviso (endif)
+  html = html.replace(
+    /\$\(if trial == 'yes'\)([\s\S]*?)\$\(else\)([\s\S]*?)\$\(endif\)/,
+    (_, conTrial, sinTrial) => (trialDisponible ? conTrial : sinTrial)
+  );
+
   // Bloque condicional $(if error) ... $(endif)
   html = html.replace(/\$\(if error\)([\s\S]*?)\$\(endif\)/, (_, block) => {
     if (!errorMessage) return ""; // sin error: el router omitiría el bloque entero
@@ -47,6 +59,8 @@ function mockMikrotikTemplate(html, errorMessage) {
   return html
     .replace(/\$\(link-login-only\)/g, "/mock-login")
     .replace(/\$\(link-orig-esc\)/g, "https://ejemplo.com/pagina-original")
+    .replace(/\$\(link-redirect\)/g, "/mock-redirect")
+    .replace(/\$\(link-status\)/g, "/mock-status")
     .replace(/\$\(mac-esc\)/g, "AA-BB-CC-DD-EE-FF")
     .replace(/\$\(popup\)/g, "false");
 }
@@ -74,26 +88,48 @@ const server = http.createServer((req, res) => {
 
   // Simula el endpoint de autenticación de MikroTik ($(link-login-only)).
   // Solo muestra lo que el router habría recibido — no autentica nada de verdad.
-  if (url.pathname === "/mock-login" && req.method === "POST") {
-    readBody(req, (body) => {
-      const params = new URLSearchParams(body);
+  //
+  // Acepta GET y POST: el botón "Aceptar y Continuar" es un enlace GET (el
+  // patrón documentado por MikroTik para Trial), pero se deja el POST por si
+  // alguna vez se vuelve a un formulario oculto.
+  if (url.pathname === "/mock-login") {
+    const responder = (params) => {
+      const dst = params.get("dst") || "(vacío)";
+      // Si el guardado en Supabase falló, login.html adjunta el contacto al
+      // fragmento (#lead=...) para que lo rescate el sitio web ya con red.
+      const frag = dst.includes("#lead=") ? dst.split("#lead=")[1] : null;
+      let contacto = "";
+      if (frag) {
+        try {
+          const json = decodeURIComponent(escape(Buffer.from(
+            frag.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(frag.length / 4) * 4, "="),
+            "base64").toString("binary")));
+          contacto = `<tr><td><b>contacto en el fragmento</b></td><td><code>${json}</code></td></tr>`;
+        } catch (e) {
+          contacto = `<tr><td><b>fragmento</b></td><td>ilegible</td></tr>`;
+        }
+      }
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(`
         <!doctype html><html lang="es"><meta charset="utf-8">
-        <body style="font-family:sans-serif;max-width:560px;margin:60px auto;line-height:1.6">
+        <body style="font-family:sans-serif;max-width:640px;margin:60px auto;line-height:1.6">
           <h1>✅ Simulación de login MikroTik</h1>
-          <p>Esto es lo que el <b>formulario oculto</b> (el que de verdad concede la red) envió al router:</p>
+          <p>Esto es lo que el enlace de acceso (el que de verdad concede la red) envió al router:</p>
           <table border="1" cellpadding="8" style="border-collapse:collapse">
+            <tr><td><b>método</b></td><td>${req.method}</td></tr>
             <tr><td><b>username</b></td><td>${params.get("username") || "(vacío)"}</td></tr>
-            <tr><td><b>dst</b> (a dónde redirige)</td><td>${params.get("dst") || "(vacío)"}</td></tr>
-            <tr><td><b>popup</b></td><td>${params.get("popup") || "(vacío)"}</td></tr>
+            <tr><td><b>dst</b> (a dónde redirige)</td><td>${dst}</td></tr>
+            ${contacto}
           </table>
-          <p style="color:#57423a">En un MikroTik real, este POST lo recibe el router (no este script) y,
+          <p style="color:#57423a">En un MikroTik real esta petición la recibe el router (no este script) y,
           si el perfil tiene Trial habilitado, concede la red y redirige a <code>dst</code>.</p>
           <p><a href="/">&larr; Volver al formulario</a></p>
         </body></html>
       `);
-    });
+    };
+
+    if (req.method === "POST") readBody(req, (body) => responder(new URLSearchParams(body)));
+    else responder(url.searchParams);
     return;
   }
 
@@ -106,8 +142,9 @@ const server = http.createServer((req, res) => {
         return;
       }
       const errorMessage = url.searchParams.get("error");
+      const trialDisponible = url.searchParams.get("trial") !== "no";
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(mockMikrotikTemplate(html, errorMessage));
+      res.end(mockMikrotikTemplate(html, errorMessage, trialDisponible));
     });
     return;
   }
@@ -124,6 +161,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Vista previa del portal cautivo en http://localhost:${PORT}/`);
-  console.log(`Para ver el estado de error: http://localhost:${PORT}/?error=Usuario+o+clave+incorrectos`);
+  console.log(`Estado de error:    http://localhost:${PORT}/?error=Usuario+o+clave+incorrectos`);
+  console.log(`Trial ya consumido: http://localhost:${PORT}/?trial=no`);
   console.log("Ctrl+C para detener. Esto NO se sube al router, es solo para revisar el diseño.");
 });

@@ -1,35 +1,75 @@
 <!DOCTYPE html>
 <!--
-  Portal cautivo — Hotspot MikroTik RouterOS — Enjoy Punta Cana
+  Portal cautivo — Hotspot MikroTik RouterOS — Enjoy PC / Corales Pizzeria
 
-  Este archivo NO es una página normal: RouterOS lo sirve directamente
-  desde su Hotspot (IP > Hotspot > Server Profiles > carpeta del skin,
-  normalmente /hotspot/) y sustituye las variables $(...) él mismo antes
-  de enviarlo al navegador del visitante. No funciona si lo abres
-  directo con doble clic — necesita ser servido por el router.
+  Este archivo NO es una página normal: RouterOS lo sirve desde su Hotspot
+  y sustituye sus propias variables de plantilla antes de enviarlo al
+  navegador del visitante. No funciona si lo abres con doble clic —
+  necesita ser servido por el router.
 
-  Requisitos en el router (ver mikrotik/README.md para el detalle):
-  1. El perfil de usuario del Hotspot debe tener "Trial" habilitado
-     (así "T-$(mac-esc)" concede acceso sin usuario/clave reales).
-  2. El dominio de Supabase debe estar en el Walled Garden, o el fetch()
-     de abajo nunca podrá completarse (el dispositivo no tiene internet
-     hasta que este formulario lo autentica).
-  3. Subir junto a este archivo: style.css, banner.jpg y la carpeta
-     fonts/ (todo dentro de esta misma carpeta mikrotik/).
-  4. Este archivo asume que el servidor Hotspot NO usa CHAP como método
-     de login (confirmado: "HTTP CHAP" desmarcado en Server Profiles,
-     solo Cookie + Trial activos) — por eso no incluye md5.js ni el
-     campo $(chap-id). Si algún día se activa CHAP en el router, hay
-     que volver a añadir ese soporte o el login fallará con
-     "web browser did not send challenge response".
+  ---------------------------------------------------------------------
+  POR QUÉ ESTÁ ESCRITO ASÍ (tres decisiones que vienen de un fallo real)
+  ---------------------------------------------------------------------
 
-  Nombre/correo son solo para captura de contactos (marketing) — la
-  variable que de verdad concede la red es el username "T-$(mac-esc)"
-  del formulario oculto de abajo, no estos campos visibles.
+  1. El botón es un <a href="..."> de verdad, no un <button> movido por
+     JavaScript. Los mini-navegadores de portal cautivo (el de iOS y el
+     WebView de Android) corren en un contexto restringido donde cosas
+     como localStorage pueden lanzar excepción y matar todo el script.
+     Si eso pasa aquí, el enlace sigue funcionando y el visitante entra
+     igual: solo se pierde la captura del contacto, no el acceso al WiFi.
+     La versión anterior usaba un <button> + submit por JS y, cuando el
+     script moría, tocar el botón no hacía absolutamente nada.
+
+  2. El acceso Trial va dentro del condicional de RouterOS que comprueba
+     si "trial" vale "yes". RouterOS solo lo da por cierto cuando ESE
+     dispositivo todavía tiene Trial disponible. El perfil está en 30 minutos por día: cuando un celular
+     los agota, pedir "T-$(mac-esc)" devuelve "invalid username or
+     password". Con el guardia, en vez de un botón que falla se muestra
+     un aviso claro de que vuelva mañana.
+
+  3. El Trial se pide con el enlace GET oficial de MikroTik
+     ($(link-login-only)?dst=...&username=T-$(mac-esc)), que es el patrón
+     documentado y el que usan las plantillas que funcionan, en lugar de
+     un formulario POST oculto.
+
+  4. El contacto se guarda en Supabase por DOS vías, y basta con que
+     funcione una:
+
+       a) Desde aquí, antes de conceder la red. Solo completa si Supabase
+          está en el Walled Garden IP del router (ver abajo).
+       b) Si (a) falla, los datos viajan en el FRAGMENTO (#) de la URL de
+          destino y los guarda el propio sitio web un segundo después, ya
+          con internet completo (js/lead-capture.js del repositorio).
+
+     El fragmento es la única parte de una URL que el navegador nunca
+     manda a ningún servidor, así que los datos no pasan por GitHub Pages
+     ni quedan en ningún log; el sitio los lee, hace el INSERT y limpia
+     la barra de direcciones. Como (b) solo se activa cuando (a) NO
+     confirmó, un contacto nunca se guarda dos veces.
+
+  ---------------------------------------------------------------------
+  REQUISITOS EN EL ROUTER
+  ---------------------------------------------------------------------
+  - IP > Hotspot > Server Profiles > (perfil activo) > Login: "Trial"
+    marcado, y Trial Uptime Limit / Reset configurados.
+  - Recomendado (no obligatorio desde que existe la vía (b)): Supabase en
+    el Walled Garden **IP**, no en el de HTTP. El menú de HTTP filtra por
+    nombre de dominio leyendo la cabecera Host, que en HTTPS va cifrada:
+    el router no puede leerla y la regla nunca coincide.
+
+        /ip hotspot walled-garden ip
+        add action=accept dst-host=buxkahmxaubgygsbreze.supabase.co
+
+  - Subir junto a este archivo: login.css, banner.jpg y la carpeta
+    fonts/. Los demás archivos de esta carpeta (alogin.html, error.html,
+    logout.html, radvert.html, redirect.html, rlogin.html, status.html,
+    errors.txt) son páginas por defecto de RouterOS: no se tocan.
 -->
 <html lang="es" id="html-root">
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="expires" content="-1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enjoy Punta Cana | WiFi</title>
   <link rel="stylesheet" href="style.css" />
@@ -52,24 +92,10 @@
       <div class="server-error"><span data-i18n="errorLabel">Error</span>: $(error)</div>
       $(endif)
 
-      <!-- Formulario oculto: es el que MikroTik reconoce para autenticar.
-           "T-$(mac-esc)" es la convención estándar de RouterOS para un
-           login de tipo "Trial" (acceso libre tras aceptar, sin
-           usuario/clave reales). Requiere Trial habilitado en el
-           perfil de usuario del servidor Hotspot. -->
-      <form name="sendin" action="$(link-login-only)" method="post" id="hotspot-form">
-        <input type="hidden" name="dst" value="https://dantecampis9.github.io/enjoypcrestaurante/" />
-        <!-- ⬆️ Sitio publicado en GitHub Pages. Si más adelante se pasa a
-             un dominio propio (ej. enjoypcrestaurante.com), actualizar aquí.
-             Alternativa: usar value="$(link-orig-esc)" para devolver al
-             visitante a la página que intentaba abrir originalmente. -->
-        <input type="hidden" name="popup" value="$(popup)" />
-        <input type="hidden" name="username" value="T-$(mac-esc)" />
-      </form>
-
-      <!-- Formulario visible: solo captura nombre/correo/teléfono para la
-           base de contactos del restaurante. No autentica nada por sí mismo. -->
-      <form id="lead-form" novalidate>
+      $(if trial == 'yes')
+      <!-- Captura de contacto. No autentica por sí misma: el acceso lo
+           concede el enlace de abajo. -->
+      <form id="lead-form" novalidate onsubmit="return false;">
         <div class="field">
           <input id="lead-name" name="name" type="text" data-i18n-placeholder="namePlaceholder" placeholder="Nombre completo" autocomplete="name" maxlength="120" required />
         </div>
@@ -80,8 +106,19 @@
           <input id="lead-phone" name="phone" type="tel" inputmode="tel" data-i18n-placeholder="phonePlaceholder" placeholder="Número de teléfono" autocomplete="tel" maxlength="20" required />
         </div>
         <p id="lead-error" class="error-text" data-i18n="formError">Ingresa tu nombre, un correo y un teléfono válidos.</p>
-        <button type="submit" id="lead-submit" class="btn-accept" data-i18n="accept">Aceptar y Continuar</button>
       </form>
+
+      <!-- ESTE enlace es el que concede la red. Funciona con o sin
+           JavaScript; el script solo lo intercepta para validar y guardar
+           el contacto antes de dejar pasar. -->
+      <a id="trial-link" class="btn-accept" data-i18n="accept"
+         href="$(link-login-only)?dst=https%3A%2F%2Fdantecampis9.github.io%2Fenjoypcrestaurante%2F&amp;username=T-$(mac-esc)">Aceptar y Continuar</a>
+      $(else)
+      <!-- Sin Trial disponible para este dispositivo (ya consumió su
+           tiempo del día). Mejor decirlo claro que mostrar un botón que
+           va a fallar. -->
+      <div class="notice" data-i18n="trialUsed">Ya usaste tu acceso gratuito de hoy. Vuelve a intentarlo mañana o pídele ayuda a nuestro personal.</div>
+      $(endif)
 
       <div class="terms">
         <a href="#" data-i18n="terms">Términos y Condiciones</a>
@@ -90,209 +127,334 @@
   </div>
 
   <script>
-    (function () {
-      // ---------------------------------------------------------------
-      // Idioma ES/EN — independiente del sitio principal a propósito:
-      // esta página la sirve el router desde su propia carpeta, sin
-      // acceso a js/i18n.js del sitio (el visitante ni siquiera tiene
-      // internet todavía). Diccionario mínimo, auto-contenido.
-      // ---------------------------------------------------------------
-      var DICT = {
-        es: {
-          title: "Enjoy PC / Corales Pizzeria Cigar, Sushi y Lounge",
-          subtitle: "Sumérgete en una experiencia donde el lujo se encuentra con la esencia del Caribe. Déjanos tus datos para conectarte al WiFi.",
-          errorLabel: "Error",
-          namePlaceholder: "Nombre completo",
-          emailPlaceholder: "Correo electrónico",
-          phonePlaceholder: "Número de teléfono",
-          formError: "Ingresa tu nombre, un correo y un teléfono válidos.",
-          accept: "Aceptar y Continuar",
-          connecting: "Conectando…",
-          terms: "Términos y Condiciones",
-        },
-        en: {
-          title: "Enjoy PC / Corales Pizzeria Cigar, Sushi & Lounge",
-          subtitle: "Immerse yourself in an experience where luxury meets the essence of the Caribbean. Leave us your details to connect to WiFi.",
-          errorLabel: "Error",
-          namePlaceholder: "Full name",
-          emailPlaceholder: "Email address",
-          phonePlaceholder: "Phone number",
-          formError: "Please enter a valid name, email and phone number.",
-          accept: "Accept and Continue",
-          connecting: "Connecting…",
-          terms: "Terms and Conditions",
-        },
-      };
-
-      var LANG_KEY = "enjoy-hotspot-lang";
-
-      function detectLang() {
-        var saved = localStorage.getItem(LANG_KEY);
-        if (saved === "es" || saved === "en") return saved;
-        return navigator.language && navigator.language.toLowerCase().indexOf("en") === 0 ? "en" : "es";
-      }
-
-      function translate(key, lang) {
-        return (DICT[lang] && DICT[lang][key]) || DICT.es[key] || key;
-      }
-
-      function applyLang(lang) {
-        document.getElementById("html-root").lang = lang;
-
-        document.querySelectorAll("[data-i18n]").forEach(function (el) {
-          el.textContent = translate(el.getAttribute("data-i18n"), lang);
-        });
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
-          el.setAttribute("placeholder", translate(el.getAttribute("data-i18n-placeholder"), lang));
-        });
-        document.querySelectorAll(".lang-btn").forEach(function (btn) {
-          btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
-        });
-
-        currentLang = lang;
-      }
-
-      var currentLang = detectLang();
-
-      document.querySelectorAll(".lang-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var lang = btn.getAttribute("data-lang");
-          localStorage.setItem(LANG_KEY, lang);
-          applyLang(lang);
-        });
-      });
-
-      applyLang(currentLang);
-
-      // ---------------------------------------------------------------
-      // Captura de contacto + envío del login real (ver comentarios
-      // arriba en el HTML: dos formularios separados a propósito).
-      // ---------------------------------------------------------------
-
-      // Mismo proyecto Supabase que usa el sitio web (tabla `leads`,
-      // protegida por RLS: INSERT público, SELECT solo administradores).
-      // La clave "publishable" es segura para exponer aquí — no es un
-      // secreto, ver sql/README.md del proyecto principal.
-      var SUPABASE_URL = "https://buxkahmxaubgygsbreze.supabase.co";
-      var SUPABASE_ANON_KEY = "sb_publishable_Ye6rfsrZxf9q7xLqwuP-CA_PQfBwSeS";
-      var SAVE_TIMEOUT_MS = 3000; // corto a propósito: nunca debe demorar el acceso a la red
-
-      // Letras (incluye acentos/ñ), espacios, apóstrofe y guion — mismo
-      // conjunto que se filtra en vivo en #lead-name más abajo.
-      // OJO: "À-ÖØ-öø-ÿ" (no "À-ÿ" de un tirón) porque el rango Latin-1
-      // completo cuela de colado los símbolos × (U+00D7) y ÷ (U+00F7),
-      // que caen justo entre letras acentuadas y no son letras.
-      var NAME_LETTERS = "A-Za-zÀ-ÖØ-öø-ÿĀ-ſ";
-      var NAME_CHARS = NAME_LETTERS + "\\s'-";
-      var NAME_DISALLOWED_RE = new RegExp("[^" + NAME_CHARS + "]", "g");
-
-      function isValidName(v) {
-        var trimmed = v.trim();
-        if (trimmed.length < 2 || trimmed.length > 120) return false;
-        if (!new RegExp("^[" + NAME_CHARS + "]+$").test(trimmed)) return false;
-        // Al menos una letra real: rechaza "- -" o "'''" como nombre.
-        return new RegExp("[" + NAME_LETTERS + "]").test(trimmed);
-      }
-
-      function isValidEmail(v) {
-        var trimmed = v.trim();
-        if (trimmed.length > 255) return false;
-        if (trimmed.indexOf("..") !== -1) return false;
-        // local@dominio.tld — sin espacios, TLD de al menos 2 letras.
-        return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,24}$/.test(trimmed);
-      }
-
-      // Dígitos, espacios, +, -, ( ) — con o sin código de país. Mismo
-      // conjunto que se filtra en vivo en #lead-phone más abajo.
-      var PHONE_DISALLOWED_RE = /[^0-9+()\s-]/g;
-
-      function isValidPhone(v) {
-        var trimmed = v.trim();
-        // Valida solo por cantidad de dígitos (7 a 15, rango internacional
-        // razonable), no por un formato dominicano específico.
-        if (!/^[0-9+()\s-]+$/.test(trimmed)) return false;
-        var digits = trimmed.replace(/\D/g, "");
-        return digits.length >= 7 && digits.length <= 15;
-      }
-
-      // Elimina en tiempo real cualquier carácter fuera del conjunto
-      // permitido, sin dejar que el cursor salte al final del campo.
-      function restrictInput(el, disallowedRe) {
-        el.addEventListener("input", function () {
-          var start = el.selectionStart;
-          var before = el.value;
-          var after = before.replace(disallowedRe, "");
-          if (before !== after) {
-            var diff = before.length - after.length;
-            el.value = after;
-            var pos = Math.max(0, (start || 0) - diff);
-            el.setSelectionRange(pos, pos);
-          }
-        });
-      }
-
-      function saveLead(nombre, email, telefono) {
-        if (!window.fetch || !window.AbortController) return Promise.resolve();
-
-        var controller = new AbortController();
-        var timer = setTimeout(function () { controller.abort(); }, SAVE_TIMEOUT_MS);
-
-        return fetch(SUPABASE_URL + "/rest/v1/leads", {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: "Bearer " + SUPABASE_ANON_KEY,
-            "Content-Type": "application/json",
-            // Sin esta cabecera, PostgREST hace INSERT ... RETURNING *,
-            // lo que activa las políticas de SELECT (que el visitante no
-            // tiene) y el guardado fallaría. Ver sql/02-rls.sql.
-            Prefer: "return=minimal",
+    // Todo va dentro de un try/catch global: si algo aquí falla, el enlace
+    // de acceso sigue siendo un <a href> normal y el visitante entra igual.
+    try {
+      (function () {
+        // -------------------------------------------------------------
+        // Idioma ES/EN — diccionario propio, auto-contenido: el visitante
+        // todavía no tiene internet, no se puede cargar nada externo.
+        // -------------------------------------------------------------
+        var DICT = {
+          es: {
+            title: "Enjoy PC / Corales Pizzeria Cigar, Sushi y Lounge",
+            subtitle: "Sumérgete en una experiencia donde el lujo se encuentra con la esencia del Caribe. Déjanos tus datos para conectarte al WiFi.",
+            errorLabel: "Error",
+            namePlaceholder: "Nombre completo",
+            emailPlaceholder: "Correo electrónico",
+            phonePlaceholder: "Número de teléfono",
+            formError: "Ingresa tu nombre, un correo y un teléfono válidos.",
+            accept: "Aceptar y Continuar",
+            connecting: "Conectando…",
+            trialUsed: "Ya usaste tu acceso gratuito de hoy. Vuelve a intentarlo mañana o pídele ayuda a nuestro personal.",
+            terms: "Términos y Condiciones",
           },
-          body: JSON.stringify({
+          en: {
+            title: "Enjoy PC / Corales Pizzeria Cigar, Sushi & Lounge",
+            subtitle: "Immerse yourself in an experience where luxury meets the essence of the Caribbean. Leave us your details to connect to WiFi.",
+            errorLabel: "Error",
+            namePlaceholder: "Full name",
+            emailPlaceholder: "Email address",
+            phonePlaceholder: "Phone number",
+            formError: "Please enter a valid name, email and phone number.",
+            accept: "Accept and Continue",
+            connecting: "Connecting…",
+            trialUsed: "You've already used your free access for today. Try again tomorrow or ask our staff for help.",
+            terms: "Terms and Conditions",
+          },
+        };
+
+        var LANG_KEY = "enjoy-hotspot-lang";
+
+        // localStorage puede lanzar excepción en el navegador de portal
+        // cautivo (contexto restringido). Nunca debe tumbar la página.
+        function readLang() {
+          try {
+            var saved = localStorage.getItem(LANG_KEY);
+            if (saved === "es" || saved === "en") return saved;
+          } catch (err) {
+            /* almacenamiento bloqueado: se usa el idioma del navegador */
+          }
+          return navigator.language && navigator.language.toLowerCase().indexOf("en") === 0 ? "en" : "es";
+        }
+
+        function writeLang(lang) {
+          try {
+            localStorage.setItem(LANG_KEY, lang);
+          } catch (err) {
+            /* no se puede recordar la preferencia: no es crítico */
+          }
+        }
+
+        function translate(key, lang) {
+          return (DICT[lang] && DICT[lang][key]) || DICT.es[key] || key;
+        }
+
+        var currentLang = readLang();
+
+        function applyLang(lang) {
+          currentLang = lang;
+          document.getElementById("html-root").lang = lang;
+
+          var i;
+          var textNodes = document.querySelectorAll("[data-i18n]");
+          for (i = 0; i < textNodes.length; i++) {
+            textNodes[i].textContent = translate(textNodes[i].getAttribute("data-i18n"), lang);
+          }
+          var phNodes = document.querySelectorAll("[data-i18n-placeholder]");
+          for (i = 0; i < phNodes.length; i++) {
+            phNodes[i].setAttribute("placeholder", translate(phNodes[i].getAttribute("data-i18n-placeholder"), lang));
+          }
+          var btns = document.querySelectorAll(".lang-btn");
+          for (i = 0; i < btns.length; i++) {
+            if (btns[i].getAttribute("data-lang") === lang) {
+              btns[i].className = "lang-btn active";
+            } else {
+              btns[i].className = "lang-btn";
+            }
+          }
+        }
+
+        var langBtns = document.querySelectorAll(".lang-btn");
+        for (var b = 0; b < langBtns.length; b++) {
+          langBtns[b].addEventListener("click", function () {
+            var lang = this.getAttribute("data-lang");
+            writeLang(lang);
+            applyLang(lang);
+          });
+        }
+
+        applyLang(currentLang);
+
+        // -------------------------------------------------------------
+        // Validación + captura de contacto.
+        // Si no hay Trial disponible, el condicional de arriba no imprimió
+        // ni el formulario ni el enlace: no hay nada que enganchar.
+        // -------------------------------------------------------------
+        var trialLink = document.getElementById("trial-link");
+        var nameEl = document.getElementById("lead-name");
+        var emailEl = document.getElementById("lead-email");
+        var phoneEl = document.getElementById("lead-phone");
+        var errorEl = document.getElementById("lead-error");
+
+        if (!trialLink || !nameEl || !emailEl || !phoneEl) return;
+
+        // Mismo proyecto Supabase que el sitio (tabla `leads`, protegida
+        // por RLS: INSERT público, SELECT solo administradores). La clave
+        // "publishable" es segura de exponer aquí — no es un secreto.
+        var SUPABASE_URL = "https://buxkahmxaubgygsbreze.supabase.co";
+        var SUPABASE_ANON_KEY = "sb_publishable_Ye6rfsrZxf9q7xLqwuP-CA_PQfBwSeS";
+        var SAVE_TIMEOUT_MS = 3000; // corto a propósito: nunca debe demorar el acceso
+
+        // Letras (con acentos/ñ), espacios, apóstrofe y guion.
+        // OJO: "À-ÖØ-öø-ÿ" y no "À-ÿ" de un tirón, porque el rango Latin-1
+        // completo cuela los símbolos × (U+00D7) y ÷ (U+00F7), que caen
+        // justo entre letras acentuadas y no son letras.
+        var NAME_LETTERS = "A-Za-zÀ-ÖØ-öø-ÿĀ-ſ";
+        var NAME_CHARS = NAME_LETTERS + "\\s'-";
+        var NAME_DISALLOWED_RE = new RegExp("[^" + NAME_CHARS + "]", "g");
+        var PHONE_DISALLOWED_RE = /[^0-9+()\s-]/g;
+
+        function isValidName(v) {
+          var t = v.trim();
+          if (t.length < 2 || t.length > 120) return false;
+          if (!new RegExp("^[" + NAME_CHARS + "]+$").test(t)) return false;
+          return new RegExp("[" + NAME_LETTERS + "]").test(t);
+        }
+
+        function isValidEmail(v) {
+          var t = v.trim();
+          if (t.length > 255) return false;
+          if (t.indexOf("..") !== -1) return false;
+          return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,24}$/.test(t);
+        }
+
+        function isValidPhone(v) {
+          var t = v.trim();
+          if (!/^[0-9+()\s-]+$/.test(t)) return false;
+          var digits = t.replace(/\D/g, "");
+          return digits.length >= 7 && digits.length <= 15;
+        }
+
+        // Filtra en vivo: no deja ni escribir un carácter inválido.
+        function restrictInput(el, disallowedRe) {
+          el.addEventListener("input", function () {
+            var start = el.selectionStart;
+            var before = el.value;
+            var after = before.replace(disallowedRe, "");
+            if (before !== after) {
+              var diff = before.length - after.length;
+              el.value = after;
+              try {
+                var pos = Math.max(0, (start || 0) - diff);
+                el.setSelectionRange(pos, pos);
+              } catch (err) {
+                /* algunos navegadores no permiten mover el cursor aquí */
+              }
+            }
+          });
+        }
+
+        restrictInput(nameEl, NAME_DISALLOWED_RE);
+        restrictInput(phoneEl, PHONE_DISALLOWED_RE);
+
+        function clearInvalidOnFix(el, validator) {
+          el.addEventListener("input", function () {
+            if (validator(el.value)) el.className = "";
+          });
+        }
+        clearInvalidOnFix(nameEl, isValidName);
+        clearInvalidOnFix(emailEl, isValidEmail);
+        clearInvalidOnFix(phoneEl, isValidPhone);
+
+        // -------------------------------------------------------------
+        // Plan B: llevar los datos al otro lado de la conexión.
+        //
+        // El guardado de aquí abajo ocurre en el peor momento posible: el
+        // dispositivo TODAVÍA no tiene internet. Solo completa si Supabase
+        // está en el Walled Garden IP del router, y ni siquiera eso es
+        // fiable a largo plazo — Supabase está detrás de Cloudflare y sus
+        // IPs pueden rotar sin aviso.
+        //
+        // Así que cuando el guardado falla, los datos viajan dentro del
+        // FRAGMENTO (#) de la URL de destino. El fragmento es la única
+        // parte de una URL que el navegador NO envía a ningún servidor:
+        // se queda en el dispositivo. Un segundo después, ya con internet
+        // completo, es el propio sitio web quien hace el INSERT y borra el
+        // fragmento de la barra de direcciones.
+        //   -> ver js/lead-capture.js en el repositorio del sitio.
+        // -------------------------------------------------------------
+        function encodePayload(datos) {
+          var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(datos))));
+          return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+        }
+
+        // Inyecta el fragmento dentro del parámetro dst= del enlace de
+        // acceso, que es la URL a la que RouterOS redirige tras autenticar.
+        function conFragmento(href, payload) {
+          return href.replace(/([?&]dst=)([^&]*)/, function (todo, prefijo, valor) {
+            var base = decodeURIComponent(valor).split("#")[0];
+            return prefijo + encodeURIComponent(base + "#lead=" + payload);
+          });
+        }
+
+        function destinoDeRespaldo(href, datos) {
+          try {
+            return conFragmento(href, encodePayload(datos));
+          } catch (err) {
+            // Si el respaldo no se puede construir se pierde el contacto,
+            // pero el visitante entra igual: eso nunca se negocia.
+            return href;
+          }
+        }
+
+        // Resuelve a true solo si Supabase confirmó el guardado.
+        function saveLead(datos) {
+          if (!window.fetch || !window.AbortController) return Promise.resolve(false);
+
+          var controller = new AbortController();
+          var timer = setTimeout(function () { controller.abort(); }, SAVE_TIMEOUT_MS);
+
+          return fetch(SUPABASE_URL + "/rest/v1/leads", {
+            method: "POST",
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: "Bearer " + SUPABASE_ANON_KEY,
+              "Content-Type": "application/json",
+              // Sin esta cabecera PostgREST hace INSERT ... RETURNING *, lo
+              // que activa las políticas de SELECT (que el visitante no
+              // tiene) y el guardado fallaría. Ver sql/02-rls.sql.
+              Prefer: "return=minimal",
+            },
+            // OJO: solo columnas que EXISTEN en la tabla `leads`
+            // (id, nombre, email, telefono, idioma, origen, created_at).
+            // Mandar una columna inexistente hace que PostgREST rechace el
+            // INSERT ENTERO con un 400, y como fetch() no lanza excepción
+            // ante un error HTTP, el fallo pasaba desapercibido: así se
+            // perdieron todos los contactos entre el 13 de agosto y hoy.
+            // Si algún día se corre sql/07-add-mikrotik-metadata.sql, se
+            // pueden volver a añadir aquí `mac` y `timestamp`.
+            body: JSON.stringify({
+              nombre: datos.nombre,
+              email: datos.email,
+              telefono: datos.telefono,
+              idioma: datos.idioma,
+              origen: "mikrotik-hotspot",
+            }),
+            signal: controller.signal,
+          })["then"](function (res) {
+            clearTimeout(timer);
+            if (res && res.ok) return true;
+            // Dejar rastro del fallo en consola: si vuelve a romperse el
+            // guardado, que al menos se vea al inspeccionar el portal.
+            try { console.warn("Supabase rechazó el contacto:", res && res.status); } catch (e) {}
+            return false;
+          })["catch"](function () {
+            // Supabase inalcanzable (walled garden mal puesto, proyecto
+            // pausado, sin internet en el router). No pasa nada: el
+            // contacto se rescata por el fragmento de la URL.
+            clearTimeout(timer);
+            return false;
+          });
+        }
+
+        trialLink.addEventListener("click", function (e) {
+          if (trialLink.className.indexOf("is-busy") !== -1) {
+            e.preventDefault();
+            return;
+          }
+
+          var nombre = nameEl.value.trim();
+          var email = emailEl.value.trim();
+          var telefono = phoneEl.value.trim();
+
+          var nameOk = isValidName(nombre);
+          var emailOk = isValidEmail(email);
+          var phoneOk = isValidPhone(telefono);
+
+          nameEl.className = nameOk ? "" : "invalid";
+          emailEl.className = emailOk ? "" : "invalid";
+          phoneEl.className = phoneOk ? "" : "invalid";
+
+          if (!nameOk || !emailOk || !phoneOk) {
+            e.preventDefault();
+            errorEl.className = "error-text visible";
+            return;
+          }
+
+          errorEl.className = "error-text";
+          e.preventDefault();
+
+          trialLink.className = "btn-accept is-busy";
+          trialLink.textContent = translate("connecting", currentLang);
+
+          var destino = trialLink.href;
+          var datos = {
             nombre: nombre,
             email: email,
             telefono: telefono,
-            origen: "mikrotik-hotspot",
-            mac: "$(mac-esc)",
-            timestamp: new Date().toISOString(),
-          }),
-          signal: controller.signal,
-        }).catch(function (err) {
-          // Si Supabase no es alcanzable (walled garden mal puesto, sin
-          // internet en el router, proyecto pausado), no pasa nada: el
-          // visitante igual debe poder conectarse al WiFi.
-          console.warn("No se pudo guardar el contacto en Supabase (no afecta el acceso al WiFi):", err);
-        }).finally(function () {
-          clearTimeout(timer);
+            idioma: currentLang,
+          };
+
+          // Pase lo que pase con el guardado (éxito, fallo o timeout) se
+          // concede la red: nunca dejar a un cliente real atrapado aquí.
+          // Si Supabase NO confirmó, el contacto se lleva en el fragmento
+          // para que lo guarde el sitio web. Así nunca se duplica: o lo
+          // guarda el portal, o lo guarda la web, nunca los dos.
+          saveLead(datos)["then"](function (guardado) {
+            window.location.href = guardado ? destino : destinoDeRespaldo(destino, datos);
+          })["catch"](function () {
+            window.location.href = destinoDeRespaldo(destino, datos);
+          });
         });
-      }
-
-      document.getElementById("lead-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        var nombre = document.getElementById("lead-name").value.trim();
-        var email = document.getElementById("lead-email").value.trim();
-        var telefono = document.getElementById("lead-phone").value.trim();
-        var errorEl = document.getElementById("lead-error");
-        var submitBtn = document.getElementById("lead-submit");
-
-        if (!nombre || !isValidEmail(email) || !isValidPhone(telefono)) {
-          errorEl.classList.add("visible");
-          return;
-        }
-        errorEl.classList.remove("visible");
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = translate("connecting", currentLang);
-
-        // Intenta guardar el contacto, pero SIEMPRE concede la red al
-        // terminar (éxito, fallo o timeout) — nunca deja al visitante
-        // atrapado en esta pantalla por un problema de red ajeno a él.
-        saveLead(nombre, email, telefono).then(function () {
-          document.sendin.submit();
-        });
-      });
-    })();
+      })();
+    } catch (err) {
+      // Si el script murió, el enlace de acceso sigue funcionando solo.
+      // Queda el rastro en consola para poder diagnosticarlo inspeccionando
+      // el portal: un fallo silencioso aquí es indistinguible de "no pasa
+      // nada al tocar el botón".
+      try { console.error("[portal] script detenido:", err); } catch (e) {}
+    }
   </script>
 </body>
 </html>

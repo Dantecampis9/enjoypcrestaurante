@@ -70,17 +70,26 @@
       <span class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase" data-i18n="welcome.eyebrow">Bienvenido al Paraíso</span>
       <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-4" data-i18n="menu.page.title">Menú </h1>
       <p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto" data-i18n="menu.page.subtitle">Cocina italiana, caribeña e internacional en el corazón de Los Corales.</p>
-      <button onclick="window.print()" class="no-print mt-6 inline-flex items-center gap-2 border border-primary text-primary px-5 py-2 rounded-full font-label-caps text-label-caps hover:bg-primary hover:text-black transition-colors">
+      <!-- Se oculta hasta que hay menú: imprimir una página vacía no tiene sentido -->
+      <button id="print-btn" hidden onclick="window.print()" class="no-print mt-6 inline-flex items-center gap-2 border border-primary text-primary px-5 py-2 rounded-full font-label-caps text-label-caps hover:bg-primary hover:text-black transition-colors">
         <span class="material-symbols-outlined text-base">print</span>
         <span data-i18n="menu.print">Imprimir menú</span>
       </button>
     </header>
 
-    <!-- Category tabs -->
-    <div id="menu-tabs" class="no-print flex flex-wrap justify-center gap-3 mb-12" role="tablist"></div>
+    <!-- Filtros de categoría. Son 21: en móvil se desplazan en horizontal en
+         vez de envolverse, porque envueltos ocupaban media pantalla y
+         empujaban el primer plato fuera de la vista. Desde sm: vuelven a
+         envolverse centrados, que a ese ancho sí caben bien. -->
+    <!-- Grupo de botones de filtro, NO un tablist: `role="tab"` promete
+         navegación con flechas (patrón ARIA de pestañas) que aquí no existe,
+         y esto tampoco cambia de panel — filtra la misma rejilla. Con
+         `aria-pressed` se describe lo que de verdad hace: alternar un filtro. -->
+    <div id="menu-tabs" class="no-print flex sm:flex-wrap sm:justify-center gap-3 mb-12 overflow-x-auto sm:overflow-visible -mx-gutter px-gutter sm:mx-0 sm:px-0 pb-2 sm:pb-0 snap-x" role="group" aria-label="Filtrar el menú por categoría"></div>
 
-    <!-- Menu grid -->
-    <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <!-- aria-live: al cambiar de filtro, el lector de pantalla anuncia la
+         rejilla nueva sin que el foco tenga que moverse hasta ella. -->
+    <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" aria-live="polite"></div>
 
     <p class="text-center font-body-md text-on-surface-variant mt-16 italic" data-i18n="menu.price.note">Precios en pesos dominicanos (RD$). Sujetos a cambio sin previo aviso.</p>
   </main>
@@ -144,7 +153,10 @@
     </p>
   </footer>
 
-  <script src="js/menu-data.js"></script>
+  <!-- OJO: aquí NO se carga js/menu-data.js a propósito. Esta página lee el
+       menú real solo de Supabase; el archivo local es el respaldo offline de
+       otras vistas y contiene platos de muestra. Cargarlo aquí solo servía
+       para descargar 8 KB de datos falsos que nunca se pintaban. -->
   <script src="js/supabase-config.js"></script>
   <script src="js/data-source.js"></script>
   <script src="js/i18n.js"></script>
@@ -153,6 +165,7 @@
     (function () {
       const tabsEl = document.getElementById("menu-tabs");
       const gridEl = document.getElementById("menu-grid");
+      const printBtn = document.getElementById("print-btn");
       let activeCategory = "all";
 
       // El menú real vive SOLO en Supabase — a propósito, sin respaldo
@@ -180,14 +193,29 @@
         return Number.isInteger(num) ? String(num) : num.toFixed(2);
       }
 
+      // Clases comunes de cada filtro. shrink-0 es lo que evita que se
+      // aplasten cuando la fila se desplaza en horizontal en móvil.
+      const TAB_CLASS = "menu-tab shrink-0 snap-start px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors";
+
       function renderTabs() {
         const lang = currentLang();
-        const allBtn = `<button data-cat="all" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === "all"}">${escapeHtml(I18N.translate("menu.filter.all", lang))}</button>`;
-        const catBtns = categories.map(
-          (cat) =>
-            `<button data-cat="${escapeHtml(cat.id)}" class="menu-tab px-5 py-2 border border-outline-variant font-label-caps text-label-caps transition-colors" role="tab" aria-selected="${activeCategory === cat.id}">${escapeHtml(cat.label[lang])}</button>`
-        ).join("");
-        tabsEl.innerHTML = allBtn + catBtns;
+        // Sin datos (cargando o error) no se pinta ningún filtro: una fila
+        // con un solo "Todos" que no filtra nada solo confunde.
+        if (loadState !== "ready") {
+          tabsEl.innerHTML = "";
+          tabsEl.hidden = true;
+          return;
+        }
+        tabsEl.hidden = false;
+
+        // aria-pressed = filtro activo (lo dice el CSS también). aria-controls
+        // enlaza el botón con la rejilla que actualiza.
+        const tab = (cat, etiqueta) =>
+          `<button type="button" data-cat="${escapeHtml(cat)}" class="${TAB_CLASS}" aria-controls="menu-grid" aria-pressed="${activeCategory === cat}">${escapeHtml(etiqueta)}</button>`;
+
+        tabsEl.innerHTML =
+          tab("all", I18N.translate("menu.filter.all", lang)) +
+          categories.map((cat) => tab(cat.id, cat.label[lang])).join("");
 
         tabsEl.querySelectorAll("button").forEach((btn) => {
           btn.addEventListener("click", () => {
@@ -200,13 +228,12 @@
 
       function renderGrid() {
         const lang = currentLang();
+        // Imprimir solo tiene sentido con el menú ya cargado.
+        printBtn.hidden = loadState !== "ready";
 
-        if (loadState === "loading") {
-          gridEl.innerHTML = `<p class="col-span-full text-center font-body-md text-on-surface-variant py-16">${escapeHtml(I18N.translate("menu.loading", lang))}</p>`;
-          return;
-        }
-        if (loadState === "error") {
-          gridEl.innerHTML = `<p class="col-span-full text-center font-body-md text-on-surface-variant py-16">${escapeHtml(I18N.translate("menu.loadError", lang))}</p>`;
+        if (loadState !== "ready") {
+          const clave = loadState === "loading" ? "menu.loading" : "menu.loadError";
+          gridEl.innerHTML = `<p class="col-span-full text-center font-body-md text-on-surface-variant py-16">${escapeHtml(I18N.translate(clave, lang))}</p>`;
           return;
         }
 

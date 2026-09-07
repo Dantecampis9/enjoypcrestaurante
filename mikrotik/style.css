@@ -1,8 +1,13 @@
-/* Estilos del portal cautivo — Enjoy Punta Cana
-   Sin Tailwind, sin CDN: el dispositivo del visitante NO tiene internet
-   todavía en el momento en que esta página se muestra, así que no puede
-   cargar nada externo. Todo (fuentes, imagen, CSS) se sube junto al
-   login.html a la carpeta del Hotspot en el router. */
+/* Portal cautivo — Enjoy PC / Corales Pizzeria — Hotspot MikroTik
+ *
+ * Sin Tailwind, sin CDN: el dispositivo del visitante NO tiene internet
+ * todavía cuando esta página se muestra, así que no puede cargar nada
+ * externo. Todo (fuentes, imagen, CSS) se sube junto al login.html a la
+ * carpeta del Hotspot en el router.
+ *
+ * Paleta igual a la del sitio (js/tailwind-config.js del proyecto):
+ *   botones/acentos #E36A56 · títulos #2E6E78 · texto negro · fondo #FCF9F8
+ */
 
 @font-face {
   font-family: "Playfair Display";
@@ -33,7 +38,7 @@ body {
 
 body {
   background-color: #fcf9f8;
-  color: #1c1b1b;
+  color: #000000;
   font-family: "Hanken Grotesk", sans-serif;
   display: flex;
   align-items: center;
@@ -86,7 +91,7 @@ body {
   letter-spacing: 0.05em;
   background: transparent;
   border: 1px solid #dec0b5;
-  color: #57423a;
+  color: #000000;
   border-radius: 999px;
   padding: 5px 14px;
   cursor: pointer;
@@ -94,8 +99,8 @@ body {
 }
 
 .lang-btn.active {
-  background-color: #ea3e70;
-  border-color: #ea3e70;
+  background-color: #e36a56;
+  border-color: #e36a56;
   color: #000000;
 }
 
@@ -104,14 +109,14 @@ body {
   font-size: 28px;
   line-height: 1.25;
   font-weight: 700;
-  color: #ea3e70;
+  color: #2e6e78;
   margin: 0 0 12px;
 }
 
 .subtitle {
   font-family: "Hanken Grotesk", sans-serif;
   font-size: 16px;
-  color: #57423a;
+  color: #000000;
   margin: 0 0 28px;
 }
 
@@ -128,14 +133,14 @@ body {
   padding: 14px 16px;
   font-family: "Hanken Grotesk", sans-serif;
   font-size: 16px;
-  color: #1c1b1b;
+  color: #000000;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .field input:focus {
-  border-color: #ea3e70;
-  box-shadow: 0 0 0 2px rgba(234, 62, 112, 0.25);
+  border-color: #e36a56;
+  box-shadow: 0 0 0 2px rgba(227, 106, 86, 0.25);
 }
 
 .field input.invalid {
@@ -168,9 +173,26 @@ body {
   text-align: left;
 }
 
+/* Aviso cuando el Trial del día ya se consumió: informativo, no error rojo */
+.notice {
+  background: #f6f3f2;
+  border: 1px solid #dec0b5;
+  color: #000000;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+/* El botón es un <a> (no <button>) para que funcione aunque el JavaScript
+   falle: en los mini-navegadores de portal cautivo eso pasa más de lo que
+   uno espera. El JS solo intercepta el clic para validar y guardar el
+   contacto antes de dejar pasar. */
 .btn-accept {
+  display: block;
   width: 100%;
-  background-color: #ea3e70;
+  background-color: #e36a56;
   color: #000000;
   border: none;
   border-radius: 8px;
@@ -180,16 +202,18 @@ body {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, opacity 0.2s;
   margin-top: 4px;
 }
 
 .btn-accept:hover {
-  background-color: #af2f54;
+  background-color: #aa5041;
 }
 
-.btn-accept:disabled {
+.btn-accept.is-busy {
   opacity: 0.6;
   cursor: wait;
 }
@@ -210,5 +234,5 @@ body {
 }
 
 .terms a:hover {
-  color: #ea3e70;
+  color: #e36a56;
 }

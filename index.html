@@ -144,17 +144,17 @@
     <!-- Bento Grid Quick Links -->
     <section class="py-section-gap px-gutter max-w-container-max mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
-        <!-- Eventos de Hoy -->
-        <div class="md:col-span-8 relative overflow-hidden group rounded-2xl min-h-[320px] md:min-h-0">
+        <!-- Eventos de Hoy — la tarjeta entera es el enlace (mismo patrón que
+             la de Galería, abajo), en vez de llevar un botón dentro. -->
+        <a href="eventos.html" class="md:col-span-8 relative overflow-hidden group block rounded-2xl min-h-[320px] md:min-h-0">
           <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('img/ambiente/musica-vivo.jpg')"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
           <div class="absolute bottom-0 left-0 p-10">
             <div class="inline-block bg-primary text-black px-3 py-1 rounded-full font-label-caps text-label-caps mb-4" data-i18n="bento.events.badge">HOY</div>
             <h3 class="font-headline-md text-white text-3xl mb-2" data-i18n="bento.events.title">Música en Vivo</h3>
-            <p class="text-white/80 font-body-md mb-6 max-w-md" data-i18n="bento.events.body">Disfruta de música en vivo y coctelería de autor en nuestra terraza frente al jardín, todas las noches desde las 7:00 PM.</p>
-            <a href="eventos.html" class="inline-block bg-white text-primary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-primary hover:text-black transition-colors" data-i18n="bento.events.cta">Ver Horarios</a>
+            <p class="text-white/80 font-body-md max-w-md" data-i18n="bento.events.body">Disfruta de música en vivo y coctelería de autor en nuestra terraza frente al jardín, todas las noches desde las 7:00 PM.</p>
           </div>
-        </div>
+        </a>
 
         <!-- Reservations Small -->
         <div class="md:col-span-4 bg-primary text-black p-10 flex flex-col justify-end rounded-2xl">
